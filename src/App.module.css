@@ -3,7 +3,7 @@
 .appContainer {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 20vh;
   width: 100%;
   background-color: var(--theme-background);
 }
@@ -36,6 +36,9 @@
   color: var(--theme-text);
   text-decoration: none;
 }
+.logo{
+  height: 45px;
+}
 
 .navBrand:hover {
   color: var(--theme-primary);
@@ -53,7 +56,7 @@
   font-size: 1rem;
   font-weight: 500;
   color: var(--theme-text-secondary);
-  padding: 0.5rem 0.75rem;
+  /* padding: 0.5rem 0.75rem; */
   border-radius: 6px;
   text-decoration: none;
   transition: all 0.2s ease;

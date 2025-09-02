@@ -29,6 +29,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <LandingPage /> },
+      { path: 'auth', element: <AuthPage /> },
       { path: 'NandGame', element: <NandGame /> },
       { 
         path: 'grupos', 
@@ -84,10 +85,6 @@ const router = createBrowserRouter([
       // { path: 'summary', element: <DailySummaryPage /> }, // <-- AÑADIR ESTA LÍNEA
       { path: '*', element: <NotFoundPage /> }, // Ruta para manejar 404
     ],
-  },
-  {
-    path: '/auth',
-    element: <AuthPage />,
   },
   {
     path: '/legacy-auth',

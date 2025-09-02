@@ -30,7 +30,7 @@ const LandingPage = () => {
     },
     {
       title: "Pilares Telemáticos",
-      description: "Explora los fundamentos de la ingeniería telemática a través de contenido interactivo y práctico.",
+      description: "Explora los fundamentos de la ingeniería civil telemática a través de contenido interactivo y práctico.",
       icon: "📡",
       details: ["Teoría de redes", "Protocolos", "Arquitecturas de comunicación"]
     }
@@ -45,7 +45,7 @@ const LandingPage = () => {
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/ranking');
     } else {
       navigate('/auth');
     }
@@ -76,7 +76,7 @@ const LandingPage = () => {
                 onClick={handleGetStarted}
                 className={`${styles.ctaButton} ${styles.primary}`}
               >
-                {isAuthenticated ? 'Ir al Dashboard' : 'Comenzar Ahora'}
+                {isAuthenticated ? 'Ir al Ranking' : 'Comenzar Ahora'}
               </button>
             </div>
           </div>

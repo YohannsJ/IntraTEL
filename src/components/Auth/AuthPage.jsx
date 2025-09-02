@@ -20,7 +20,7 @@ const AuthPage = () => {
       const result = await login(email, password);
       
       if (result.success) {
-        navigate('/dashboard');
+        navigate('/perfil');
       } else {
         setMessage(result.message || 'Error en el inicio de sesión');
       }
@@ -51,60 +51,44 @@ const AuthPage = () => {
   };
 
   return (
-    <div className={styles.authPage}>
-      {/* Header con navegación */}
-      <header className={styles.authHeader}>
-        <nav className={styles.authNav}>
-          <Link to="/" className={styles.logoLink}>
-            <img src="/LogoTEL.png" alt="IntraTEL" className={styles.logo} />
-            <span className={styles.logoText}>IntraTEL</span>
-          </Link>
-          <Link to="/" className={styles.backToHome}>
-            ← Volver al inicio
-          </Link>
-        </nav>
-      </header>
+    <div className={styles.authMain}>
+      <div className={styles.authContainer}>
+        <div className={styles.authCard}>
+          <div className={styles.authCardHeader}>
+            <h1 className={styles.authTitle}>
+              {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+            </h1>
+            <p className={styles.authSubtitle}>
+              {isLogin 
+                ? 'Bienvenido de vuelta a IntraTEL' 
+                : 'Únete a la comunidad IntraTEL'
+              }
+            </p>
+          </div>
 
-      {/* Contenido principal */}
-      <main className={styles.authMain}>
-        <div className={styles.authContainer}>
-          <div className={styles.authCard}>
-            <div className={styles.authCardHeader}>
-              <h1 className={styles.authTitle}>
-                {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
-              </h1>
-              <p className={styles.authSubtitle}>
-                {isLogin 
-                  ? 'Bienvenido de vuelta a IntraTEL' 
-                  : 'Únete a la comunidad IntraTEL'
-                }
-              </p>
+          {message && (
+            <div className={`${styles.message} ${message.includes('Error') ? styles.error : styles.success}`}>
+              {message}
             </div>
+          )}
 
-            {message && (
-              <div className={`${styles.message} ${message.includes('Error') ? styles.error : styles.success}`}>
-                {message}
-              </div>
+          <div className={styles.authFormContainer}>
+            {isLogin ? (
+              <LoginForm 
+                onSubmit={handleLogin}
+                onSwitchToRegister={() => setIsLogin(false)}
+                isLoading={isLoading}
+              />
+            ) : (
+              <RegisterForm 
+                onSubmit={handleRegister}
+                onSwitchToLogin={() => setIsLogin(true)}
+                isLoading={isLoading}
+              />
             )}
-
-            <div className={styles.authFormContainer}>
-              {isLogin ? (
-                <LoginForm 
-                  onSubmit={handleLogin}
-                  onSwitchToRegister={() => setIsLogin(false)}
-                  isLoading={isLoading}
-                />
-              ) : (
-                <RegisterForm 
-                  onSubmit={handleRegister}
-                  onSwitchToLogin={() => setIsLogin(true)}
-                  isLoading={isLoading}
-                />
-              )}
-            </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

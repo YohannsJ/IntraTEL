@@ -186,71 +186,308 @@ Cada componente tiene su archivo CSS módulo:
 
 ## 🔌 API y Backend
 
-### **Estructura de Rutas**
-```javascript
-// server/routes/example.js
-const express = require('express');
-const router = express.Router();
-const ExampleController = require('../controllers/ExampleController');
-const auth = require('../middleware/auth');
+### **Arquitectura de la API**
+IntraTEL utiliza una **API RESTful** construida con Express.js que sigue los principios de:
 
-// Rutas públicas
-router.get('/public-data', ExampleController.getPublicData);
+- **Stateless**: Cada request contiene toda la información necesaria
+- **CRUD Operations**: Create, Read, Update, Delete para todos los recursos
+- **JWT Authentication**: Tokens seguros para autenticación
+- **Role-based Access**: Control de acceso basado en roles
+- **Error Handling**: Manejo consistente de errores
+- **Response Format**: Formato estandarizado para todas las respuestas
 
-// Rutas protegidas
-router.get('/user-data', auth, ExampleController.getUserData);
-router.post('/create', auth, ExampleController.createItem);
-
-// Rutas de admin
-router.delete('/admin/delete/:id', auth, ExampleController.deleteItem);
-
-module.exports = router;
+### **Estructura de Endpoints**
+```
+/api
+├── /auth                    # Autenticación y usuarios
+│   ├── POST /register       # Registro de usuario
+│   ├── POST /login          # Inicio de sesión
+│   ├── GET /profile         # Perfil del usuario
+│   ├── PUT /profile         # Actualizar perfil
+│   └── GET /admin/*         # Rutas de administración
+├── /flags                   # Sistema de flags
+│   ├── POST /submit         # Enviar flag
+│   ├── GET /user           # Flags del usuario
+│   ├── GET /leaderboard    # Ranking individual
+│   └── GET /admin/*        # Gestión de flags
+├── /groups                  # Gestión de grupos
+│   ├── POST /              # Crear grupo
+│   ├── POST /join          # Unirse a grupo
+│   ├── GET /:id            # Información del grupo
+│   └── PUT /:id            # Actualizar grupo
+└── /games                   # Sistema de juegos
+    ├── POST /progress      # Guardar progreso
+    ├── GET /progress       # Obtener progreso
+    └── GET /leaderboard    # Ranking de juegos
 ```
 
-### **Controladores**
+### **Middleware de Seguridad**
 ```javascript
-// server/controllers/ExampleController.js
-const User = require('../models/User');
-const { logError } = require('../config/environment');
+// server/middleware/auth.js
+import jwt from 'jsonwebtoken';
 
-class ExampleController {
-  static async getPublicData(req, res) {
+// Middleware de autenticación básica
+export const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: 'Token de acceso requerido'
+    });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: 'Token inválido'
+      });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// Middleware para requerir roles específicos
+export const requireRole = (roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Permisos insuficientes'
+      });
+    }
+    next();
+  };
+};
+
+// Middleware para administradores de grupo
+export const requireGroupAdmin = async (req, res, next) => {
+  try {
+    const groupId = req.params.groupId;
+    const userId = req.user.id;
+    
+    const group = await Group.findById(groupId);
+    if (!group || group.admin_id !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Debe ser administrador del grupo'
+      });
+    }
+    
+    req.group = group;
+    next();
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error verificando permisos de grupo'
+    });
+  }
+};
+```
+
+### **Controladores Avanzados**
+```javascript
+// server/controllers/FlagController.js
+import Flag from '../models/Flag.js';
+import { logError } from '../config/environment.js';
+
+class FlagController {
+  // Enviar flag con validación avanzada
+  static async submitFlag(req, res) {
     try {
-      const data = await User.getPublicStats();
-      res.json({ success: true, data });
+      const { flag } = req.body;
+      const userId = req.user.id;
+
+      // Validaciones
+      if (!flag || !flag.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'La flag es requerida'
+        });
+      }
+
+      // Lógica de negocio
+      const result = await Flag.submitFlag(userId, flag.trim());
+
+      // Respuesta contextual
+      if (result.alreadySubmittedByGroup) {
+        return res.json({
+          success: true,
+          alreadySubmittedByGroup: true,
+          message: `✅ Flag correcta, pero ya fue subida por ${result.submittedBy.firstName}`,
+          data: result
+        });
+      }
+
+      // Respuesta exitosa
+      res.json({
+        success: true,
+        message: `🎉 ¡Felicitaciones! Has obtenido "${result.flagName}" (+${result.points} puntos)`,
+        data: result
+      });
+
     } catch (error) {
-      logError('Error in getPublicData:', error);
-      res.status(500).json({ 
-        success: false, 
-        message: 'Error interno del servidor' 
+      logError('Error enviando flag:', error);
+      
+      // Manejo específico de errores
+      switch (error.message) {
+        case 'Flag inválida':
+          return res.status(400).json({
+            success: false,
+            message: 'Flag no existe o es incorrecta'
+          });
+        case 'Usuario no encontrado':
+          return res.status(404).json({
+            success: false,
+            message: 'Usuario no válido'
+          });
+        default:
+          return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor'
+          });
+      }
+    }
+  }
+
+  // Obtener estadísticas de flags del usuario
+  static async getUserFlagStats(req, res) {
+    try {
+      const userId = req.user.id;
+      const stats = await Flag.getUserStats(userId);
+
+      res.json({
+        success: true,
+        data: {
+          totalFlags: stats.total_flags,
+          totalPoints: stats.total_points,
+          personalFlags: stats.personal_flags,
+          teamFlags: stats.team_flags,
+          rank: stats.user_rank,
+          groupRank: stats.group_rank,
+          recentSubmissions: stats.recent_flags
+        }
+      });
+
+    } catch (error) {
+      logError('Error obteniendo estadísticas:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error obteniendo estadísticas de flags'
       });
     }
   }
 
-  static async getUserData(req, res) {
+  // Crear nueva flag (solo administradores)
+  static async createFlag(req, res) {
     try {
-      const userId = req.user.id;
-      const userData = await User.findById(userId);
-      
-      if (!userData) {
-        return res.status(404).json({
+      // Verificar permisos de admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({
           success: false,
-          message: 'Usuario no encontrado'
+          message: 'Solo los administradores pueden crear flags'
         });
       }
 
-      res.json({ success: true, data: userData });
+      const { name, description, flag_value, points, category, difficulty } = req.body;
+
+      // Validaciones
+      const validationErrors = [];
+      if (!name) validationErrors.push('El nombre es requerido');
+      if (!description) validationErrors.push('La descripción es requerida');
+      if (!flag_value) validationErrors.push('El valor de la flag es requerido');
+      if (points && (points < 1 || points > 100)) {
+        validationErrors.push('Los puntos deben estar entre 1 y 100');
+      }
+
+      if (validationErrors.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Errores de validación',
+          errors: validationErrors
+        });
+      }
+
+      // Crear flag
+      const flagData = {
+        name: name.trim(),
+        description: description.trim(),
+        flag_value: flag_value.trim(),
+        points: points || 10,
+        category: category || 'general',
+        difficulty: difficulty || 'medium',
+        created_by: req.user.id
+      };
+
+      const newFlag = await Flag.create(flagData);
+
+      res.status(201).json({
+        success: true,
+        message: 'Flag creada exitosamente',
+        data: {
+          id: newFlag.id,
+          name: newFlag.name,
+          description: newFlag.description,
+          points: newFlag.points,
+          category: newFlag.category,
+          difficulty: newFlag.difficulty,
+          created_at: newFlag.created_at
+        }
+      });
+
     } catch (error) {
-      logError('Error in getUserData:', error);
-      res.status(500).json({ 
-        success: false, 
-        message: 'Error al obtener datos del usuario' 
+      logError('Error creando flag:', error);
+      
+      if (error.message.includes('UNIQUE constraint')) {
+        return res.status(409).json({
+          success: false,
+          message: 'Ya existe una flag con ese nombre o valor'
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        message: 'Error creando la flag'
+      });
+    }
+  }
+
+  // Obtener ranking con paginación
+  static async getLeaderboard(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
+      const result = await Flag.getLeaderboard(limit, offset);
+
+      res.json({
+        success: true,
+        data: result.users,
+        pagination: {
+          page,
+          limit,
+          total: result.total,
+          totalPages: Math.ceil(result.total / limit),
+          hasNext: page < Math.ceil(result.total / limit),
+          hasPrev: page > 1
+        }
+      });
+
+    } catch (error) {
+      logError('Error obteniendo ranking:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error obteniendo el ranking'
       });
     }
   }
 }
 
-module.exports = ExampleController;
+export default FlagController;
 ```
 
 ### **Modelos de Datos**

@@ -57,6 +57,10 @@ const AppLayout = () => {
         <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
           {/* <Link to="/" className={styles.navLink} onClick={closeMobileMenu}>Inicio</Link> */}
           <Link to="/NandGame" className={styles.navLink} onClick={closeMobileMenu}>NandGame</Link>
+          <Link to="/Juego2" className={styles.navLink} onClick={closeMobileMenu}>G3</Link>
+          <Link to="/Juego3" className={styles.navLink} onClick={closeMobileMenu}>G4</Link>
+          <Link to="/Juego5 " className={styles.navLink} onClick={closeMobileMenu}>G5</Link>
+          <Link to="/Juego4" className={styles.navLink} onClick={closeMobileMenu}>G2</Link>
           <Link to="/Templo" className={styles.navLink} onClick={closeMobileMenu}>Templo</Link>
           {isAuthenticated && (
             <>

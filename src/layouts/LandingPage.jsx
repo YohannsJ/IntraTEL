@@ -8,6 +8,8 @@ const LandingPage = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [currentFeature, setCurrentFeature] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
 
   const features = [
     {
@@ -43,6 +45,31 @@ const LandingPage = () => {
     return () => clearInterval(interval);
   }, [features.length]);
 
+  useEffect(() => {
+    // Check for reduced motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduceMotion(mediaQuery.matches);
+
+    const handleChange = (e) => setReduceMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) return; // Skip parallax if user prefers reduced motion
+
+    const handleScroll = () => {
+      // Throttle scroll events for better performance
+      requestAnimationFrame(() => {
+        setScrollY(window.scrollY);
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [reduceMotion]);
+
   const handleGetStarted = () => {
     if (isAuthenticated) {
       navigate('/ranking');
@@ -55,11 +82,46 @@ const LandingPage = () => {
     <div className={styles.container}>
       {/* Hero Section */}
       <section className={styles.hero}>
+        {/* Parallax Background Layers */}
+        <div className={styles.parallaxContainer}>
+          <div 
+            className={styles.parallaxLayer}
+            style={{ 
+              transform: reduceMotion ? 'none' : `translateY(${scrollY * 0.5}px)`,
+              backgroundImage: `url('/BackgroundTEL.png')`
+            }}
+          />
+          <div 
+            className={styles.parallaxOverlay}
+            style={{ 
+              transform: reduceMotion ? 'none' : `translateY(${scrollY * 0.3}px)`
+            }}
+          />
+          <div 
+            className={styles.parallaxGradient}
+            style={{ 
+              transform: reduceMotion ? 'none' : `translateY(${scrollY * 0.2}px)`
+            }}
+          />
+        </div>
+
         <div className={styles.heroContent}>
           <div className={styles.logoSection}>
-            <img src="/LogoTEL.png" alt="Logo Telemática" className={styles.heroLogo} />
+            <img 
+              src="/LogoTEL.png" 
+              alt="Logo Telemática" 
+              className={styles.heroLogo}
+              style={{ 
+                transform: reduceMotion ? 'none' : `translateY(${scrollY * -0.1}px)`
+              }}
+            />
           </div>
-          <div className={styles.heroText}>
+          <div 
+            className={styles.heroText}
+            style={{ 
+              transform: reduceMotion ? 'none' : `translateY(${scrollY * -0.15}px)`
+            }}
+          >
             <h1 className={styles.heroTitle}>
               Bienvenido a <span className={styles.brandName}>IntraTEL</span>
             </h1>

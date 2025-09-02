@@ -9,13 +9,67 @@
 
 /* Hero Section */
 .hero {
-  min-height: 85vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 100px 20px 60px;
   position: relative;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  overflow: hidden;
+}
+
+/* Parallax Container */
+.parallaxContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  z-index: 1;
+}
+
+.parallaxLayer {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  will-change: transform;
+}
+
+.parallaxOverlay {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 20, 25, 0.85) 0%,
+    rgba(30, 41, 59, 0.75) 30%,
+    rgba(15, 23, 42, 0.8) 70%,
+    rgba(15, 20, 25, 0.9) 100%
+  );
+  will-change: transform;
+}
+
+.parallaxGradient {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(59, 130, 246, 0.1) 0%,
+    rgba(139, 92, 246, 0.05) 30%,
+    transparent 70%
+  );
+  will-change: transform;
 }
 
 .heroContent {
@@ -23,22 +77,28 @@
   width: 100%;
   text-align: center;
   animation: fadeInUp 1s ease-out;
+  position: relative;
+  z-index: 10;
+  will-change: transform;
 }
 
 .logoSection {
   margin-bottom: 40px;
+  will-change: transform;
 }
 
 .heroLogo {
   height: 300px;
   width: auto;
-  filter: drop-shadow(0 4px 20px rgba(59, 130, 246, 0.3));
+  filter: drop-shadow(0 4px 20px rgba(59, 130, 246, 0.4)) drop-shadow(0 8px 40px rgba(0, 0, 0, 0.3));
   animation: logoFloat 3s ease-in-out infinite;
+  will-change: transform;
 }
 
 .heroText {
   max-width: 800px;
   margin: 0 auto;
+  will-change: transform;
 }
 
 .heroTitle {
@@ -47,6 +107,7 @@
   line-height: 1.2;
   margin: 0 0 24px;
   color: #f1f5f9;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .brandName {
@@ -62,6 +123,7 @@
   line-height: 1.6;
   margin: 0 0 16px;
   color: #cbd5e1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .heroDescription {
@@ -69,6 +131,7 @@
   line-height: 1.7;
   margin: 0 0 40px;
   color: #94a3b8;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .heroActions {
@@ -298,6 +361,27 @@
   }
 }
 
+/* Accessibility - Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .parallaxLayer,
+  .parallaxOverlay,
+  .parallaxGradient,
+  .heroLogo,
+  .heroText,
+  .logoSection {
+    transform: none !important;
+    will-change: auto;
+  }
+  
+  .heroLogo {
+    animation: none;
+  }
+  
+  .heroContent {
+    animation: none;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .heroTitle {
@@ -307,6 +391,10 @@
   .sectionTitle {
     font-size: 2.2rem;
   }
+  
+  .parallaxLayer {
+    background-attachment: scroll;
+  }
 }
 
 @media (max-width: 768px) {
@@ -315,7 +403,7 @@
   }
   
   .heroLogo {
-    height: 80px;
+    height: 200px;
   }
   
   .sectionTitle {
@@ -349,6 +437,37 @@
   
   .hero {
     padding: 80px 20px 40px;
+    min-height: 80vh;
+  }
+  
+  /* Reduce parallax effect on mobile for better performance */
+  .parallaxLayer,
+  .parallaxOverlay,
+  .parallaxGradient {
+    background-attachment: scroll;
+    height: 100%;
+    top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.1rem;
+  }
+  
+  .heroDescription {
+    font-size: 1rem;
+  }
+  
+  .heroLogo {
+    height: 150px;
+  }
+  
+  .hero {
     min-height: 70vh;
   }
 }

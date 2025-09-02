@@ -16,31 +16,58 @@ import { useTheme } from './context/ThemeContext.jsx';
 const AppLayout = () => {
   const { isRefreshing } = useData(); // Mantenemos el estado de refresh del DataContext
   const { user, logout, isAuthenticated } = useAuth(); // Usamos el nuevo AuthContext
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  // Close mobile menu when clicking outside
+  const handleNavClick = (e) => {
+    if (e.target.closest(`.${styles.mobileMenuButton}`)) return;
+    if (mobileMenuOpen && !e.target.closest(`.${styles.navLinks}`)) {
+      closeMobileMenu();
+    }
   };
 // console.log(ThemeContext.Consumer.);
 // Quiero saber si es tema oscuro o claro
 // console.log(useTheme().currentTheme);
   return (
-    <div className={styles.appContainer}>
+    <div className={styles.appContainer} onClick={handleNavClick}>
       <nav className={styles.navbar}>
         <Link to="/" className={styles.logo}><img src={`intratel-logo-${useTheme().currentTheme}.svg`} alt="" /></Link>
-        <div className={styles.navLinks}>
-          {/* <Link to="/" className={styles.navLink}>Inicio</Link> */}
-          <Link to="/NandGame" className={styles.navLink}>NandGame</Link>
-          <Link to="/Templo" className={styles.navLink}>Templo</Link>
+        
+        {/* Mobile menu button */}
+        <button 
+          className={styles.mobileMenuButton}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle mobile menu"
+        >
+          {mobileMenuOpen ? '✕' : '☰'}
+        </button>
+
+        <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
+          {/* <Link to="/" className={styles.navLink} onClick={closeMobileMenu}>Inicio</Link> */}
+          <Link to="/NandGame" className={styles.navLink} onClick={closeMobileMenu}>NandGame</Link>
+          <Link to="/Templo" className={styles.navLink} onClick={closeMobileMenu}>Templo</Link>
           {isAuthenticated && (
             <>
-              <Link to="/grupos" className={styles.navLink}>Grupos</Link>
-              <Link to="/ranking" className={styles.navLink}>🏆 Ranking</Link>
-              <Link to="/mis-flags" className={styles.navLink}>🏁 Mis Flags</Link>
-              {/* <Link to="/perfil" className={styles.navLink}>Mi Perfil</Link> */}
+              <Link to="/grupos" className={styles.navLink} onClick={closeMobileMenu}>Grupos</Link>
+              <Link to="/ranking" className={styles.navLink} onClick={closeMobileMenu}>🏆 Ranking</Link>
+              <Link to="/mis-flags" className={styles.navLink} onClick={closeMobileMenu}>🏁 Mis Flags</Link>
+              {/* <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>Mi Perfil</Link> */}
               {user?.role === 'admin' && (
                 <>
-                  <Link to="/admin" className={styles.navLink}>Admin</Link>
-                  <Link to="/admin/flags" className={styles.navLink}>📊 Flags Admin</Link>
+                  <Link to="/admin" className={styles.navLink} onClick={closeMobileMenu}>Admin</Link>
+                  <Link to="/admin/flags" className={styles.navLink} onClick={closeMobileMenu}>📊 Flags Admin</Link>
                 </>
               )}
             </>
@@ -51,7 +78,7 @@ const AppLayout = () => {
         <div className={styles.authSection}>
           {isAuthenticated ? (
             <div className={styles.userInfo}>
-                <Link to="/perfil" className={styles.navLink}>
+                <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>
                 <span className={styles.welcomeText}>
                   Hola, {user?.first_name || user?.username}
                 </span>

@@ -1,0 +1,59 @@
+{
+  "name": "intratel-tests",
+  "version": "1.0.0",
+  "description": "Testing suite for IntraTEL application",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:frontend": "jest --testPathPattern=tests/frontend",
+    "test:backend": "jest --testPathPattern=tests/backend",
+    "test:e2e": "cypress open",
+    "test:e2e:run": "cypress run",
+    "test:all": "npm run test:frontend && npm run test:backend && npm run test:e2e:run",
+    "test:ci": "jest --coverage --watchAll=false && cypress run"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/user-event": "^14.4.3",
+    "@babel/preset-env": "^7.22.0",
+    "@babel/preset-react": "^7.22.0",
+    "babel-jest": "^29.5.0",
+    "cypress": "^12.17.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "supertest": "^6.3.3",
+    "msw": "^1.2.2",
+    "identity-obj-proxy": "^3.0.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "moduleNameMapping": {
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@tests/(.*)$": "<rootDir>/tests/$1"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "server/**/*.js",
+      "!src/main.jsx",
+      "!src/index.css",
+      "!**/*.config.js",
+      "!**/node_modules/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    },
+    "testMatch": [
+      "<rootDir>/tests/**/*.test.js",
+      "<rootDir>/tests/**/*.test.jsx"
+    ]
+  }
+}

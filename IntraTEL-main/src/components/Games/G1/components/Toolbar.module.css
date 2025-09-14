@@ -1,0 +1,106 @@
+/* Estilos para la Toolbar */
+.toolbar {
+  border-radius: 0.75rem;
+  border: 1px solid var(--theme-border);
+  background-color: var(--theme-surface);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.toolbarHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.toolbarTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
+.counter {
+  background-color: var(--theme-background-secondary);
+  border: 1px solid var(--theme-border);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.counterText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--theme-success);
+}
+
+.gateGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.gateButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background-color: var(--theme-background-secondary);
+  border: 1px solid var(--theme-border);
+  border-radius: 0.5rem;
+  color: var(--theme-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 60px;
+}
+
+.gateButton:hover {
+  background-color: var(--theme-background-tertiary);
+  border-color: var(--theme-border-accent);
+  transform: translateY(-1px);
+}
+
+.gateButton:active {
+  transform: translateY(0);
+}
+
+.gateIcon {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
+
+.gateLabel {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.instructions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--theme-border-secondary);
+}
+
+.instructions h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--theme-text);
+}
+
+.instructions ul {
+  list-style: disc;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.instructions li {
+  font-size: 0.75rem;
+  color: var(--theme-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}

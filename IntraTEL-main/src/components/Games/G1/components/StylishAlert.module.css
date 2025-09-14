@@ -1,0 +1,313 @@
+/* Stylish Alert Styles */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.alert {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.alert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-color);
+}
+
+.success::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.error::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.warning::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.flag::before {
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+.iconContainer {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.success .iconContainer {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.error .iconContainer {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.warning .iconContainer {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.flag .iconContainer {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.info .iconContainer {
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+}
+
+.icon {
+  font-size: 1.8rem;
+  animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -10px, 0);
+  }
+  70% {
+    transform: translate3d(0, -5px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.content {
+  padding: 2rem 2rem 1.5rem 2rem;
+  padding-right: 4rem; /* Espacio para el botón de cerrar */
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.message {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.flagContainer {
+  margin-top: 1rem;
+}
+
+.flagValue {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.flagCode {
+  font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb), 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  flex: 1;
+  text-align: center;
+  border: 1px solid rgba(var(--accent-color-rgb), 0.2);
+}
+
+.copyButton {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.copyButton:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--accent-color-rgb), 0.3);
+}
+
+.copyButton:disabled {
+  background: #10b981;
+  cursor: default;
+  transform: none;
+}
+
+.copyIcon {
+  font-size: 1rem;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(var(--text-muted-rgb, 100, 116, 139), 0.1);
+}
+
+.closeButton:hover {
+  background: rgba(var(--text-muted-rgb, 100, 116, 139), 0.2);
+  transform: scale(1.1);
+}
+
+.closeIcon {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(var(--accent-color-rgb), 0.2);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-color);
+  width: 100%;
+  transform: translateX(-100%);
+  animation: progress linear;
+}
+
+@keyframes progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .alert {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .content {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    padding-right: 3rem;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .flagValue {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .copyButton {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .iconContainer {
+    width: 50px;
+    height: 50px;
+    top: -8px;
+    right: 15px;
+  }
+  
+  .icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* Tema específico para flags */
+.flag {
+  border-color: #8b5cf6;
+}
+
+.flag .title {
+  color: #8b5cf6;
+}
+
+.flag .flagCode {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+}

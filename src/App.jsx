@@ -67,51 +67,16 @@ const AppLayout = () => {
   return (
     <div className={styles.appContainer} onClick={handleNavClick}>
       <nav className={styles.navbar}>
-        <div className={styles.navbarHeader}>
-          <Link to="/" className={styles.logo}><img src={`intratel-logo-${useTheme().currentTheme}.svg`} alt="" /></Link>
-          
-          {/* Mobile menu button */}
-          <button 
-            className={styles.mobileMenuButton}
-            onClick={toggleMobileMenu}
-            aria-label="Toggle mobile menu"
-          >
-            {mobileMenuOpen ? '✕' : '☰'}
-          </button>
-
-          {/* Desktop auth section */}
-          <div className={`${styles.authSection} ${styles.desktopOnly}`}>
-            {isAuthenticated ? (
-              <div className={styles.userInfo}>
-                  <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>
-                  <span className={styles.welcomeText}>
-                    Hola, {user?.first_name || user?.username}
-                  </span>
-                  {user?.group_name && (
-                  <span className={styles.groupInfo}>
-                    ({user.group_name})
-                  </span>
-                )}
-                <span className={styles.roleInfo}>
-                  {user?.role === 'admin' ? ' 👑' : 
-                   user?.role === 'teacher' ? ' 👨‍🏫' : ' 👨‍🎓'}
-                </span>
-                </Link>
-                <button 
-                  onClick={handleLogout}
-                  className={styles.logoutButton}
-                >
-                  Cerrar Sesión
-                </button>
-              </div>
-            ) : (
-              <Link to="/auth" className={styles.loginButton}>
-                Iniciar Sesión
-              </Link>
-            )}
-            <ThemeToggle className={styles.themeToggle} />
-          </div>
-        </div>
+        <Link to="/" className={styles.logo}><img src={`intratel-logo-${useTheme().currentTheme}.svg`} alt="" /></Link>
+        
+        {/* Mobile menu button */}
+        <button 
+          className={styles.mobileMenuButton}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle mobile menu"
+        >
+          {mobileMenuOpen ? '✕' : '☰'}
+        </button>
 
         <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
           {/* <Link to="/" className={styles.navLink} onClick={closeMobileMenu}>Inicio</Link> */}
@@ -143,17 +108,17 @@ const AppLayout = () => {
               </Link>
             </div>
           </div>
-          
-          <Link to="/Templo" className={styles.navLink} onClick={closeMobileMenu}>Templo</Link>
+
+          <Link to="/Templo" className={styles.navLink} onClick={closeMobileMenu}>🏛️ Templo</Link>
           {isAuthenticated && (
             <>
-              <Link to="/grupos" className={styles.navLink} onClick={closeMobileMenu}>Grupos</Link>
+              <Link to="/grupos" className={styles.navLink} onClick={closeMobileMenu}>👥 Grupos</Link>
               <Link to="/ranking" className={styles.navLink} onClick={closeMobileMenu}>🏆 Ranking</Link>
               <Link to="/mis-flags" className={styles.navLink} onClick={closeMobileMenu}>🏁 Mis Flags</Link>
               {/* <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>Mi Perfil</Link> */}
               {user?.role === 'admin' && (
                 <>
-                  <Link to="/admin" className={styles.navLink} onClick={closeMobileMenu}>Admin</Link>
+                  <Link to="/admin" className={styles.navLink} onClick={closeMobileMenu}>👑 Admin</Link>
                   <Link to="/admin/flags" className={styles.navLink} onClick={closeMobileMenu}>📊 Flags Admin</Link>
                 </>
               )}
@@ -195,6 +160,7 @@ const AppLayout = () => {
           </div>
         </div>
 
+        {/* Desktop auth section */}
         <div className={`${styles.authSection} ${styles.desktopOnly}`}>
           {isAuthenticated ? (
             <div className={styles.userInfo}>

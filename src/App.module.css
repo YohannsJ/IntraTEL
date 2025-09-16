@@ -267,6 +267,8 @@
 
 /* Mobile menu button */
 .mobileMenuButton {
+  /* Ajustar a la izquierda */
+  margin-right: auto;
   display: none;
   background: none;
   border: none;
@@ -275,7 +277,7 @@
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 4px;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.5s ease;
 }
 
 .mobileMenuButton:hover {
@@ -375,6 +377,133 @@
   }
 }
 
+@media (min-width: 769px) {
+  /* Estilos específicos para desktop */
+  .navbar {
+    flex-direction: row;
+    align-items: center;
+    height: 60px;
+  }
+  
+  .navLinks {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    flex: 0;
+    justify-content: center;
+    align-items: center;
+    margin: 0 1rem;
+    opacity: 1;
+    max-height: none;
+    overflow: visible;
+    position: static;
+    padding: 0;
+    border: none;
+    background: transparent;
+    width: auto;
+  }
+  
+  .navLink {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    width: auto;
+    text-align: left;
+    min-width: auto;
+    height: 36px;
+  }
+  
+  /* Dropdown en desktop */
+  .gamesDropdown {
+    position: relative;
+    display: inline-block;
+    width: auto;
+    margin: 0;
+  }
+  
+  .dropdownToggle {
+    width: auto;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 0.4rem 0.8rem;
+    min-width: auto;
+    background: none;
+    border-radius: 6px;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    min-width: 200px;
+    z-index: 1001;
+    overflow: hidden;
+    max-height: none;
+    margin: 0;
+    gap: 0;
+    align-items: stretch;
+  }
+  
+  .dropdownMenu.dropdownOpen {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    max-height: 400px;
+  }
+  
+  .dropdownItem {
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    font-size: 0.85rem;
+    border: none;
+    border-bottom: 1px solid var(--theme-border);
+    border-radius: 0;
+    background: transparent;
+    margin: 0;
+    min-width: auto;
+    width: 100%;
+    display: block;
+  }
+  
+  .dropdownItem:last-child {
+    border-bottom: none;
+  }
+  
+  .dropdownItem:hover {
+    background: var(--theme-background-secondary);
+    color: var(--theme-text);
+    transform: translateX(4px);
+    margin-left: 0;
+  }
+  
+  /* Auth section en desktop */
+  .authSection.desktopOnly {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: auto;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .mobileOnly {
+    display: none !important;
+  }
+  
+  .mobileMenuButton {
+    display: none !important;
+  }
+}
+
+/* Mobile Menu Button */
 @media (max-width: 768px) {
   .mobileMenuButton {
     display: block;

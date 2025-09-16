@@ -17,6 +17,7 @@ const AppLayout = () => {
   const { isRefreshing } = useData(); // Mantenemos el estado de refresh del DataContext
   const { user, logout, isAuthenticated } = useAuth(); // Usamos el nuevo AuthContext
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [gamesDropdownOpen, setGamesDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -24,9 +25,28 @@ const AppLayout = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+    // Cerrar dropdown de juegos al abrir/cerrar mobile menu
+    if (!mobileMenuOpen) {
+      setGamesDropdownOpen(false);
+    }
   };
 
   const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+    setGamesDropdownOpen(false);
+  };
+
+  const toggleGamesDropdown = () => {
+    setGamesDropdownOpen(!gamesDropdownOpen);
+  };
+
+  const closeGamesDropdown = () => {
+    setGamesDropdownOpen(false);
+  };
+
+  const handleGameSelection = () => {
+    // Cerrar ambos menús al seleccionar un juego
+    setGamesDropdownOpen(false);
     setMobileMenuOpen(false);
   };
 
@@ -36,6 +56,10 @@ const AppLayout = () => {
     if (mobileMenuOpen && !e.target.closest(`.${styles.navLinks}`)) {
       closeMobileMenu();
     }
+    // Close games dropdown when clicking outside
+    if (gamesDropdownOpen && !e.target.closest(`.${styles.gamesDropdown}`)) {
+      closeGamesDropdown();
+    }
   };
 // console.log(ThemeContext.Consumer.);
 // Quiero saber si es tema oscuro o claro
@@ -43,24 +67,83 @@ const AppLayout = () => {
   return (
     <div className={styles.appContainer} onClick={handleNavClick}>
       <nav className={styles.navbar}>
-        <Link to="/" className={styles.logo}><img src={`intratel-logo-${useTheme().currentTheme}.svg`} alt="" /></Link>
-        
-        {/* Mobile menu button */}
-        <button 
-          className={styles.mobileMenuButton}
-          onClick={toggleMobileMenu}
-          aria-label="Toggle mobile menu"
-        >
-          {mobileMenuOpen ? '✕' : '☰'}
-        </button>
+        <div className={styles.navbarHeader}>
+          <Link to="/" className={styles.logo}><img src={`intratel-logo-${useTheme().currentTheme}.svg`} alt="" /></Link>
+          
+          {/* Mobile menu button */}
+          <button 
+            className={styles.mobileMenuButton}
+            onClick={toggleMobileMenu}
+            aria-label="Toggle mobile menu"
+          >
+            {mobileMenuOpen ? '✕' : '☰'}
+          </button>
+
+          {/* Desktop auth section */}
+          <div className={`${styles.authSection} ${styles.desktopOnly}`}>
+            {isAuthenticated ? (
+              <div className={styles.userInfo}>
+                  <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>
+                  <span className={styles.welcomeText}>
+                    Hola, {user?.first_name || user?.username}
+                  </span>
+                  {user?.group_name && (
+                  <span className={styles.groupInfo}>
+                    ({user.group_name})
+                  </span>
+                )}
+                <span className={styles.roleInfo}>
+                  {user?.role === 'admin' ? ' 👑' : 
+                   user?.role === 'teacher' ? ' 👨‍🏫' : ' 👨‍🎓'}
+                </span>
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className={styles.logoutButton}
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
+            ) : (
+              <Link to="/auth" className={styles.loginButton}>
+                Iniciar Sesión
+              </Link>
+            )}
+            <ThemeToggle className={styles.themeToggle} />
+          </div>
+        </div>
 
         <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
           {/* <Link to="/" className={styles.navLink} onClick={closeMobileMenu}>Inicio</Link> */}
-          <Link to="/NandGame" className={styles.navLink} onClick={closeMobileMenu}>NandGame ()</Link>
-          <Link to="/Juego2" className={styles.navLink} onClick={closeMobileMenu}>Consola(Redes)</Link>
-          <Link to="/Juego3" className={styles.navLink} onClick={closeMobileMenu}>Espectro (Teleco)</Link>
-          <Link to="/Juego5 " className={styles.navLink} onClick={closeMobileMenu}>Código (Software)</Link>
-          <Link to="/Juego4" className={styles.navLink} onClick={closeMobileMenu}>(DATOS)</Link>
+          
+          {/* Dropdown de Juegos */}
+          <div className={styles.gamesDropdown}>
+            <button 
+              className={`${styles.navLink} ${styles.dropdownToggle}`}
+              onClick={toggleGamesDropdown}
+              aria-expanded={gamesDropdownOpen}
+            >
+              🎮 Juegos {gamesDropdownOpen ? '▲' : '▼'}
+            </button>
+            <div className={`${styles.dropdownMenu} ${gamesDropdownOpen ? styles.dropdownOpen : ''}`}>
+              <Link to="/NandGame" className={styles.dropdownItem} onClick={handleGameSelection}>
+                🔧 NandGame (Hardware)
+              </Link>
+              <Link to="/Juego2" className={styles.dropdownItem} onClick={handleGameSelection}>
+                🌐 Consola (Redes)
+              </Link>
+              <Link to="/Juego3" className={styles.dropdownItem} onClick={handleGameSelection}>
+                📡 Espectro (Teleco)
+              </Link>
+              <Link to="/Juego5" className={styles.dropdownItem} onClick={handleGameSelection}>
+                💻 Código (Software)
+              </Link>
+              <Link to="/Juego4" className={styles.dropdownItem} onClick={handleGameSelection}>
+                📊 Análisis (Datos)
+              </Link>
+            </div>
+          </div>
+          
           <Link to="/Templo" className={styles.navLink} onClick={closeMobileMenu}>Templo</Link>
           {isAuthenticated && (
             <>
@@ -77,9 +160,42 @@ const AppLayout = () => {
             </>
           )}
           {isRefreshing && <div className={styles.refreshIndicator}>🔄️</div>}
+          
+          {/* Mobile auth section */}
+          <div className={`${styles.authSection} ${styles.mobileOnly}`}>
+            {isAuthenticated ? (
+              <div className={styles.userInfo}>
+                  <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>
+                  <span className={styles.welcomeText}>
+                    Hola, {user?.first_name || user?.username}
+                  </span>
+                  {user?.group_name && (
+                  <span className={styles.groupInfo}>
+                    ({user.group_name})
+                  </span>
+                )}
+                <span className={styles.roleInfo}>
+                  {user?.role === 'admin' ? ' 👑' : 
+                   user?.role === 'teacher' ? ' 👨‍🏫' : ' 👨‍🎓'}
+                </span>
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className={styles.logoutButton}
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
+            ) : (
+              <Link to="/auth" className={styles.loginButton}>
+                Iniciar Sesión
+              </Link>
+            )}
+            <ThemeToggle className={styles.themeToggle} />
+          </div>
         </div>
 
-        <div className={styles.authSection}>
+        <div className={`${styles.authSection} ${styles.desktopOnly}`}>
           {isAuthenticated ? (
             <div className={styles.userInfo}>
                 <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>

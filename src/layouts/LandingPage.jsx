@@ -130,7 +130,7 @@ const LandingPage = () => {
               en el aprendizaje de <strong>Ingeniería Civil Telemática</strong>
             </p>
             <p className={styles.heroDescription}>
-              Descubre los pilares fundamentales!!!!!!! de la carrera a través de juegos educativos, 
+              Descubre los pilares fundamentales de la carrera a través de juegos educativos, 
               desafíos prácticos y colaboración en equipo.
             </p>
             <div className={styles.heroActions}>

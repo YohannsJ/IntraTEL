@@ -19,7 +19,14 @@ export default function HomeHero() {
   ];
 
   // Función para alternar un pilar al hacer click
+  // Solo permite seleccionar TELECO si se completaron los 3 niveles
+  const isTelecoUnlocked = typeof window !== 'undefined' && localStorage.getItem('teleco_completed') === 'true';
   const togglePillar = (index: number) => {
+    // Si es TELECO y no está desbloqueado, no hacer nada
+    if (index === 0 && !isTelecoUnlocked) {
+      alert('Debes completar los 3 niveles del juego de espectro para desbloquear el pilar de TELECO.');
+      return;
+    }
     setStates((prev) => {
       const newStates = [...prev] as PillarState[];
       newStates[index] = Math.abs(newStates[index] - 1) as PillarState; // alterna entre ON y OFF
@@ -39,20 +46,27 @@ export default function HomeHero() {
 
       {/* Zona interactiva */}
       <div className="flex gap-6 mt-8">
-        {labels.map((label, i) => (
-          <button
-            key={i}
-            onClick={() => togglePillar(i)}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${
-              states[i] === 1
-                ? "bg-green-600 text-white cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
-
-          >
-            {states[i] === 1 ? `${label} ✅` : `${label} ❌`}
-          </button>
-        ))}
+        {labels.map((label, i) => {
+          const isTeleco = i === 0;
+          const disabled = isTeleco && !isTelecoUnlocked;
+          return (
+            <button
+              key={i}
+              onClick={() => togglePillar(i)}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${
+                states[i] === 1
+                  ? "bg-green-600 text-white cursor-not-allowed"
+                  : disabled
+                    ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+              disabled={disabled}
+              title={disabled ? 'Completa los 3 niveles del juego de espectro para desbloquear TELECO' : ''}
+            >
+              {states[i] === 1 ? `${label} ✅` : `${label} ❌`}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

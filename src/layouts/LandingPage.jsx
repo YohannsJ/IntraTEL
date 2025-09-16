@@ -123,7 +123,11 @@ const LandingPage = () => {
             }}
           >
             <h1 className={styles.heroTitle}>
+<<<<<<< HEAD
               Bienvenido a <span className={styles.brandName}>Inter TELEMATICA</span>
+=======
+              Bienvenido a <span className={styles.brandName}>IntraTEL</span>
+>>>>>>> origin/main
             </h1>
             <p className={styles.heroSubtitle}>
               Una plataforma interactiva diseñada por DifTel para ofrecer una experiencia única 

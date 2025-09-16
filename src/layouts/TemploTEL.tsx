@@ -19,6 +19,7 @@ export default function HomeHero() {
   ];
 
   // Función para alternar un pilar al hacer click
+<<<<<<< HEAD
   // Solo permite seleccionar TELECO si se completaron los 3 niveles
   const isTelecoUnlocked = typeof window !== 'undefined' && localStorage.getItem('teleco_completed') === 'true';
   const togglePillar = (index: number) => {
@@ -27,6 +28,9 @@ export default function HomeHero() {
       alert('Debes completar los 3 niveles del juego de espectro para desbloquear el pilar de TELECO.');
       return;
     }
+=======
+  const togglePillar = (index: number) => {
+>>>>>>> origin/main
     setStates((prev) => {
       const newStates = [...prev] as PillarState[];
       newStates[index] = Math.abs(newStates[index] - 1) as PillarState; // alterna entre ON y OFF
@@ -46,6 +50,7 @@ export default function HomeHero() {
 
       {/* Zona interactiva */}
       <div className="flex gap-6 mt-8">
+<<<<<<< HEAD
         {labels.map((label, i) => {
           const isTeleco = i === 0;
           const disabled = isTeleco && !isTelecoUnlocked;
@@ -67,6 +72,22 @@ export default function HomeHero() {
             </button>
           );
         })}
+=======
+        {labels.map((label, i) => (
+          <button
+            key={i}
+            onClick={() => togglePillar(i)}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${
+              states[i] === 1
+                ? "bg-green-600 text-white cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+
+          >
+            {states[i] === 1 ? `${label} ✅` : `${label} ❌`}
+          </button>
+        ))}
+>>>>>>> origin/main
       </div>
     </div>
   );

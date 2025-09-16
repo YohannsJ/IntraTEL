@@ -123,7 +123,6 @@ const LandingPage = () => {
             }}
           >
             <h1 className={styles.heroTitle}>
-              Bienvenido a <span className={styles.brandName}>Inter TELEMATICA</span>
               Bienvenido a <span className={styles.brandName}>IntraTEL</span>
             </h1>
             <p className={styles.heroSubtitle}>

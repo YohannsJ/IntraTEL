@@ -97,7 +97,7 @@ const AppLayout = () => {
               <Link to="/Juego2" className={styles.dropdownItem} onClick={handleGameSelection}>
                 🌐 Consola (Redes)
               </Link>
-              <Link to="/Juego3" className={styles.dropdownItem} onClick={handleGameSelection}>
+              <Link to="/Espectro" className={styles.dropdownItem} onClick={handleGameSelection}>
                 📡 Espectro (Teleco)
               </Link>
               <Link to="/Juego5" className={styles.dropdownItem} onClick={handleGameSelection}>

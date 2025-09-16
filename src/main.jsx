@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       { index: true, element: <LandingPage /> },
       { path: 'auth', element: <AuthPage /> },
       { path: 'NandGame', element: <NandGame /> },
-      { path: 'Juego3', element: <EspectroGame /> },
+      { path: 'Espectro', element: <EspectroGame /> },
       { 
         path: 'grupos', 
         element: (

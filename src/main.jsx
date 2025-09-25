@@ -23,6 +23,7 @@ import AdminFlagsPanel from './components/Admin/AdminFlagsPanel.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import UserProfile from './components/Profile/UserProfile.jsx';
 import AdminPanel from './components/Admin/AdminPanel.jsx';
+import GestionWorkshop from './layouts/GestionWorkshop.jsx';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,8 @@ const router = createBrowserRouter([
       { path: 'auth', element: <AuthPage /> },
       { path: 'NandGame', element: <NandGame /> },
       { path: 'Espectro', element: <EspectroGame /> },
+      { path: 'gestion-workshop', element: <GestionWorkshop /> },
+
       { 
         path: 'grupos', 
         element: (

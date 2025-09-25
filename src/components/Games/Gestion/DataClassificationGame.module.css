@@ -1,0 +1,80 @@
+.cardsRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.cardIcon {
+  font-size: 1.5rem;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.instruction {
+  font-size: 1.1rem;
+  color: var(--game-text);
+  margin-bottom: 18px;
+  text-align: center;
+  font-weight: 500;
+}
+/* Variables para modo claro */
+:root {
+  --game-bg: #f0f8ff;
+  --game-text: #222;
+  --card-bg: #fff;
+  --card-text: #222;
+  --box-text: #222;
+  --safe-bg: #d4f8d4;
+  --suspicious-bg: #f8d4d4;
+  --score-text: #222;
+}
+
+/* Variables para modo oscuro */
+.dark {
+  --game-bg: #222;
+  --game-text: #fff;
+  --card-bg: #333;
+  --card-text: #fff;
+  --box-text: #fff;
+  --safe-bg: #295e29;
+  --suspicious-bg: #5e2929;
+  --score-text: #fff;
+}
+.gameContainer {
+  text-align: center;
+  background: var(--game-bg);
+  color: var(--game-text);
+  padding-top: 1px;
+}
+.card {
+  width: 220px;
+  padding: 10px;
+  margin: 0 10px 10px 0;
+  background: var(--card-bg);
+  color: var(--card-text);
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  cursor: grab;
+  user-select: none;
+}
+
+.box {
+  width: 250px;
+  height: 200px;
+  margin: 20px;
+  display: inline-block;
+  vertical-align: top;
+  border: 3px dashed #999;
+  border-radius: 8px;
+  color: var(--box-text);
+}
+.safe {
+  background: var(--safe-bg);
+}
+.suspicious {
+  background: var(--suspicious-bg);
+}
+.score {
+  font-size: 20px;
+  margin-top: 20px;
+  color: var(--score-text);
+}

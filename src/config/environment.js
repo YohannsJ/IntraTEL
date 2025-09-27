@@ -2,8 +2,9 @@
 const config = {
   // API Configuration
   // API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://170.239.86.170/api',
-  API_BASE_URL: 'http://170.239.86.170',
-  API_PREFIX: '/api',
+  // API_BASE_URL: 'http://170.239.86.170:3001',
+  // API_PREFIX: '/api',
+  API_BASE_URL: '/api',
   
   // Server Configuration
   SERVER_PORT: import.meta.env.VITE_SERVER_PORT || 3001,
@@ -42,7 +43,7 @@ const config = {
 
 // Helper functions
 export const getApiUrl = (endpoint = '') => {
-  const baseUrl = `${config.API_BASE_URL}${config.API_PREFIX}`;
+  const baseUrl = `${config.API_BASE_URL}`;
   return endpoint ? `${baseUrl}${endpoint}` : baseUrl;
 };
 

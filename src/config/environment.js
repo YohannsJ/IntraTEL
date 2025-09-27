@@ -4,7 +4,7 @@ const config = {
   // API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://170.239.86.170/api',
   // API_BASE_URL: 'http://170.239.86.170:3001',
   // API_PREFIX: '/api',
-  API_BASE_URL: '/api',
+  API_BASE_URL: import.meta.env.VITE_API_BASE_URL || '/api',
   
   // Server Configuration
   SERVER_PORT: import.meta.env.VITE_SERVER_PORT || 3001,

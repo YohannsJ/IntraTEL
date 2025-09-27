@@ -2,7 +2,7 @@
 const config = {
   // API Configuration
   // API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://170.239.86.170/api',
-  API_BASE_URL: 'http://170.239.86.170/api',
+  API_BASE_URL: 'http://170.239.86.170',
   API_PREFIX: '/api',
   
   // Server Configuration

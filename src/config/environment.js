@@ -1,7 +1,7 @@
 // Configuración de variables de entorno para la aplicación
 const config = {
   // API Configuration
-  API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
+  API_BASE_URL: import.meta.env.VITE_API_BASE_URL || './api',
   API_PREFIX: '/api',
   
   // Server Configuration

@@ -20,11 +20,15 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
+const allowlist = (process.env.CORS_ORIGINS || '').split(',').filter(Boolean);
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'], // URLs del frontend
+  origin: (origin, cb) => {
+    if (!origin || allowlist.length === 0 || allowlist.includes(origin)) return cb(null, true);
+    return cb(new Error('Not allowed by CORS'));
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
 }));
 
 app.use(express.json({ limit: '10mb' }));

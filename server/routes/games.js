@@ -18,6 +18,10 @@ router.get('/progress', GameController.getMyProgress);
 // Tabla de líderes
 router.get('/leaderboard', GameController.getLeaderboard);
 
+// Logros en memoria (se resetean al reiniciar el servidor)
+router.get('/achievements/me', GameController.getMyAchievements);
+router.post('/achievements/me', GameController.saveMyAchievements);
+
 // Rutas de progreso de otros usuarios
 router.get('/progress/user/:userId', GameController.getUserProgress);
 

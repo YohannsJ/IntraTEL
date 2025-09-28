@@ -4,8 +4,13 @@ import styles from './Toolbar.module.css';
 
 /**
  * Componente Toolbar - Barra de herramientas para agregar nuevos elementos
+ * Solo disponible en modo sandbox
  */
 export function Toolbar({ onAddNode, extraNodesCount, mode }) {
+  // Solo mostrar toolbar en modo sandbox
+  if (mode !== 'sandbox') {
+    return null;
+  }
   const gateTypes = [
     { type: NODE_TYPES.NAND, label: 'NAND', icon: '⊼' },
     { type: NODE_TYPES.NOT, label: 'NOT', icon: '¬' },

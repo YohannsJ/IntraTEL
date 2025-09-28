@@ -32,13 +32,31 @@ export function CircuitCanvas({
     node: null
   });
 
-  // Manejar inicio de arrastre
+  // Obtener coordenadas de evento (mouse o touch)
+  const getEventCoordinates = useCallback((e) => {
+    if (e.touches && e.touches.length > 0) {
+      return { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+    }
+    return { clientX: e.clientX, clientY: e.clientY };
+  }, []);
+
+  // Manejar inicio de arrastre (mouse y touch)
   const handleMouseDown = useCallback((e, node) => {
     e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
+    // Solo prevenir default en eventos mouse, no en touch para evitar el error pasivo
+    if (e.type === 'mousedown') {
+      e.preventDefault();
+    }
+    
+    // No permitir arrastrar nodos INPUT y OUTPUT (son fijos)
+    if (node.type === NODE_TYPES.INPUT || node.type === NODE_TYPES.OUTPUT || node.fixed) {
+      return;
+    }
+    
+    const coords = getEventCoordinates(e);
     const svgRect = e.currentTarget.closest('svg').getBoundingClientRect();
-    const mouseX = e.clientX - svgRect.left;
-    const mouseY = e.clientY - svgRect.top;
+    const mouseX = coords.clientX - svgRect.left;
+    const mouseY = coords.clientY - svgRect.top;
     
     setDragState({
       isDragging: true,
@@ -48,7 +66,7 @@ export function CircuitCanvas({
         y: mouseY - node.y
       }
     });
-  }, []);
+  }, [getEventCoordinates]);
 
   // Manejar click derecho para mostrar menú contextual
   const handleContextMenu = useCallback((e, node) => {
@@ -89,20 +107,38 @@ export function CircuitCanvas({
     onRemoveNode(nodeId);
   }, [onRemoveNode]);
 
-  // Manejar movimiento durante arrastre
+  // Manejar movimiento durante arrastre (mouse y touch)
   const handleMouseMove = useCallback((e) => {
     if (!dragState.isDragging) return;
     
-    const svgRect = e.currentTarget.getBoundingClientRect();
-    const mouseX = e.clientX - svgRect.left;
-    const mouseY = e.clientY - svgRect.top;
+    // Solo prevenir default en eventos mouse para evitar error en eventos táctiles pasivos
+    if (e.type === 'mousemove') {
+      e.preventDefault();
+    }
     
-    // Límites del área de movimiento ajustados al área completa
-    const newX = Math.max(30, Math.min(svgRect.width - 120, mouseX - dragState.offset.x));
-    const newY = Math.max(30, Math.min(svgRect.height - 80, mouseY - dragState.offset.y));
+    const coords = getEventCoordinates(e);
+    const svgRect = e.currentTarget.getBoundingClientRect();
+    const mouseX = coords.clientX - svgRect.left;
+    const mouseY = coords.clientY - svgRect.top;
+    
+    // Obtener dimensiones del nodo para cálculos precisos
+    const nodeDimensions = getNodeDimensions(dragState.nodeId, nodes);
+    const nodeWidth = nodeDimensions?.width || 80;
+    const nodeHeight = nodeDimensions?.height || 60;
+    
+    // Límites dinámicos basados en el tamaño del canvas con margen
+    const margin = 20;
+    const minX = margin;
+    const minY = margin;
+    const maxX = svgRect.width - nodeWidth - margin;
+    const maxY = svgRect.height - nodeHeight - margin;
+    
+    // Aplicar límites y actualizar posición
+    const newX = Math.max(minX, Math.min(maxX, mouseX - dragState.offset.x));
+    const newY = Math.max(minY, Math.min(maxY, mouseY - dragState.offset.y));
     
     onMoveNode(dragState.nodeId, newX, newY);
-  }, [dragState, onMoveNode]);
+  }, [dragState, onMoveNode, getEventCoordinates, nodes]);
 
   // Manejar fin de arrastre
   const handleMouseUp = useCallback(() => {
@@ -142,10 +178,21 @@ export function CircuitCanvas({
       <svg 
         width="100%" 
         height="100%" 
-        style={{ minWidth: 600, minHeight: 400, position: 'relative', zIndex: 2 }}
+        viewBox="0 0 600 400"
+        preserveAspectRatio="xMidYMid meet"
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          position: 'relative', 
+          zIndex: 2,
+          touchAction: 'none' // Desabilitar gestos táctiles por defecto
+        }}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchMove={handleMouseMove}
+        onTouchEnd={handleMouseUp}
+        onTouchCancel={handleMouseUp}
       >
       {/* Conexiones permanentes (se dibujan primero, detrás de los nodos) */}
       {connections.map((connection) => {
@@ -197,16 +244,19 @@ export function CircuitCanvas({
         const isSelectedOut = selected?.nodeId === node.id && selected?.kind === "out";
         const isSelectedIn = selected?.nodeId === node.id && selected?.kind === "in";
         const isBeingDragged = dragState.isDragging && dragState.nodeId === node.id;
+        const isFixed = node.type === NODE_TYPES.INPUT || node.type === NODE_TYPES.OUTPUT || node.fixed;
 
         // Renderizar según el tipo de nodo
         return (
           <g 
             key={node.id}
             style={{ 
-              cursor: isBeingDragged ? 'grabbing' : 'grab',
-              opacity: isBeingDragged ? 0.8 : 1 
+              cursor: isFixed ? 'default' : (isBeingDragged ? 'grabbing' : 'grab'),
+              opacity: isBeingDragged ? 0.8 : 1,
+              touchAction: 'none' // Desabilitar gestos táctiles por defecto
             }}
             onMouseDown={(e) => handleMouseDown(e, node)}
+            onTouchStart={(e) => handleMouseDown(e, node)}
             onContextMenu={(e) => handleContextMenu(e, node)}
           >
             {/* Renderizar el componente visual según el tipo */}

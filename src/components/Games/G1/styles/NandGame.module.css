@@ -25,6 +25,22 @@
   padding: 0 1rem;
 }
 
+@media (max-width: 768px) {
+  .gameHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameHeader {
+    padding: 0 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
 .gameTitle {
   font-size: 1.5rem;
   font-weight: 600;
@@ -37,10 +53,30 @@
   }
 }
 
+@media (max-width: 768px) {
+  .gameTitle {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameTitle {
+    font-size: 1.1rem;
+  }
+}
+
 .gameControls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .gameControls {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 }
 
 .controlButton {
@@ -54,6 +90,29 @@
   transition: all 0.2s ease;
   font-family: inherit;
   font-size: inherit;
+  /* Mejoras para dispositivos táctiles */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  min-height: 44px; /* Tamaño mínimo para accesibilidad táctil */
+}
+
+/* Responsive para controles */
+@media (max-width: 768px) {
+  .controlButton {
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .controlButton {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8rem;
+    min-width: 70px;
+  }
 }
 
 .controlButton:hover {
@@ -109,9 +168,24 @@
   width: 100%;
 }
 
+/* Responsive breakpoints mejorados */
 @media (max-width: 1024px) {
   .gameGrid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gameGrid {
+    padding: 0 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameGrid {
+    padding: 0 0.25rem;
   }
 }
 
@@ -121,9 +195,17 @@
   border: 1px solid var(--theme-border);
   background-color: var(--theme-surface);
   padding: 0.5rem;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
-  min-height: 500px;
+  min-height: 400px;
+  width: 100%;
+  /* Mejoras para dispositivos táctiles */
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+  /* Área de trabajo responsiva */
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 768px) {
@@ -132,16 +214,48 @@
   }
 }
 
+@media (max-width: 768px) {
+  .circuitPanel {
+    min-height: 350px;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .circuitPanel {
+    min-height: 300px;
+    padding: 0.125rem;
+  }
+}
+
 .circuitSvg {
-  min-width: 600px;
+  width: 100%;
+  height: 100%;
+  min-width: unset;
+  min-height: unset;
+}
+
+@media (max-width: 768px) {
+  .circuitSvg {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .circuitSvg {
+    aspect-ratio: 4 / 3;
+  }
 }
 
 /* Área de trabajo para componentes */
 .workArea {
   position: absolute;
   top: 20px;
-  left: 20px;
-  right: 110px;
+  left: 80px;
+  right: 20px;
   bottom: 50px;
   border: 2px dashed var(--theme-circuit-work-area);
   border-radius: 8px;
@@ -157,6 +271,43 @@
   font-size: 12px;
   color: var(--theme-text-muted);
   font-weight: 500;
+}
+
+/* Responsive para área de trabajo */
+@media (max-width: 768px) {
+  .workArea {
+    top: 15px;
+    left: 70px;
+    right: 15px;
+    bottom: 40px;
+    border-width: 1.5px;
+  }
+  
+  .workArea::before {
+    font-size: 10px;
+    top: -20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .workArea {
+    top: 10px;
+    left: 60px;
+    right: 10px;
+    bottom: 30px;
+    border-width: 1px;
+  }
+  
+  .workArea::before {
+    content: 'Área de trabajo';
+    font-size: 9px;
+    top: -18px;
+  }
+  
+  .circuitPanel {
+    padding: 0.25rem;
+    min-height: 300px;
+  }
 }
 
 /* Panel lateral */
@@ -242,4 +393,110 @@
   border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+/* Mejoras generales para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  /* Prevenir zoom accidental en doble tap */
+  .nandGame {
+    touch-action: manipulation;
+  }
+  
+  /* Mejorar área de toque para elementos interactivos */
+  .controlButton,
+  .gateButton,
+  .puzzleSelect {
+    min-height: 48px;
+  }
+  
+  /* Feedback visual mejorado para elementos táctiles */
+  .controlButton:active,
+  .gateButton:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Limitar tamaño máximo de compuertas */
+.circuitPanel svg g {
+  max-width: 80px;
+  max-height: 55px;
+}
+
+/* Escalado responsivo de compuertas para móviles */
+@media (max-width: 768px) {
+  .circuitPanel {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .circuitPanel {
+    font-size: 0.8rem;
+    padding: 0.25rem;
+  }
+  
+  .circuitPanel svg {
+    font-size: 0.7em; /* Escalar texto de compuertas */
+  }
+  
+  /* Hacer compuertas más compactas en móviles */
+  .circuitPanel svg g {
+    transform-origin: center;
+    max-width: 100px;
+    max-height: 60px;
+  }
+}
+
+/* Clase para escalar compuertas en móviles */
+.mobileScaled {
+  transform: scale(0.8);
+  transform-origin: center;
+}
+
+@media (max-width: 480px) {
+  .mobileScaled {
+    transform: scale(0.7);
+  }
+}
+
+/* Estilos específicos para orientación landscape en móviles */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .gameGrid {
+    grid-template-columns: 1fr 300px;
+    gap: 0.5rem;
+  }
+  
+  .circuitPanel {
+    min-height: 280px;
+  }
+  
+  .gameHeader {
+    margin-bottom: 0.5rem;
+  }
+  
+  .puzzleDescription {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+}
+
+/* Mejoras de visibilidad para elementos pequeños */
+@media (max-width: 480px) {
+  /* Aumentar tamaño de texto para mejor legibilidad */
+  .puzzleDescription {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .failedAttemptsInfo {
+    font-size: 0.9rem;
+    padding: 1rem;
+  }
+  
+  /* Mejoras en spacing */
+  .saveIndicator {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
 }

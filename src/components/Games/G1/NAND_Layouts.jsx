@@ -11,7 +11,7 @@ import styles from './styles/NandGame.module.css';
 
 /**
  * NandGame – Mini juego de lógica con puertas NAND
- * - 2 ejercicios: NOT y XOR usando sólo NAND
+ * - 4 ejercicios: NOT, AND, OR y XOR usando sólo NAND
  * - Interfaz SVG con puertos clicables y cableado visual
  * - Botón "Probar" valida todas las combinaciones de entrada y, si es correcto, muestra alert() con FLAG
  * - Sistema de guardado automático del estado del juego
@@ -45,7 +45,7 @@ const createInitialState = (puzzles) => ({
   puzzleIndex: 0,
   nodes: [...puzzles[0].nodes],
   connections: [],
-  solved: { NOT: false, XOR: false },
+  solved: { NOT: false, AND: false, OR: false, XOR: false },
   mode: 'puzzle',
   failedAttempts: 0
 });
@@ -63,7 +63,7 @@ export default function NandGame() {
           puzzleIndex: savedState.puzzleIndex || 0,
           nodes: savedState.nodes || [...puzzles[0]?.nodes || []],
           connections: savedState.connections || [],
-          solved: savedState.solved || { NOT: false, XOR: false },
+          solved: savedState.solved || { NOT: false, AND: false, OR: false, XOR: false },
           mode: savedState.mode || 'puzzle',
           failedAttempts: savedState.failedAttempts || 0
         };
@@ -237,7 +237,7 @@ export default function NandGame() {
         setPuzzleIndex(importedState.puzzleIndex || 0);
         setNodes(importedState.nodes || []);
         setConnections(importedState.connections || []);
-        setSolved(importedState.solved || { NOT: false, XOR: false });
+        setSolved(importedState.solved || { NOT: false, AND: false, OR: false, XOR: false });
         setMode(importedState.mode || 'puzzle');
         setFailedAttempts(importedState.failedAttempts || 0);
         setSelected(null);
@@ -461,9 +461,7 @@ export default function NandGame() {
       setSolved(newSolved);
 
       // Mostrar flag correspondiente
-      const levelFlag = currentPuzzle.key === "NOT" 
-        ? "FLAG{NAND_WIN_LEVEL1_NOT}" 
-        : "FLAG{NAND_WIN_LEVEL2_XOR}";
+      const levelFlag = currentPuzzle.flag || `FLAG{${currentPuzzle.key}_COMPLETED}`;
       
       showAlert({
         type: 'flag',
@@ -475,13 +473,13 @@ export default function NandGame() {
       });
 
       // Flag final si se completaron ambos
-      if (newSolved.NOT && newSolved.XOR) {
+      if (newSolved.NOT && newSolved.AND && newSolved.OR && newSolved.XOR) {
         setTimeout(() => {
           showAlert({
             type: 'success',
             title: '🏆 ¡Maestro NAND!',
             message: '¡Increíble! Has completado todos los puzzles NAND. Eres un verdadero maestro de la lógica digital. Aquí tienes tu flag especial:',
-            flagValue: 'FLAG{NAND_TOTAL_MASTER_2_DE_2}',
+            flagValue: 'FLAG{NAND_TOTAL_MASTER_4_DE_4}',
             showCopyButton: true,
             autoClose: false
           });
@@ -517,7 +515,7 @@ export default function NandGame() {
         {/* Header del juego */}
         <header className={styles.gameHeader}>
           <h1 className={styles.gameTitle}>
-            NandGame – {mode === 'puzzle' ? '2 ejercicios' : 'Modo Sandbox'}
+            NandGame – {mode === 'puzzle' ? '4 ejercicios' : 'Modo Sandbox'}
           </h1>
           
           <div className={styles.gameControls}>
@@ -527,12 +525,20 @@ export default function NandGame() {
                 value={puzzleIndex}
                 onChange={(e) => resetToPuzzle(parseInt(e.target.value, 10))}
               >
-                {puzzles.map((puzzle, index) => (
-                  <option key={puzzle.key} value={index}>
-                    {puzzle.key === "NOT" ? "Ejercicio 1 – NOT" : "Ejercicio 2 – XOR"}
-                    {solved[puzzle.key] ? " ✅" : ""}
-                  </option>
-                ))}
+                {puzzles.map((puzzle, index) => {
+                  const puzzleNames = {
+                    NOT: "Ejercicio 1 – NOT",
+                    AND: "Ejercicio 2 – AND", 
+                    OR: "Ejercicio 3 – OR",
+                    XOR: "Ejercicio 4 – XOR"
+                  };
+                  return (
+                    <option key={puzzle.key} value={index}>
+                      {puzzleNames[puzzle.key] || `Ejercicio ${index + 1} – ${puzzle.key}`}
+                      {solved[puzzle.key] ? " ✅" : ""}
+                    </option>
+                  );
+                })}
               </select>
             )}
             
@@ -734,9 +740,9 @@ export default function NandGame() {
         {/* Indicador de estado guardado */}
         <div className={styles.saveIndicator}>
           💾 <span>Estado guardado automáticamente</span>
-          {solved.NOT || solved.XOR ? (
+          {solved.NOT || solved.AND || solved.OR || solved.XOR ? (
             <span className={styles.progressBadge}>
-              ✅ Progreso: {Object.values(solved).filter(Boolean).length}/2 puzzles completados
+              ✅ Progreso: {Object.values(solved).filter(Boolean).length}/4 puzzles completados
             </span>
           ) : null}
         </div>

@@ -1,0 +1,191 @@
+.progressTracker {
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+  height: fit-content;
+}
+
+.header {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+}
+
+.stats {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statLabel {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.statValue {
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.completedBadge {
+  font-size: 0.75rem;
+}
+
+.progressBar {
+  position: relative;
+  background: rgba(51, 65, 85, 0.8);
+  height: 8px;
+  margin: 0 1rem 1rem 1rem;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  background: linear-gradient(90deg, #10b981, #3b82f6);
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.progressText {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.levelGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.levelDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(51, 65, 85, 0.8);
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.levelDot:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.1);
+  color: white;
+}
+
+.levelDot.completed {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  color: white;
+}
+
+.levelDot.current {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-color: #3b82f6;
+  color: white;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.achievements {
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(139, 92, 246, 0.05);
+  padding: 1rem;
+}
+
+.achievementHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.achievementIcon {
+  font-size: 1.125rem;
+}
+
+.achievementTitle {
+  font-weight: 600;
+  color: #a78bfa;
+  font-size: 0.875rem;
+}
+
+.achievementsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.achievementEmoji {
+  font-size: 1rem;
+}
+
+.achievementText {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .levelGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .levelDot {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+  
+  .stats {
+    padding: 0.75rem;
+  }
+  
+  .statItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}

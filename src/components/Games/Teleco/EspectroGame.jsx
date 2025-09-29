@@ -890,50 +890,11 @@ const EspectroGame = () => {
       )}
 
       <div className={styles.header}>
-        <h1>🎯 Juego del Espectro Electromagnético</h1>
+        <h1>
+          <span className={styles.titleEmoji}>🌐</span>
+          <span className={styles.titleText}>Juego del Espectro Electromagnético</span>
+        </h1>
         <p>Sintoniza la frecuencia correcta y optimiza la señal</p>
-      </div>
-
-      <div className={styles.gameStats}>
-        <div className={styles.stat}>
-          <label>Nivel:</label>
-          <span>{gameState.level}</span>
-        </div>
-        <div className={styles.stat}>
-          <label>Puntuación:</label>
-          <span>{gameState.score.toFixed(0)}</span>
-        </div>
-        <div className={styles.stat}>
-          <label>SNR:</label>
-          <span className={gameState.snr >= 20 ? styles.good : styles.bad}>
-            {gameState.snr.toFixed(1)} dB
-          </span>
-        </div>
-        <div className={styles.stat}>
-          <label>Logros:</label>
-          <span>{Object.values(achievements).filter(Boolean).length}/10</span>
-          <button 
-            onClick={() => setShowAchievements(!showAchievements)}
-            style={{
-              marginTop: '5px',
-              padding: '5px 10px',
-              background: 'rgba(255,255,255,0.2)',
-              border: 'none',
-              borderRadius: '5px',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '0.8rem',
-            }}
-          >
-            {showAchievements ? '📖' : '🏆'}
-          </button>
-        </div>
-        <div className={styles.stat}>
-          <label>Racha:</label>
-          <span className={gameState.perfectStreak > 0 ? styles.good : ''}>
-            {gameState.perfectStreak} 🔥
-          </span>
-        </div>
       </div>
 
       {!gameState.isPlaying ? (
@@ -946,111 +907,193 @@ const EspectroGame = () => {
           </p>
         </div>
       ) : (
-        <div className={styles.gameArea}>
-          <div className={styles.targetInfo}>
-            <h3 style={{marginBottom: 6}}>🎯 Objetivos:</h3>
-            <div style={{display:'flex', gap:'1.5rem', justifyContent:'center', alignItems:'center', marginTop: '2px', marginBottom: '4px'}}>
-              <span style={{color:'#e6f2ff', fontWeight:600}}>📡 Frecuencia: <span style={{color:'#9af59a'}}>{gameState.targetFrequency.toFixed(2)} MHz</span></span>
-              <span style={{color:'#e6f2ff', fontWeight:600}}>📶 Ancho objetivo: <span style={{color:'#9af59a'}}>{currentTargets.bandwidth} MHz</span></span>
-            </div>
-            <div style={{textAlign:'center', color:'#e6f2ff', fontWeight:600, marginBottom:'8px'}}>
-              ⚡ Potencia objetivo: <span style={{color:'#9af59a'}}>{currentTargets.power} dBm</span>
-            </div>
-            {/* Objetivos del nivel actual */}
-            <div className={styles.control}>
-              <label>🎛️ Frecuencia (MHz):</label>
-              <input
-                type="range"
-                min={600}
-                max={3000}
-                step="0.01"
-                value={gameState.currentFrequency}
-                onChange={(e) => adjustFrequency(e.target.value)}
-                className={styles.slider}
-              />
-              <span className={styles.value} style={{ color: frequencyStatus.color }}>{frequencyStatus.icon} {parseFloat(gameState.currentFrequency).toFixed(2)} MHz</span>
-            </div>
-
-            <div className={styles.control}>
-              <label>📶 Ancho de Banda (MHz):</label>
-              <input
-                type="range"
-                min={1}
-                max={40}
-                step={1}
-                value={gameState.bandwidth}
-                onChange={(e) => adjustBandwidth(e.target.value)}
-                className={styles.slider}
-              />
-              <span className={styles.value} style={{ color: bandwidthStatus.color }}>{bandwidthStatus.icon} {gameState.bandwidth} MHz</span>
-            </div>
-
-            <div className={styles.control}>
-              <label>⚡ Potencia de Señal (dBm):</label>
-              <input
-                type="range"
-                min={-10}
-                max={10}
-                step={1}
-                value={gameState.signalPower}
-                onChange={(e) => adjustPower(e.target.value)}
-                className={styles.slider}
-              />
-              <span className={styles.value} style={{ color: powerStatus.color }}>{powerStatus.icon} {gameState.signalPower} dBm</span>
-            </div>
-          </div>
-
-          <div className={styles.spectrum}>
-            <h4>📊 Analizador de Espectro</h4>
-            <div className={styles.spectrumDisplay}>
-              <div 
-                className={styles.signal}
-                style={{
-                  left: `${((gameState.currentFrequency - 600) / (3000 - 600)) * 100}%`,
-                  width: `${(gameState.bandwidth / (3000 - 600)) * 100}%`,
-                  height: `${Math.max(10, (gameState.signalPower + 100) * 0.8)}%`
-                }}
-              />
-              <div 
-                className={styles.target}
-                style={{
-                  left: `${((gameState.targetFrequency - 600) / (3000 - 600)) * 100}%`
-                }}
-              />
-            </div>
-            <div className={styles.frequencyLabels}>
-              <span>600</span>
-              <span>1200</span>
-              <span>1800</span>
-              <span>2400</span>
-              <span>3000 MHz</span>
-            </div>
-          </div>
-
-          {/* Espectrograma + círculo de feedback */}
-          <div className={styles.spectrogramSection} style={{display: 'flex', alignItems: 'center', gap: '2rem'}}>
-            <div style={{flex: 1}}>
-              <div className={styles.spectrogramControls}>
-                <button 
-                  className={styles.toggleButton}
-                  onClick={toggleSpectrogram}
-                >
-                  {gameState.spectrogramActive ? '⏸️ Pausar' : '▶️ Activar'} Espectrograma
-                </button>
+        <div className={styles.gameLayout}>
+          {/* Panel izquierdo - Controles */}
+          <div className={styles.leftPanel}>
+            <div className={styles.controlsPanel}>
+              <div className={styles.controlsHeader}>
+                <h3 className={styles.controlsTitle}>🎛️ Controles de Sintonización</h3>
               </div>
-              <MemoizedSpectrogram 
-                signalFrequency={gameState.currentFrequency}
-                signalPower={gameState.signalPower}
-                noise={gameState.noise}
-                bandwidth={gameState.bandwidth}
-                isActive={gameState.spectrogramActive && gameState.isPlaying}
-                timeWindow={15}
-                frequencyRange={spectrogramFrequencyRange}
-                // tuningStatus y detectionColor eliminados porque no se usan
-              />
+              <div className={styles.controlsContent}>
+                <div className={styles.targetInfo}>
+                  <h4 style={{marginBottom: 6}}>🎯 Objetivos:</h4>
+                  <div style={{marginBottom:'1rem'}}>
+                    <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                      📡 Frecuencia: <span style={{color:'#9af59a'}}>{gameState.targetFrequency.toFixed(2)} MHz</span>
+                    </span>
+                    <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                      📶 Ancho objetivo: <span style={{color:'#9af59a'}}>{currentTargets.bandwidth} MHz</span>
+                    </span>
+                    <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                      ⚡ Potencia objetivo: <span style={{color:'#9af59a'}}>{currentTargets.power} dBm</span>
+                    </span>
+                  </div>
+                </div>
+                <div className={styles.control}>
+                  <label>📡 Frecuencia (MHz):</label>
+                  <input
+                    type="range"
+                    min={600}
+                    max={3000}
+                    step="0.01"
+                    value={gameState.currentFrequency}
+                    onChange={(e) => adjustFrequency(e.target.value)}
+                    className={styles.slider}
+                  />
+                  <span className={styles.value} style={{ color: frequencyStatus.color }}>{frequencyStatus.icon} {parseFloat(gameState.currentFrequency).toFixed(2)} MHz</span>
+                </div>
+
+                <div className={styles.control}>
+                  <label>📶 Ancho de Banda (MHz):</label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={40}
+                    step={1}
+                    value={gameState.bandwidth}
+                    onChange={(e) => adjustBandwidth(e.target.value)}
+                    className={styles.slider}
+                  />
+                  <span className={styles.value} style={{ color: bandwidthStatus.color }}>{bandwidthStatus.icon} {gameState.bandwidth} MHz</span>
+                </div>
+
+                <div className={styles.control}>
+                  <label>⚡ Potencia de Señal (dBm):</label>
+                  <input
+                    type="range"
+                    min={-10}
+                    max={10}
+                    step={1}
+                    value={gameState.signalPower}
+                    onChange={(e) => adjustPower(e.target.value)}
+                    className={styles.slider}
+                  />
+                  <span className={styles.value} style={{ color: powerStatus.color }}>{powerStatus.icon} {gameState.signalPower} dBm</span>
+                </div>
+
+                <div className={styles.actions}>
+                  <button 
+                    className={styles.checkButton}
+                    onClick={checkTuning}
+                    disabled={!gameState.isPlaying}
+                  >
+                    ✅ Verificar Sintonización
+                  </button>
+                  <button 
+                    className={styles.resetButton}
+                    onClick={resetGame}
+                  >
+                    🔄 Reiniciar
+                  </button>
+                </div>
+              </div>
             </div>
+            
+            {/* Estadísticas del juego */}
+            <div className={styles.gameStats}>
+              <div className={styles.gameStatsGrid}>
+                <div className={styles.stat}>
+                  <label>Nivel:</label>
+                  <span>{gameState.level}</span>
+                </div>
+                <div className={styles.stat}>
+                  <label>Puntuación:</label>
+                  <span>{gameState.score.toFixed(0)}</span>
+                </div>
+                <div className={styles.stat}>
+                  <label>SNR:</label>
+                  <span className={gameState.snr >= 20 ? styles.good : styles.bad}>
+                    {gameState.snr.toFixed(1)} dB
+                  </span>
+                </div>
+                <div className={styles.stat}>
+                  <label>Logros:</label>
+                  <span>{Object.values(achievements).filter(Boolean).length}/10</span>
+                  <button 
+                    onClick={() => setShowAchievements(!showAchievements)}
+                    style={{
+                      marginTop: '5px',
+                      padding: '5px 10px',
+                      background: 'rgba(255,255,255,0.2)',
+                      border: 'none',
+                      borderRadius: '5px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    {showAchievements ? '📖' : '🏆'}
+                  </button>
+                </div>
+                <div className={styles.stat}>
+                  <label>Racha:</label>
+                  <span className={gameState.perfectStreak > 0 ? styles.good : ''}>
+                    {gameState.perfectStreak} 🔥
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Panel central - Espectrograma */}
+          <div className={styles.centerPanel}>
+            <div className={styles.spectrumPanel}>
+              <div className={styles.spectrumHeader}>
+                <h3 className={styles.spectrumTitle}>📊 Análisis Espectral</h3>
+              </div>
+              <div className={styles.spectrumContent}>
+                <div className={styles.spectrogramControls}>
+                  <button 
+                    className={styles.toggleButton}
+                    onClick={toggleSpectrogram}
+                  >
+                    {gameState.spectrogramActive ? '⏸️ Pausar' : '▶️ Activar'} Espectrograma
+                  </button>
+                </div>
+                <MemoizedSpectrogram 
+                  signalFrequency={gameState.currentFrequency}
+                  signalPower={gameState.signalPower}
+                  noise={gameState.noise}
+                  bandwidth={gameState.bandwidth}
+                  isActive={gameState.spectrogramActive && gameState.isPlaying}
+                  timeWindow={15}
+                  frequencyRange={spectrogramFrequencyRange}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Panel derecho - Espectro y feedback */}
+          <div className={styles.rightPanel}>
+            <div className={styles.spectrum}>
+              <h4>📊 Analizador de Espectro</h4>
+              <div className={styles.spectrumDisplay}>
+                <div 
+                  className={styles.signal}
+                  style={{
+                    left: `${((gameState.currentFrequency - 600) / (3000 - 600)) * 100}%`,
+                    width: `${(gameState.bandwidth / (3000 - 600)) * 100}%`,
+                    height: `${Math.max(10, (gameState.signalPower + 100) * 0.8)}%`
+                  }}
+                />
+                <div 
+                  className={styles.target}
+                  style={{
+                    left: `${((gameState.targetFrequency - 600) / (3000 - 600)) * 100}%`
+                  }}
+                />
+              </div>
+              <div className={styles.frequencyLabels}>
+                <span>600</span>
+                <span>1200</span>
+                <span>1800</span>
+                <span>2400</span>
+                <span>3000 MHz</span>
+              </div>
+            </div>
+
             {/* Círculo de feedback visual */}
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: '1rem'}}>
               {(() => {
                 const t = levelTargets[(gameState.level - 1) % levelTargets.length];
                 const frequencyError = Math.abs(gameState.currentFrequency - gameState.targetFrequency);
@@ -1103,22 +1146,99 @@ const EspectroGame = () => {
                 );
               })()}
             </div>
-          </div>
 
-          <div className={styles.actions}>
-            <button 
-              className={styles.checkButton}
-              onClick={checkTuning}
-              disabled={!gameState.isPlaying}
-            >
-              ✅ Verificar Sintonización
-            </button>
-            <button 
-              className={styles.resetButton}
-              onClick={resetGame}
-            >
-              🔄 Reiniciar
-            </button>
+            {/* Sección de Logros */}
+            <div className={styles.achievementsSection} style={{marginTop: '1.5rem'}}>
+              <div style={{
+                padding: '1rem',
+                background: 'rgba(15, 23, 42, 0.8)',
+                borderRadius: '8px',
+                border: '1px solid rgba(148, 163, 184, 0.2)'
+              }}>
+                <h4 style={{
+                  margin: '0 0 0.75rem 0',
+                  fontSize: '1rem',
+                  color: '#94a3b8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  🏆 Logros ({Object.values(achievements).filter(Boolean).length}/10)
+                </h4>
+                
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  maxHeight: '200px',
+                  overflowY: 'auto'
+                }}>
+                  {Object.entries(achievementMeta).slice(0, 5).map(([key, meta]) => (
+                    <div 
+                      key={key}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.5rem',
+                        background: achievements[key] ? 'rgba(16, 185, 129, 0.1)' : 'rgba(148, 163, 184, 0.05)',
+                        borderRadius: '6px',
+                        border: `1px solid ${achievements[key] ? 'rgba(16, 185, 129, 0.3)' : 'rgba(148, 163, 184, 0.1)'}`,
+                        opacity: achievements[key] ? 1 : 0.6,
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '1rem' }}>{meta.icon}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          color: achievements[key] ? '#10b981' : '#94a3b8',
+                          marginBottom: '0.125rem'
+                        }}>
+                          {meta.title}
+                        </div>
+                        <div style={{
+                          fontSize: '0.625rem',
+                          color: '#64748b',
+                          lineHeight: 1.2,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {meta.description}
+                        </div>
+                      </div>
+                      {achievements[key] && (
+                        <span style={{ color: '#10b981', fontSize: '0.875rem' }}>✓</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                {Object.keys(achievementMeta).length > 5 && (
+                  <button
+                    onClick={() => setShowAchievements(!showAchievements)}
+                    style={{
+                      width: '100%',
+                      marginTop: '0.5rem',
+                      padding: '0.5rem',
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      borderRadius: '6px',
+                      color: '#3b82f6',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => e.target.style.background = 'rgba(59, 130, 246, 0.2)'}
+                    onMouseOut={(e) => e.target.style.background = 'rgba(59, 130, 246, 0.1)'}
+                  >
+                    {showAchievements ? 'Ver menos' : `Ver todos (${Object.keys(achievementMeta).length - 5} más)`}
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

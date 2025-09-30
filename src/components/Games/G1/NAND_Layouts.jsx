@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { getAllPuzzles } from './utils/puzzleConfig.js';
-import { uid, combinations, NODE_TYPES } from './utils/gameUtils.js';
+import { uid, combinations, NODE_TYPES, relativeToPixels } from './utils/gameUtils.js';
 import { evaluateCircuit } from './utils/circuitEvaluator.js';
 import { CircuitCanvas } from './components/CircuitCanvas.jsx';
 import { TruthTable } from './components/TruthTable.jsx';
@@ -85,6 +85,8 @@ export default function NandGame() {
   
   const [selected, setSelected] = useState(null); // {nodeId, port, kind:'out'|'in'}
   const [mousePosition, setMousePosition] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   
   // Estados para las alertas estilosas
   const [alert, setAlert] = useState({
@@ -109,6 +111,23 @@ export default function NandGame() {
     setAlert(prev => ({ ...prev, isOpen: false }));
   }, []);
 
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownOpen && !event.target.closest(`.${styles.exportImportGroup}`)) {
+        setDropdownOpen(false);
+      }
+      if (moreDropdownOpen && !event.target.closest(`.${styles.moreGroup}`)) {
+        setMoreDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownOpen, moreDropdownOpen, styles.exportImportGroup, styles.moreGroup]);
+
   // Efecto para guardar automáticamente el estado cuando cambie
   useEffect(() => {
     const stateToSave = {
@@ -126,15 +145,78 @@ export default function NandGame() {
 
   const currentPuzzle = puzzles[puzzleIndex];
 
+  // Obtener factor de escala actual basado en responsive
+  const getScaleFactor = useCallback(() => {
+    const screenWidth = Math.min(window.innerWidth, 1100); // Limitar a 1100px
+    if (screenWidth < 481) {
+      return 0.6; // Compuertas más compactas para móviles muy pequeños
+    } else if (screenWidth < 780) {
+      return 0.7; // Compuertas compactas para móviles grandes y tablets pequeños
+    } else if (screenWidth <= 1024) {
+      return 0.85; // Escala reducida para tablets
+    } else {
+      // Para pantallas grandes, escalar proporcionalmente hasta 1100px
+      const ratio = Math.min(screenWidth / 1024, 1100 / 1024);
+      return 0.85 * ratio;
+    }
+  }, []);
+
+  // Función para calcular los límites del viewBox (consistente con CircuitCanvas)
+  const getViewBoxLimits = useCallback(() => {
+    const screenWidth = Math.min(window.innerWidth, 1100); // Limitar a 1100px
+    let width, height;
+    
+    if (screenWidth < 481) {
+      // Móviles muy pequeños - área compacta
+      width = 350;
+      height = 450;
+    } else if (screenWidth < 780) {
+      // Tablets pequeños y móviles grandes
+      width = 450;
+      height = 550;
+    } else {
+      // Desktop y tablets grandes - escalar proporcionalmente hasta 1100px
+      const scaleFactor = getScaleFactor();
+      const baseWidth = 600;
+      const baseHeight = 650;
+      
+      // Escalar el área de trabajo proporcionalmente
+      width = Math.floor(baseWidth * (scaleFactor / 0.85));
+      height = baseHeight; // Altura máxima establecida
+    }
+    
+    return { width, height };
+  }, [getScaleFactor]);
+
+  // Función para convertir nodos con coordenadas relativas a píxeles
+  const convertRelativeToPixels = useCallback((nodes) => {
+    const viewBoxLimits = getViewBoxLimits();
+    const scaleFactor = getScaleFactor();
+    
+    return nodes.map(node => {
+      if (node.relativeX !== undefined && node.relativeY !== undefined) {
+        const { x, y } = relativeToPixels(node.relativeX, node.relativeY, viewBoxLimits, scaleFactor);
+        return {
+          ...node,
+          x: x,
+          y: y
+        };
+      }
+      return node;
+    });
+  }, [getViewBoxLimits, getScaleFactor]);
+
   // Resetear al puzzle seleccionado
   const resetToPuzzle = useCallback((index) => {
     setPuzzleIndex(index);
-    setNodes([...puzzles[index].nodes]);
+    // Convertir coordenadas relativas a píxeles y aplicar
+    const convertedNodes = convertRelativeToPixels(puzzles[index].nodes);
+    setNodes(convertedNodes);
     setConnections([]);
     setSelected(null);
     setMode('puzzle');
     setFailedAttempts(0);
-  }, [puzzles]);
+  }, [puzzles, convertRelativeToPixels]);
 
   // Cambiar a modo sandbox
   const enterSandboxMode = useCallback(() => {
@@ -330,16 +412,82 @@ export default function NandGame() {
     });
   }, [showAlert]);
 
+  // Función para ajustar posiciones de nodos INPUT y OUTPUT al área de trabajo
+  const adjustNodePositions = useCallback((nodes) => {
+    const viewBoxLimits = getViewBoxLimits();
+    const scaleFactor = getScaleFactor();
+    
+    return nodes.map(node => {
+      if (node.type === NODE_TYPES.INPUT || node.type === NODE_TYPES.OUTPUT) {
+        let newNode = { ...node };
+        
+        if (node.type === NODE_TYPES.INPUT) {
+          // Las entradas siempre en el borde izquierdo del área de trabajo
+          newNode.x = 20;
+        } else if (node.type === NODE_TYPES.OUTPUT) {
+          // Las salidas siempre en el borde derecho del área de trabajo, con margen para ser visibles
+          const outputWidth = 75 * scaleFactor; // Ancho de OUTPUT actualizado
+          const marginRight = 20;
+          newNode.x = viewBoxLimits.width - outputWidth - marginRight;
+        }
+        
+        return newNode;
+      }
+      return node;
+    });
+  }, [getViewBoxLimits, getScaleFactor]);
+
+  // useEffect para ajustar posiciones cuando cambia el tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      // Si estamos en modo puzzle, recalcular desde coordenadas relativas
+      if (mode === 'puzzle' && currentPuzzle && currentPuzzle.nodes) {
+        const convertedNodes = convertRelativeToPixels(currentPuzzle.nodes);
+        setNodes(convertedNodes);
+      } else {
+        // Para modo sandbox, solo ajustar posiciones existentes
+        setNodes(prevNodes => adjustNodePositions(prevNodes));
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Ajustar posiciones iniciales solo si no estamos en puzzle mode
+    if (mode !== 'puzzle') {
+      setNodes(prevNodes => adjustNodePositions(prevNodes));
+    }
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [adjustNodePositions, convertRelativeToPixels, mode, currentPuzzle]);
+
+  // useEffect para ajustar posiciones cuando cambia el puzzle
+  useEffect(() => {
+    if (currentPuzzle && currentPuzzle.nodes && mode === 'puzzle') {
+      // Para puzzles, usar coordenadas relativas
+      const convertedNodes = convertRelativeToPixels(currentPuzzle.nodes);
+      setNodes(convertedNodes);
+    }
+  }, [currentPuzzle, convertRelativeToPixels, mode]);
+
   // Manejar movimiento del mouse para cable temporal
   const handleMouseMove = useCallback((e) => {
     if (selected && selected.kind === "out") {
-      const rect = e.currentTarget.getBoundingClientRect();
+      const svg = e.currentTarget.querySelector('svg');
+      if (!svg) return;
+      const svgRect = svg.getBoundingClientRect();
+      const viewBoxLimits = getViewBoxLimits();
+      const scaleX = svgRect.width / viewBoxLimits.width;
+      const scaleY = svgRect.height / viewBoxLimits.height;
+      const scale = Math.min(scaleX, scaleY);
+      const offsetX = (svgRect.width - viewBoxLimits.width * scale) / 2;
+      const offsetY = (svgRect.height - viewBoxLimits.height * scale) / 2;
+      
       setMousePosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
+        x: (e.clientX - svgRect.left - offsetX) / scale,
+        y: (e.clientY - svgRect.top - offsetY) / scale
       });
     }
-  }, [selected]);
+  }, [selected, getViewBoxLimits]);
 
   // Evaluar el circuito actual
   const { valueOut } = useMemo(
@@ -370,7 +518,9 @@ export default function NandGame() {
   // Manejar clicks en puertos
   const handlePortClick = useCallback(
     (node, port, kind) => {
-      if (kind === "out") {
+      if (selected && selected.nodeId === node.id && selected.port === port && selected.kind === kind) {
+        setSelected(null);
+      } else if (kind === "out") {
         setSelected({ nodeId: node.id, port, kind });
       } else {
         // kind === 'in'
@@ -514,14 +664,11 @@ export default function NandGame() {
       <div className={styles.gameContainer}>
         {/* Header del juego */}
         <header className={styles.gameHeader}>
-          <h1 className={styles.gameTitle}>
-            NandGame – {mode === 'puzzle' ? '4 ejercicios' : 'Modo Sandbox'}
-          </h1>
-          
-          <div className={styles.gameControls}>
+          {/* Controles izquierdos - Ejercicios y modo */}
+          <div className={styles.leftControls}>
             {mode === 'puzzle' && (
               <select
-                className={styles.puzzleSelect}
+                className={`${styles.puzzleSelect} ${solved[puzzles[puzzleIndex]?.key] ? styles.completed : ''} ${styles.active}`}
                 value={puzzleIndex}
                 onChange={(e) => resetToPuzzle(parseInt(e.target.value, 10))}
               >
@@ -551,72 +698,158 @@ export default function NandGame() {
               </button>
             ) : (
               <button
-                className={`${styles.controlButton} ${styles.activeMode}`}
+                className={`${styles.controlButton} ${styles.activeMode} ${styles.essential}`}
                 onClick={returnToPuzzle}
                 title="Volver al modo puzzle"
               >
                 🔙 Volver a Puzzles
               </button>
             )}
-            
-            <button
-              className={styles.controlButton}
-              onClick={clearAllConnections}
-              title="Borra todas las conexiones actuales"
-            >
-              Borrar cables
-            </button>
-            
-            {mode === 'puzzle' && (
+          </div>
+          
+          {/* Título central */}
+          <h1 className={styles.gameTitle}>
+            NandGame
+          </h1>
+          
+          {/* Controles derechos - Acciones y exportar/importar */}
+          <div className={styles.rightControls}>
+            {/* Grupo de exportar/importar */}
+            <div className={styles.exportImportGroup}>
               <button
-                className={styles.controlButton}
-                onClick={() => resetToPuzzle(puzzleIndex)}
+                className={styles.exportImportButton}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                title="Opciones de exportar/importar"
               >
-                Reiniciar ejercicio
+                📁 Archivos ▼
               </button>
-            )}
+              
+              <div className={`${styles.exportImportDropdown} ${dropdownOpen ? styles.open : ''}`}>
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    exportGameState();
+                    setDropdownOpen(false);
+                  }}
+                >
+                  📥 Exportar
+                </button>
+                
+                <label className={styles.dropdownItem}>
+                  📤 Importar
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => {
+                      importGameState(e);
+                      setDropdownOpen(false);
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+              </div>
+            </div>
             
-            <button
-              className={styles.controlButton}
-              onClick={clearSavedProgress}
-              title="Elimina todo el progreso guardado y reinicia el juego"
-              style={{ 
-                backgroundColor: 'var(--theme-danger, #ef4444)', 
-                borderColor: 'var(--theme-danger, #ef4444)',
-                color: 'white'
-              }}
-            >
-              🗑️ Limpiar Progreso
-            </button>
-            
-            <button
-              className={styles.controlButton}
-              onClick={exportGameState}
-              title="Exporta el estado actual como archivo JSON"
-            >
-              📥 Exportar
-            </button>
-            
-            <label className={styles.controlButton} title="Importa un estado guardado desde archivo JSON">
-              📤 Importar
-              <input
-                type="file"
-                accept=".json"
-                onChange={importGameState}
-                style={{ display: 'none' }}
-              />
-            </label>
-            
-            {mode === 'puzzle' && (
+            {/* Acciones rápidas */}
+            <div className={styles.quickActions}>
               <button
-                className={`${styles.controlButton} ${styles.solveButton}`}
-                onClick={trySolve}
+                className={styles.emojiButton}
+                onClick={clearAllConnections}
+                title="Borrar cables"
               >
-                Probar
+                🗑️
               </button>
-            )}
+              
+              {mode === 'puzzle' && (
+                <button
+                  className={styles.emojiButton}
+                  onClick={() => resetToPuzzle(puzzleIndex)}
+                  title="Reiniciar ejercicio"
+                >
+                  🔄
+                </button>
+              )}
+              
+              <button
+                className={`${styles.controlButton} ${styles.dangerButton}`}
+                onClick={clearSavedProgress}
+                title="Elimina todo el progreso guardado y reinicia el juego"
+              >
+                🗑️ Limpiar Progreso
+              </button>
+              
+              {mode === 'puzzle' && (
+                <button
+                  className={`${styles.controlButton} ${styles.solveButton} ${styles.essential}`}
+                  onClick={trySolve}
+                >
+                  Probar
+                </button>
+              )}
+            </div>
+
+            {/* Grupo de más opciones - solo visible en móviles */}
+            <div className={styles.moreGroup}>
+              <button
+                className={styles.moreButton}
+                onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
+                title="Más opciones"
+              >
+                ⋯
+              </button>
+              
+              <div className={`${styles.moreDropdown} ${moreDropdownOpen ? styles.open : ''}`}>
+                {/* Exportar/Importar en móviles */}
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    exportGameState();
+                    setMoreDropdownOpen(false);
+                  }}
+                >
+                  📥 Exportar
+                </button>
+                
+                <label className={styles.dropdownItem}>
+                  📤 Importar
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => {
+                      importGameState(e);
+                      setMoreDropdownOpen(false);
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+
+                {/* Botones ocultos en móviles */}
+                {mode === 'puzzle' && (
+                  <button
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      resetToPuzzle(puzzleIndex);
+                      setMoreDropdownOpen(false);
+                    }}
+                  >
+                    🔄 Reiniciar
+                  </button>
+                )}
+                
+                <button
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    clearSavedProgress();
+                    setMoreDropdownOpen(false);
+                  }}
+                >
+                  🗑️ Limpiar Progreso
+                </button>
+              </div>
+            </div>
           </div>
         </header>
+
 
         {/* Descripción del puzzle */}
         {mode === 'puzzle' && (
@@ -649,6 +882,7 @@ export default function NandGame() {
               selected={selected}
               valueOut={valueOut}
               mousePosition={mousePosition}
+              mode={mode}
               onPortClick={handlePortClick}
               onToggleInput={toggleInput}
               onRemoveWire={removeWire}

@@ -5,65 +5,383 @@
   background-color: var(--theme-background);
   color: var(--theme-text);
   padding: 1rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .gameContainer {
   width: 100%;
-  max-width: none;
+  max-width: 100%;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+/* Limitar ancho máximo y centrar en pantallas muy anchas */
+@media (min-width: 1100px) {
+  .gameContainer {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  .nandGame {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
 }
 
 /* Header del juego */
 .gameHeader {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding: 0 1rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+  border-radius: 1rem;
+  border: 1px solid var(--theme-border);
+  max-width: 100%;
+  overflow: visible;
+  flex-wrap: nowrap;
+  position: relative;
 }
 
 @media (max-width: 768px) {
   .gameHeader {
     flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-    padding: 0 0.5rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .gameHeader .gameTitle {
+    position: static;
+    transform: none;
   }
 }
 
 @media (max-width: 480px) {
   .gameHeader {
-    padding: 0 0.25rem;
-    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
   }
 }
 
 .gameTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--theme-text);
+  font-size: 3rem;
+  text-align: center;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+  flex-shrink: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   .gameTitle {
-    font-size: 2rem;
+    font-size: 3.5rem;
   }
 }
 
 @media (max-width: 768px) {
   .gameTitle {
-    font-size: 1.25rem;
-    text-align: center;
+    font-size: 2rem;
+    position: static;
+    transform: none;
+    order: -1;
+    width: 100%;
+    margin-bottom: 0.5rem;
   }
 }
 
 @media (max-width: 480px) {
   .gameTitle {
-    font-size: 1.1rem;
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
   }
+}
+
+/* Controles izquierdos */
+.leftControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .leftControls {
+    justify-content: center;
+    width: 100%;
+    gap: 0.5rem;
+    order: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .leftControls {
+    gap: 0.25rem;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+/* Controles derechos */
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .rightControls {
+    justify-content: center;
+    width: 100%;
+    gap: 0.5rem;
+    order: 3;
+  }
+}
+
+@media (max-width: 480px) {
+  .rightControls {
+    gap: 0.25rem;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  /* Ocultar elementos no esenciales en móviles */
+  .rightControls .exportImportGroup {
+    display: none;
+  }
+  
+  .rightControls .emojiButton {
+    display: none;
+  }
+  
+  .rightControls .dangerButton {
+    display: none;
+  }
+  
+  /* Mostrar el grupo de más opciones en móviles */
+  .rightControls .moreGroup {
+    display: flex;
+  }
+}
+
+/* Grupo de exportar/importar - ahora como dropdown */
+.exportImportGroup {
+  position: relative;
+  display: inline-block;
+}
+
+.exportImportButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 0.5rem;
+  color: var(--theme-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .exportImportButton {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .exportImportButton {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+.exportImportButton:hover {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2));
+  transform: translateY(-1px);
+}
+
+.exportImportDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--theme-background-secondary);
+  border: 1px solid var(--theme-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.exportImportDropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  color: var(--theme-text);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 0;
+}
+
+.dropdownItem:first-child {
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.dropdownItem:last-child {
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.dropdownItem:hover {
+  background-color: var(--theme-background-tertiary);
+}
+
+/* Responsive para dropdown */
+@media (max-width: 480px) {
+  .exportImportDropdown {
+    right: auto;
+    left: 0;
+    min-width: 120px;
+  }
+  
+  .exportImportButton {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  .dropdownItem {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .exportImportDropdown {
+    min-width: 130px;
+  }
+  
+  .dropdownItem {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Acciones rápidas */
+.quickActions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .quickActions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quickActions {
+    width: 100%;
+    justify-content: center;
+    gap: 1rem;
+    /* Mostrar solo dos botones: Probar y Modo Sandbox/Volver */
+  }
+  
+  .quickActions .emojiButton {
+    display: none;
+  }
+  
+  .quickActions .dangerButton {
+    display: none;
+  }
+}
+
+/* Botones emoji compactos */
+.emojiButton {
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--theme-border);
+  background-color: var(--theme-background-secondary);
+  color: var(--theme-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .emojiButton {
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0.4rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .emojiButton {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+  }
+}
+
+.emojiButton:hover {
+  background-color: var(--theme-background-tertiary);
+  transform: scale(1.05);
+}
+
+.emojiButton:active {
+  transform: scale(0.95);
 }
 
 .gameControls {
@@ -89,29 +407,87 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
-  font-size: inherit;
+  font-size: 0.875rem;
+  white-space: nowrap;
   /* Mejoras para dispositivos táctiles */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  min-height: 44px; /* Tamaño mínimo para accesibilidad táctil */
+  min-height: 40px;
 }
 
 /* Responsive para controles */
 @media (max-width: 768px) {
   .controlButton {
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    font-size: 0.875rem;
-    min-width: 80px;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.4rem;
+    font-size: 0.75rem;
+    min-height: 36px;
   }
 }
 
 @media (max-width: 480px) {
   .controlButton {
-    padding: 0.625rem 0.875rem;
-    font-size: 0.8rem;
-    min-width: 70px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+    min-height: 32px;
+    border-radius: 0.3rem;
+  }
+}
+
+/* Clase especial para mostrar solo botones esenciales en móvil */
+@media (max-width: 480px) {
+  .controlButton.essential {
+    display: flex !important;
+  }
+  
+  .controlButton.solveButton {
+    display: flex !important;
+    flex: 1;
+    max-width: 120px;
+  }
+  
+  .controlButton.activeMode {
+    display: flex !important;
+    flex: 1;
+    max-width: 120px;
+  }
+}
+
+/* Clase especial para mostrar solo botones esenciales en móvil */
+@media (max-width: 480px) {
+  .controlButton.essential {
+    display: flex !important;
+  }
+  
+  .controlButton.solveButton {
+    display: flex !important;
+    flex: 1;
+    max-width: 120px;
+  }
+  
+  .controlButton.activeMode {
+    display: flex !important;
+    flex: 1;
+    max-width: 120px;
+  }
+  
+  /* Ocultar elementos no esenciales en móviles */
+  .rightControls .exportImportGroup {
+    display: none !important;
+  }
+  
+  .rightControls .emojiButton {
+    display: none !important;
+  }
+  
+  .rightControls .dangerButton {
+    display: none !important;
+  }
+  
+  /* Ocultar el botón modo sandbox en móvil */
+  .leftControls .controlButton:not(.activeMode) {
+    display: none !important;
   }
 }
 
@@ -137,25 +513,228 @@
   background-color: var(--theme-primary-hover) !important;
 }
 
+/* Botón de peligro */
+.dangerButton {
+  background-color: var(--theme-danger, #ef4444) !important;
+  border-color: var(--theme-danger, #ef4444) !important;
+  color: white !important;
+}
+
+.dangerButton:hover {
+  background-color: var(--theme-danger-hover, #dc2626) !important;
+  border-color: var(--theme-danger-hover, #dc2626) !important;
+}
+
 .puzzleSelect {
-  background-color: var(--theme-background-secondary);
-  border: 1px solid var(--theme-border);
+  background: linear-gradient(135deg, var(--theme-background-secondary), rgba(30, 41, 59, 0.8));
+  border: 2px solid var(--theme-border);
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   color: var(--theme-text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  max-width: 250px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6,9 12,15 18,9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+/* Estados específicos del selector */
+.puzzleSelect.completed {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.2));
+  border-color: rgba(34, 197, 94, 0.6);
+  color: #059669;
+}
+
+.puzzleSelect.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.2));
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #2563eb;
+}
+
+.puzzleSelect:hover {
+  border-color: var(--theme-primary);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
+}
+
+.puzzleSelect.completed:hover {
+  border-color: #22c55e;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.puzzleSelect:focus {
+  outline: none;
+  border-color: var(--theme-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+@media (max-width: 768px) {
+  .puzzleSelect {
+    min-width: auto;
+    width: 100%;
+    max-width: 200px;
+    font-size: 0.8rem;
+    padding: 0.4rem 2rem 0.4rem 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .puzzleSelect {
+    font-size: 0.75rem;
+    padding: 0.3rem 1.8rem 0.3rem 0.5rem;
+    max-width: 160px;
+  }
+  
+  /* Ocultar el botón modo sandbox en móvil */
+  .leftControls .controlButton {
+    display: none;
+  }
 }
 
 /* Descripción del puzzle */
 .puzzleDescription {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--theme-text-secondary);
-  margin-top: 0.5rem;
-  max-width: 48rem;
-  padding: 0 1rem;
+  margin: 1rem 0;
+  max-width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.03), rgba(139, 92, 246, 0.03));
+  border-left: 4px solid var(--theme-primary);
+  border-radius: 0 0.5rem 0.5rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  line-height: 1.6;
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.puzzleDescription::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--theme-primary), var(--theme-secondary));
+  border-radius: 0 0 0.25rem 0;
+}
+
+@media (max-width: 768px) {
+  .puzzleDescription {
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .puzzleDescription {
+    padding: 0.875rem 1rem;
+    margin: 0.75rem 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
 }
 
 .puzzleTitle {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--theme-text);
+  display: inline-block;
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+/* Estilo especial para modo sandbox */
+.sandboxDescription {
+  border-left-color: var(--theme-secondary);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.03), rgba(236, 72, 153, 0.03));
+}
+
+.sandboxDescription::before {
+  background: linear-gradient(180deg, var(--theme-secondary), #ec4899);
+}
+
+/* Efectos especiales para el título */
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    text-shadow: 0 2px 20px rgba(59, 130, 246, 0.5), 0 0 30px rgba(139, 92, 246, 0.3);
+  }
+}
+
+.gameTitle:hover {
+  animation: titleGlow 2s ease-in-out infinite;
+}
+
+/* Grupo de más opciones - solo visible en móviles */
+.moreGroup {
+  position: relative;
+  display: none; /* Oculto por defecto, visible solo en móviles */
+}
+
+.moreButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--theme-border);
+  background-color: var(--theme-background-secondary);
+  color: var(--theme-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.moreButton:hover {
+  background-color: var(--theme-background-tertiary);
+  transform: scale(1.05);
+}
+
+.moreButton:active {
+  transform: scale(0.95);
+}
+
+.moreDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--theme-background-secondary);
+  border: 1px solid var(--theme-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.moreDropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /* Grid principal */
@@ -197,7 +776,8 @@
   padding: 0.5rem;
   overflow: hidden;
   position: relative;
-  min-height: 400px;
+  min-height: 300px; /* Base mínima */
+  max-height: 650px; /* Altura máxima establecida */
   width: 100%;
   /* Mejoras para dispositivos táctiles */
   touch-action: manipulation;
@@ -210,7 +790,8 @@
 
 @media (min-width: 768px) {
   .circuitPanel {
-    min-height: 600px;
+    min-height: 450px; /* Altura apropiada para escritorio */
+    max-height: 650px; /* Altura máxima para escritorio */
   }
 }
 
@@ -231,22 +812,25 @@
 
 .circuitSvg {
   width: 100%;
-  height: 100%;
+  height: 100%; /* Ocupa todo el contenedor disponible */
   min-width: unset;
   min-height: unset;
+  max-height: 650px; /* Altura máxima para el SVG */
 }
 
 @media (max-width: 768px) {
   .circuitSvg {
     width: 100%;
-    height: auto;
-    aspect-ratio: 3 / 2;
+    height: 100%;
+    max-height: 550px; /* Altura máxima para tablets */
   }
 }
 
 @media (max-width: 480px) {
   .circuitSvg {
-    aspect-ratio: 4 / 3;
+    width: 100%;
+    height: 100%;
+    max-height: 450px; /* Altura máxima para móviles */
   }
 }
 
@@ -404,26 +988,36 @@
   
   /* Mejorar área de toque para elementos interactivos */
   .controlButton,
-  .gateButton,
+  .emojiButton,
   .puzzleSelect {
     min-height: 48px;
   }
   
   /* Feedback visual mejorado para elementos táctiles */
   .controlButton:active,
-  .gateButton:active {
+  .emojiButton:active {
     transform: scale(0.98);
     transition: transform 0.1s ease;
   }
 }
 
-/* Limitar tamaño máximo de compuertas */
+/* DESHABILITADO: Tamaño fijo que interfiere con scaleFactor
 .circuitPanel svg g {
-  max-width: 80px;
-  max-height: 55px;
+  max-width: 90px;
+  max-height: 60px;
 }
+*/
 
-/* Escalado responsivo de compuertas para móviles */
+/* DESHABILITADO: Tamaño fijo para compuertas en desktop para consistencia 
+@media (min-width: 769px) {
+  .circuitPanel svg g {
+    width: 90px;
+    height: 60px;
+  }
+}
+*/
+
+/* Escalado responsivo de compuertas para móviles - DESHABILITADO para evitar conflictos */
 @media (max-width: 768px) {
   .circuitPanel {
     font-size: 0.9rem;
@@ -436,28 +1030,22 @@
     padding: 0.25rem;
   }
   
+  /* DESHABILITADO: CSS que puede interferir con scaleFactor de React
   .circuitPanel svg {
-    font-size: 0.7em; /* Escalar texto de compuertas */
+    font-size: 0.7em;
   }
   
-  /* Hacer compuertas más compactas en móviles */
   .circuitPanel svg g {
+    transform: scale(0.85);
     transform-origin: center;
     max-width: 100px;
     max-height: 60px;
   }
-}
-
-/* Clase para escalar compuertas en móviles */
-.mobileScaled {
-  transform: scale(0.8);
-  transform-origin: center;
-}
-
-@media (max-width: 480px) {
-  .mobileScaled {
-    transform: scale(0.7);
+  
+  .circuitPanel svg g {
+    transform: scale(0.75) !important;
   }
+  */
 }
 
 /* Estilos específicos para orientación landscape en móviles */

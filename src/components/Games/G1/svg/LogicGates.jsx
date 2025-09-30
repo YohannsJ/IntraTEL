@@ -3,30 +3,33 @@ import React from 'react';
 /**
  * Componente NAND Gate - Puerta lógica NAND visual
  */
-export function SvgNAND({ x, y, w = 90, h = 60, label = "NAND", activeOut }) {
+export function SvgNAND({ x, y, w = 85, h = 55, label = "NAND", activeOut, scaleFactor = 1 }) {
+  // Usar directamente el factor de escala pasado como prop
+  const scaledW = w * scaleFactor;
+  const scaledH = h * scaleFactor;
   // Cuerpo tipo AND con burbuja de negación en la salida (NAND)
-  const pathBody = `M ${x} ${y} h ${w * 0.55} c ${w * 0.25} 0, ${w * 0.25} ${h}, 0 ${h} h ${-w * 0.55} z`;
-  const bubbleX = x + w * 0.8;
-  const bubbleY = y + h / 2;
+  const pathBody = `M ${x} ${y} h ${scaledW * 0.55} c ${scaledW * 0.25} 0, ${scaledW * 0.25} ${scaledH}, 0 ${scaledH} h ${-scaledW * 0.55} z`;
+  const bubbleX = x + scaledW * 0.8;
+  const bubbleY = y + scaledH / 2;
   const input1X = x;
-  const input1Y = y + h * 0.3;
+  const input1Y = y + scaledH * 0.3;
   const input2X = x;
-  const input2Y = y + h * 0.7;
-  const outX = x + w + 14;
-  const outY = y + h / 2;
+  const input2Y = y + scaledH * 0.7;
+  const outX = x + scaledW + 14;
+  const outY = y + scaledH / 2;
 
   return (
     <g>
       {/* Cables de entrada */}
-      <line x1={input1X - 8} y1={input1Y} x2={input1X} y2={input1Y} stroke="var(--theme-circuit-gate-border)" strokeWidth={2} />
-      <line x1={input2X - 8} y1={input2Y} x2={input2X} y2={input2Y} stroke="var(--theme-circuit-gate-border)" strokeWidth={2} />
+      <line x1={input1X - 10} y1={input1Y} x2={input1X} y2={input1Y} stroke="var(--theme-circuit-gate-border)" strokeWidth={2} />
+      <line x1={input2X - 10} y1={input2Y} x2={input2X} y2={input2Y} stroke="var(--theme-circuit-gate-border)" strokeWidth={2} />
       
       {/* Cable de salida */}
       <line x1={bubbleX + 6} y1={outY} x2={outX + 8} y2={outY} stroke="var(--theme-circuit-gate-border)" strokeWidth={2} />
       
       {/* Puertos de entrada */}
-      <circle cx={input1X - 8} cy={input1Y} r={3} fill="var(--theme-background)" fillOpacity={0.5} stroke="var(--theme-circuit-gate-border)" strokeOpacity={0.6} strokeWidth={2} />
-      <circle cx={input2X - 8} cy={input2Y} r={3} fill="var(--theme-background)" fillOpacity={0.5} stroke="var(--theme-circuit-gate-border)" strokeOpacity={0.6} strokeWidth={2} />
+      <circle cx={input1X - 10} cy={input1Y} r={3} fill="var(--theme-background)" fillOpacity={0.5} stroke="var(--theme-circuit-gate-border)" strokeOpacity={0.6} strokeWidth={2} />
+      <circle cx={input2X - 10} cy={input2Y} r={3} fill="var(--theme-background)" fillOpacity={0.5} stroke="var(--theme-circuit-gate-border)" strokeOpacity={0.6} strokeWidth={2} />
       
       {/* Cuerpo de la compuerta */}
       <path 
@@ -40,16 +43,16 @@ export function SvgNAND({ x, y, w = 90, h = 60, label = "NAND", activeOut }) {
       <circle 
         cx={bubbleX} 
         cy={bubbleY} 
-        r={6} 
+        r={8} 
         fill="var(--theme-circuit-gate)" 
         stroke="var(--theme-circuit-gate-border)" 
         strokeWidth={2} 
       />
       
       <text 
-        x={x + w * 0.25} 
-        y={y + h / 2 + 4} 
-        fontSize={10} 
+        x={x + scaledW * 0.25} 
+        y={y + scaledH / 2 + 4} 
+        fontSize={10 * scaleFactor} 
         fill="var(--theme-text-secondary)" 
         textAnchor="middle"
       >
@@ -58,7 +61,7 @@ export function SvgNAND({ x, y, w = 90, h = 60, label = "NAND", activeOut }) {
       
       {/* Puerto de salida */}
       <circle 
-        cx={outX + 8} 
+        cx={outX} 
         cy={outY} 
         r={3} 
         fill={activeOut ? "var(--theme-circuit-wire-active)" : "var(--theme-background)"} 
@@ -74,17 +77,20 @@ export function SvgNAND({ x, y, w = 90, h = 60, label = "NAND", activeOut }) {
 /**
  * Componente Input Switch - Entrada con switch clickeable
  */
-export function SvgInput({ x, y, w = 70, h = 36, label = "A", value, onToggle }) {
-  const outX = x + w;
-  const outY = y + h / 2;
+export function SvgInput({ x, y, w = 65, h = 35, label = "A", value, onToggle, scaleFactor = 1 }) {
+  // Usar directamente el factor de escala pasado como prop
+  const scaledW = w * scaleFactor;
+  const scaledH = h * scaleFactor;
+  const outX = x + scaledW;
+  const outY = y + scaledH / 2;
   
   return (
     <g>
       {/* Nombre arriba */}
       <text 
-        x={x + w / 2} 
+        x={x + scaledW / 2} 
         y={y - 8} 
-        fontSize={12} 
+        fontSize={12 * scaleFactor} 
         fill="var(--theme-text)"
         textAnchor="middle"
         fontWeight="600"
@@ -99,8 +105,8 @@ export function SvgInput({ x, y, w = 70, h = 36, label = "A", value, onToggle })
       <rect 
         x={x} 
         y={y} 
-        width={w} 
-        height={h} 
+        width={scaledW} 
+        height={scaledH} 
         rx={10} 
         fill="var(--theme-circuit-gate)" 
         stroke="var(--theme-circuit-gate-border)" 
@@ -124,14 +130,14 @@ export function SvgInput({ x, y, w = 70, h = 36, label = "A", value, onToggle })
         <rect 
           x={x + 8} 
           y={y + 8} 
-          width={w - 16} 
-          height={h - 16} 
+          width={scaledW - 16} 
+          height={scaledH - 16} 
           rx={8} 
           fill={value ? "var(--theme-circuit-wire-active)" : "var(--theme-background-tertiary)"} 
         />
         <circle 
-          cx={x + (value ? w - 12 : 12)} 
-          cy={y + h / 2} 
+          cx={x + (value ? scaledW - 12 : 12)} 
+          cy={y + scaledH / 2} 
           r={6} 
           fill="var(--theme-background)" 
         />
@@ -155,17 +161,20 @@ export function SvgInput({ x, y, w = 70, h = 36, label = "A", value, onToggle })
 /**
  * Componente Output Display - Salida con indicador LED
  */
-export function SvgOutput({ x, y, w = 80, h = 46, label = "Y", value }) {
+export function SvgOutput({ x, y, w = 75, h = 45, label = "Y", value, scaleFactor = 1 }) {
+  // Usar directamente el factor de escala pasado como prop
+  const scaledW = w * scaleFactor;
+  const scaledH = h * scaleFactor;
   const inputX = x;
-  const inputY = y + h / 2;
+  const inputY = y + scaledH / 2;
   
   return (
     <g>
       {/* Nombre arriba mostrando valor */}
       <text 
-        x={x + w / 2} 
+        x={x + scaledW / 2} 
         y={y - 8} 
-        fontSize={12} 
+        fontSize={12 * scaleFactor} 
         fill="var(--theme-text)"
         textAnchor="middle"
         fontWeight="600"
@@ -183,8 +192,8 @@ export function SvgOutput({ x, y, w = 80, h = 46, label = "Y", value }) {
       <rect 
         x={x} 
         y={y} 
-        width={w} 
-        height={h} 
+        width={scaledW} 
+        height={scaledH} 
         rx={10} 
         fill="var(--theme-circuit-gate)" 
         stroke="var(--theme-circuit-gate-border)" 
@@ -194,7 +203,7 @@ export function SvgOutput({ x, y, w = 80, h = 46, label = "Y", value }) {
       
       {/* Indicador de elemento fijo */}
       <rect 
-        x={x + w - 8} 
+        x={x + scaledW - 8} 
         y={y + 2} 
         width={6} 
         height={6} 
@@ -205,17 +214,17 @@ export function SvgOutput({ x, y, w = 80, h = 46, label = "Y", value }) {
       
       {/* LED Indicator */}
       <circle 
-        cx={x + w / 2} 
-        cy={y + h / 2} 
-        r={12} 
+        cx={x + scaledW / 2} 
+        cy={y + scaledH / 2} 
+        r={12 * scaleFactor} 
         fill={value ? "var(--theme-circuit-wire-active)" : "var(--theme-background-tertiary)"} 
         stroke="var(--theme-circuit-gate-border)" 
         strokeWidth={2}
       />
       <circle 
-        cx={x + w / 2} 
-        cy={y + h / 2} 
-        r={8} 
+        cx={x + scaledW / 2} 
+        cy={y + scaledH / 2} 
+        r={8 * scaleFactor} 
         fill={value ? "var(--theme-accent)" : "var(--theme-background-secondary)"} 
       />
     </g>
@@ -225,15 +234,18 @@ export function SvgOutput({ x, y, w = 80, h = 46, label = "Y", value }) {
 /**
  * Componente NOT Gate - Puerta lógica NOT visual
  */
-export function SvgNOT({ x, y, w = 80, h = 50, label = "NOT", activeOut }) {
+export function SvgNOT({ x, y, w = 75, h = 48, label = "NOT", activeOut, scaleFactor = 1 }) {
+  // Usar directamente el factor de escala pasado como prop
+  const scaledW = w * scaleFactor;
+  const scaledH = h * scaleFactor;
   // Triángulo con punta hacia la derecha y burbuja de negación
-  const points = `${x},${y} ${x},${y + h} ${x + w * 0.8},${y + h/2}`;
-  const bubbleX = x + w * 0.8 + 6;
-  const bubbleY = y + h / 2;
+  const points = `${x},${y} ${x},${y + scaledH} ${x + scaledW * 0.8},${y + scaledH/2}`;
+  const bubbleX = x + scaledW * 0.8 + 6;
+  const bubbleY = y + scaledH / 2;
   const inputX = x;
-  const inputY = y + h / 2;
-  const outX = x + w + 14;
-  const outY = y + h / 2;
+  const inputY = y + scaledH / 2;
+  const outX = x + scaledW + 14;
+  const outY = y + scaledH / 2;
 
   return (
     <g>
@@ -265,9 +277,9 @@ export function SvgNOT({ x, y, w = 80, h = 50, label = "NOT", activeOut }) {
       />
       
       <text 
-        x={x + w * 0.3} 
-        y={y + h / 2 + 4} 
-        fontSize={10} 
+        x={x + scaledW * 0.3} 
+        y={y + scaledH / 2 + 4} 
+        fontSize={10 * scaleFactor} 
         fill="var(--theme-text-secondary)" 
         textAnchor="middle"
       >
@@ -292,15 +304,18 @@ export function SvgNOT({ x, y, w = 80, h = 50, label = "NOT", activeOut }) {
 /**
  * Componente AND Gate - Puerta lógica AND visual
  */
-export function SvgAND({ x, y, w = 90, h = 60, label = "AND", activeOut }) {
+export function SvgAND({ x, y, w = 85, h = 55, label = "AND", activeOut, scaleFactor = 1 }) {
+  // Usar directamente el factor de escala pasado como prop
+  const scaledW = w * scaleFactor;
+  const scaledH = h * scaleFactor;
   // Cuerpo tipo AND sin burbuja
-  const pathBody = `M ${x} ${y} h ${w * 0.6} c ${w * 0.2} 0, ${w * 0.2} ${h}, 0 ${h} h ${-w * 0.6} z`;
+  const pathBody = `M ${x} ${y} h ${scaledW * 0.6} c ${scaledW * 0.2} 0, ${scaledW * 0.2} ${scaledH}, 0 ${scaledH} h ${-scaledW * 0.6} z`;
   const input1X = x;
-  const input1Y = y + h * 0.3;
+  const input1Y = y + scaledH * 0.3;
   const input2X = x;
-  const input2Y = y + h * 0.7;
-  const outX = x + w;
-  const outY = y + h / 2;
+  const input2Y = y + scaledH * 0.7;
+  const outX = x + scaledW;
+  const outY = y + scaledH / 2;
 
   return (
     <g>
@@ -324,9 +339,9 @@ export function SvgAND({ x, y, w = 90, h = 60, label = "AND", activeOut }) {
       />
       
       <text 
-        x={x + w * 0.3} 
-        y={y + h / 2 + 4} 
-        fontSize={10} 
+        x={x + scaledW * 0.3} 
+        y={y + scaledH / 2 + 4} 
+        fontSize={10 * scaleFactor} 
         fill="var(--theme-text-secondary)" 
         textAnchor="middle"
       >
@@ -351,19 +366,22 @@ export function SvgAND({ x, y, w = 90, h = 60, label = "AND", activeOut }) {
 /**
  * Componente OR Gate - Puerta lógica OR visual
  */
-export function SvgOR({ x, y, w = 90, h = 60, label = "OR", activeOut }) {
+export function SvgOR({ x, y, w = 85, h = 55, label = "OR", activeOut, scaleFactor = 1 }) {
+  // Usar directamente el factor de escala pasado como prop
+  const scaledW = w * scaleFactor;
+  const scaledH = h * scaleFactor;
   // Forma curva característica de OR como en la imagen 3
   const pathBody = `M ${x + 10} ${y} 
-                   Q ${x + w * 0.7} ${y} ${x + w - 5} ${y + h * 0.5} 
-                   Q ${x + w * 0.7} ${y + h} ${x + 10} ${y + h} 
-                   Q ${x + w * 0.3} ${y + h * 0.5} ${x + 10} ${y} z`;
+                   Q ${x + scaledW * 0.7} ${y} ${x + scaledW - 5} ${y + scaledH * 0.5} 
+                   Q ${x + scaledW * 0.7} ${y + scaledH} ${x + 10} ${y + scaledH} 
+                   Q ${x + scaledW * 0.3} ${y + scaledH * 0.5} ${x + 10} ${y} z`;
   
   const input1X = x;
-  const input1Y = y + h * 0.3;
+  const input1Y = y + scaledH * 0.3;
   const input2X = x;
-  const input2Y = y + h * 0.7;
-  const outX = x + w;
-  const outY = y + h / 2;
+  const input2Y = y + scaledH * 0.7;
+  const outX = x + scaledW;
+  const outY = y + scaledH / 2;
 
   return (
     <g>
@@ -387,9 +405,9 @@ export function SvgOR({ x, y, w = 90, h = 60, label = "OR", activeOut }) {
       />
       
       <text 
-        x={x + w * 0.4} 
-        y={y + h / 2 + 4} 
-        fontSize={10} 
+        x={x + scaledW * 0.4} 
+        y={y + scaledH / 2 + 4} 
+        fontSize={10 * scaleFactor} 
         fill="var(--theme-text-secondary)" 
         textAnchor="middle"
       >
@@ -414,23 +432,27 @@ export function SvgOR({ x, y, w = 90, h = 60, label = "OR", activeOut }) {
 /**
  * Componente Constant - Valor constante
  */
-export function SvgConst({ x, y, w = 60, h = 36, value = true }) {
+export function SvgConst({ x, y, w = 55, h = 35, value = true, scaleFactor = 1 }) {
+  // Usar directamente el factor de escala pasado como prop
+  const scaledW = w * scaleFactor;
+  const scaledH = h * scaleFactor;
+  
   return (
     <g>
       <rect 
         x={x} 
         y={y} 
-        width={w} 
-        height={h} 
+        width={scaledW} 
+        height={scaledH} 
         rx={8} 
         fill="var(--theme-circuit-gate)" 
         stroke="var(--theme-circuit-gate-border)" 
         strokeWidth={2} 
       />
       <text 
-        x={x + w / 2} 
-        y={y + h / 2 + 5} 
-        fontSize={14} 
+        x={x + scaledW / 2} 
+        y={y + scaledH / 2 + 5} 
+        fontSize={14 * scaleFactor} 
         fill="var(--theme-text-secondary)" 
         textAnchor="middle"
       >

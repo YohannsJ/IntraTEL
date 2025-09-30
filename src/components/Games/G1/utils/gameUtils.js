@@ -40,6 +40,9 @@ export const NODE_TYPES = {
   NOT: "NOT",
   AND: "AND",
   OR: "OR",
+  NOR: "NOR",
+  XOR: "XOR",
+  XNOR: "XNOR",
   OUTPUT: "OUTPUT",
   CONST: "CONST",
 };
@@ -101,11 +104,14 @@ export function getPortPos(node, port, scaleFactor = 1) {
     }
     case NODE_TYPES.NAND:
     case NODE_TYPES.AND:
-    case NODE_TYPES.OR: {
+    case NODE_TYPES.OR:
+    case NODE_TYPES.NOR:
+    case NODE_TYPES.XOR:
+    case NODE_TYPES.XNOR: {
       const w = 85 * scaleFactor, h = 55 * scaleFactor;
       if (port === "out") return { x: node.x + w + 8, y: node.y + h / 2 };
-      if (port === "in0") return { x: node.x, y: node.y + h * 0.33 };
-      if (port === "in1") return { x: node.x, y: node.y + h * 0.67 };
+      if (port === "in0") return { x: node.x, y: node.y + h * 0.25 };
+      if (port === "in1") return { x: node.x, y: node.y + h * 0.75 };
       break;
     }
   }
@@ -118,7 +124,8 @@ export function getPortPos(node, port, scaleFactor = 1) {
  * @returns {string[]} Array de nombres de puertos de entrada
  */
 export function inputPortsFor(node) {
-  if (node.type === NODE_TYPES.NAND || node.type === NODE_TYPES.AND || node.type === NODE_TYPES.OR) {
+  if (node.type === NODE_TYPES.NAND || node.type === NODE_TYPES.AND || node.type === NODE_TYPES.OR ||
+      node.type === NODE_TYPES.NOR || node.type === NODE_TYPES.XOR || node.type === NODE_TYPES.XNOR) {
     return ["in0", "in1"];
   }
   if (node.type === NODE_TYPES.NOT || node.type === NODE_TYPES.OUTPUT) {
@@ -138,6 +145,9 @@ export function hasOutput(node) {
          node.type === NODE_TYPES.NOT ||
          node.type === NODE_TYPES.AND ||
          node.type === NODE_TYPES.OR ||
+         node.type === NODE_TYPES.NOR ||
+         node.type === NODE_TYPES.XOR ||
+         node.type === NODE_TYPES.XNOR ||
          node.type === NODE_TYPES.CONST;
 }
 

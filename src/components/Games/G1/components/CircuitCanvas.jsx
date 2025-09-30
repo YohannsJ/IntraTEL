@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { NODE_TYPES, getPortPos, isPointInNode, getNodeDimensions } from '../utils/gameUtils.js';
 import { Port, Wire } from '../svg/ConnectionComponents.jsx';
-import { SvgNAND, SvgNOT, SvgAND, SvgOR, SvgInput, SvgOutput, SvgConst } from '../svg/LogicGates.jsx';
+import { SvgNAND, SvgNOT, SvgAND, SvgOR, SvgNOR, SvgXOR, SvgXNOR, SvgInput, SvgOutput, SvgConst } from '../svg/LogicGates.jsx';
 import { ContextMenu } from './ContextMenu.jsx';
 
 /**
@@ -488,6 +488,132 @@ export function CircuitCanvas({
             {node.type === NODE_TYPES.OR && (
               <>
                 <SvgOR
+                  x={node.x}
+                  y={node.y}
+                  label={node.label}
+                  activeOut={valueOut.get(node.id) === true}
+                  scaleFactor={scaleFactor}
+                />
+                <Port
+                  x={getPortPos(node, "in0", scaleFactor).x}
+                  y={getPortPos(node, "in0", scaleFactor).y}
+                  active={isSelectedIn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "in0", "in");
+                  }}
+                  title={`${node.label}.in0`}
+                />
+                <Port
+                  x={getPortPos(node, "in1", scaleFactor).x}
+                  y={getPortPos(node, "in1", scaleFactor).y}
+                  active={isSelectedIn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "in1", "in");
+                  }}
+                  title={`${node.label}.in1`}
+                />
+                <Port
+                  x={getPortPos(node, "out", scaleFactor).x}
+                  y={getPortPos(node, "out", scaleFactor).y}
+                  active={isSelectedOut}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "out", "out");
+                  }}
+                  title={`${node.label}.out`}
+                />
+              </>
+            )}
+
+            {node.type === NODE_TYPES.NOR && (
+              <>
+                <SvgNOR
+                  x={node.x}
+                  y={node.y}
+                  label={node.label}
+                  activeOut={valueOut.get(node.id) === true}
+                  scaleFactor={scaleFactor}
+                />
+                <Port
+                  x={getPortPos(node, "in0", scaleFactor).x}
+                  y={getPortPos(node, "in0", scaleFactor).y}
+                  active={isSelectedIn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "in0", "in");
+                  }}
+                  title={`${node.label}.in0`}
+                />
+                <Port
+                  x={getPortPos(node, "in1", scaleFactor).x}
+                  y={getPortPos(node, "in1", scaleFactor).y}
+                  active={isSelectedIn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "in1", "in");
+                  }}
+                  title={`${node.label}.in1`}
+                />
+                <Port
+                  x={getPortPos(node, "out", scaleFactor).x}
+                  y={getPortPos(node, "out", scaleFactor).y}
+                  active={isSelectedOut}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "out", "out");
+                  }}
+                  title={`${node.label}.out`}
+                />
+              </>
+            )}
+
+            {node.type === NODE_TYPES.XOR && (
+              <>
+                <SvgXOR
+                  x={node.x}
+                  y={node.y}
+                  label={node.label}
+                  activeOut={valueOut.get(node.id) === true}
+                  scaleFactor={scaleFactor}
+                />
+                <Port
+                  x={getPortPos(node, "in0", scaleFactor).x}
+                  y={getPortPos(node, "in0", scaleFactor).y}
+                  active={isSelectedIn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "in0", "in");
+                  }}
+                  title={`${node.label}.in0`}
+                />
+                <Port
+                  x={getPortPos(node, "in1", scaleFactor).x}
+                  y={getPortPos(node, "in1", scaleFactor).y}
+                  active={isSelectedIn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "in1", "in");
+                  }}
+                  title={`${node.label}.in1`}
+                />
+                <Port
+                  x={getPortPos(node, "out", scaleFactor).x}
+                  y={getPortPos(node, "out", scaleFactor).y}
+                  active={isSelectedOut}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPortClick(node, "out", "out");
+                  }}
+                  title={`${node.label}.out`}
+                />
+              </>
+            )}
+
+            {node.type === NODE_TYPES.XNOR && (
+              <>
+                <SvgXNOR
                   x={node.x}
                   y={node.y}
                   label={node.label}

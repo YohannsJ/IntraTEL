@@ -529,15 +529,16 @@
   background: linear-gradient(135deg, var(--theme-background-secondary), rgba(30, 41, 59, 0.8));
   border: 2px solid var(--theme-border);
   border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.rem;
   color: var(--theme-text);
+  text-align: center;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-width: 180px;
-  max-width: 250px;
+  /* min-width: 180px;
+  max-width: 250px; */
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6,9 12,15 18,9'></polyline></svg>");
   background-repeat: no-repeat;
@@ -596,6 +597,7 @@
   /* Ocultar el botón modo sandbox en móvil */
   .leftControls .controlButton {
     display: none;
+    text-align: center;
   }
 }
 
@@ -790,7 +792,7 @@
 
 @media (min-width: 768px) {
   .circuitPanel {
-    min-height: 450px; /* Altura apropiada para escritorio */
+    min-height: 300px; /* Altura apropiada para escritorio */
     max-height: 650px; /* Altura máxima para escritorio */
   }
 }
@@ -904,6 +906,7 @@
 @media (min-width: 768px) {
   .sidePanel {
     grid-column: span 1;
+    gap: 0cm;
   }
 }
 
@@ -990,7 +993,11 @@
   .controlButton,
   .emojiButton,
   .puzzleSelect {
-    min-height: 48px;
+    min-height: 30px;
+    min-width: 10px;
+    text-align: center;
+    padding: 0.5rem 2rem;
+    font-size: 0.9rem;
   }
   
   /* Feedback visual mejorado para elementos táctiles */

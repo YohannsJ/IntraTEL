@@ -376,8 +376,27 @@ export default function NandGame() {
 
   // Agregar nuevo nodo
   const addNode = useCallback((newNode) => {
+    // Generar nombre único para el nodo en modo sandbox
+    if (mode === 'sandbox' && newNode.isExtra) {
+      const baseLabel = newNode.type;
+      const existingLabels = nodes
+        .filter(node => node.type === newNode.type)
+        .map(node => node.label);
+      
+      let counter = 1;
+      let uniqueLabel = baseLabel;
+      
+      // Buscar el próximo número disponible
+      while (existingLabels.includes(uniqueLabel)) {
+        counter++;
+        uniqueLabel = `${baseLabel}_${counter}`;
+      }
+      
+      newNode.label = uniqueLabel;
+    }
+    
     setNodes(prev => [...prev, newNode]);
-  }, []);
+  }, [nodes, mode]);
 
   // Mover nodo
   const moveNode = useCallback((nodeId, newX, newY) => {
@@ -674,10 +693,10 @@ export default function NandGame() {
               >
                 {puzzles.map((puzzle, index) => {
                   const puzzleNames = {
-                    NOT: "Ejercicio 1 – NOT",
-                    AND: "Ejercicio 2 – AND", 
-                    OR: "Ejercicio 3 – OR",
-                    XOR: "Ejercicio 4 – XOR"
+                    NOT: "E1 NOT",
+                    AND: "E2 AND", 
+                    OR: "E3 OR",
+                    XOR: "E4 XOR"
                   };
                   return (
                     <option key={puzzle.key} value={index}>
@@ -716,13 +735,13 @@ export default function NandGame() {
           <div className={styles.rightControls}>
             {/* Grupo de exportar/importar */}
             <div className={styles.exportImportGroup}>
-              <button
+              {/* <button
                 className={styles.exportImportButton}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 title="Opciones de exportar/importar"
               >
                 📁 Archivos ▼
-              </button>
+              </button> */}
               
               <div className={`${styles.exportImportDropdown} ${dropdownOpen ? styles.open : ''}`}>
                 <button
@@ -770,13 +789,13 @@ export default function NandGame() {
                 </button>
               )}
               
-              <button
+              {/* <button
                 className={`${styles.controlButton} ${styles.dangerButton}`}
                 onClick={clearSavedProgress}
                 title="Elimina todo el progreso guardado y reinicia el juego"
               >
                 🗑️ Limpiar Progreso
-              </button>
+              </button> */}
               
               {mode === 'puzzle' && (
                 <button
@@ -787,17 +806,28 @@ export default function NandGame() {
                 </button>
               )}
             </div>
-
+              {mode === 'puzzle' && (
+                  <button
+                    className={styles.controlButton}
+                    onClick={() => {
+                      resetToPuzzle(puzzleIndex);
+                      setMoreDropdownOpen(false);
+                    }}
+                  >
+                    🔄 Reiniciar
+                  </button>
+                )}
+                
             {/* Grupo de más opciones - solo visible en móviles */}
             <div className={styles.moreGroup}>
-              <button
+              {/* <button
                 className={styles.moreButton}
                 onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
                 title="Más opciones"
               >
                 ⋯
               </button>
-              
+               */}
               <div className={`${styles.moreDropdown} ${moreDropdownOpen ? styles.open : ''}`}>
                 {/* Exportar/Importar en móviles */}
                 <button
@@ -824,17 +854,6 @@ export default function NandGame() {
                 </label>
 
                 {/* Botones ocultos en móviles */}
-                {mode === 'puzzle' && (
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={() => {
-                      resetToPuzzle(puzzleIndex);
-                      setMoreDropdownOpen(false);
-                    }}
-                  >
-                    🔄 Reiniciar
-                  </button>
-                )}
                 
                 <button
                   className={styles.dropdownItem}
@@ -950,12 +969,12 @@ export default function NandGame() {
                     <strong>Probar:</strong> Valida toda la tabla de verdad del ejercicio.
                   </li>
                 )}
-                <li>
+                {/* <li>
                   <strong>💾 Guardado automático:</strong> Tu progreso se guarda automáticamente.
                 </li>
                 <li>
                   <strong>📥📤 Exportar/Importar:</strong> Puedes respaldar tu progreso en archivos.
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
@@ -973,7 +992,7 @@ export default function NandGame() {
 
         {/* Indicador de estado guardado */}
         <div className={styles.saveIndicator}>
-          💾 <span>Estado guardado automáticamente</span>
+          {/* 💾 <span>Estado guardado automáticamente</span> */}
           {solved.NOT || solved.AND || solved.OR || solved.XOR ? (
             <span className={styles.progressBadge}>
               ✅ Progreso: {Object.values(solved).filter(Boolean).length}/4 puzzles completados

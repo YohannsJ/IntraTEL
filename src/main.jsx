@@ -35,7 +35,7 @@ const router = createBrowserRouter([
       { path: 'auth', element: <AuthPage /> },
       { path: 'NandGame', element: <NandGame /> },
       { path: 'Espectro', element: <EspectroGame /> },
-      { path: 'Datos', element: <GestionWorkshop /> }
+      { path: 'Datos', element: <GestionWorkshop /> },
       { path: 'Software', element: <CSSCodeGame /> },
       { 
         path: 'grupos', 

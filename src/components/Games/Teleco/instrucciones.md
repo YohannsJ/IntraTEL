@@ -1,64 +1,83 @@
-# 📊 EspectroGame - Juego de Sintonización de Espectro
+# 📊 EspectroGame - Juego de Sintonización de Espectro Electromagnético
 
 ## 🎯 Descripción del Juego
 
-EspectroGame es un juego educativo diseñado para enseñar conceptos fundamentales de telecomunicaciones a través de la sintonización de espectros de frecuencia. Los jugadores deben ajustar parámetros de señal para alcanzar objetivos específicos mientras observan un espectrograma en tiempo real.
+EspectroGame es un juego educativo interactivo diseñado para enseñar conceptos fundamentales de telecomunicaciones y análisis espectral. Los jugadores deben sintonizar frecuencias específicas, ajustar parámetros de señal y optimizar la calidad de transmisión mientras observan un espectrograma en tiempo real.
 
 ## 🕹️ Cómo Jugar
 
 ### Controles Principales
 
-1. **Frecuencia (MHz)**: Ajusta la frecuencia de la señal objetivo usando el control deslizante
-2. **Potencia (dBm)**: Modifica la potencia de transmisión de la señal
-3. **Ancho de Banda (MHz)**: Controla el ancho del espectro de la señal
-4. **Verificar Sintonización**: Botón para validar si los parámetros son correctos
-5. **Reiniciar**: Limpia el espectrograma y reinicia el juego
+1. **🎛️ Frecuencia (MHz)**: Control deslizante para ajustar la frecuencia de transmisión (600-3000 MHz)
+2. **⚡ Potencia de Señal (dBm)**: Modifica la potencia de transmisión (-10 a +10 dBm)
+3. **📶 Ancho de Banda (MHz)**: Controla el ancho del espectro de la señal (1-40 MHz)
+4. **✅ Verificar Sintonización**: Valida si has alcanzado los objetivos del nivel
+5. **🔄 Reiniciar**: Reinicia el juego completo al nivel 1
+6. **▶️/⏸️ Espectrograma**: Activa/pausa la visualización en tiempo real
 
-### Espectrograma
+### Espectrograma Interactivo
 
 - **Eje X (Horizontal)**: Representa el tiempo (ventana de 15 segundos)
-- **Eje Y (Vertical)**: Representa la frecuencia (0-3000 Hz)
-- **Colores**: Intensidad de la señal (azul = baja intensidad, rojo/amarillo = alta intensidad)
-- **Línea Punteada Blanca**: Indica la frecuencia objetivo que debes sintonizar
+- **Eje Y (Vertical)**: Representa la frecuencia (600-3000 MHz)
+- **Colores**: Intensidad de la señal (azul = baja, verde/amarillo = media, rojo = alta intensidad)
+- **Visualización Tiempo Real**: Muestra cómo tus ajustes afectan la señal instantáneamente
+- **Ruido de Fondo**: Nivel de -90 dBm para simular condiciones reales
 
 ## 🎮 Mecánica del Juego
 
-### Objetivo por Nivel
+### Objetivos por Nivel
 
-Cada nivel presenta objetivos específicos que debes cumplir simultáneamente:
+Cada nivel presenta desafíos progresivos que debes cumplir simultáneamente:
 
-1. **Frecuencia**: Sintonizar la frecuencia exacta mostrada como objetivo
-2. **Potencia**: Ajustar la potencia al valor requerido (varía por nivel)
-3. **Ancho de Banda**: Configurar el ancho de banda correcto (varía por nivel)
-4. **SNR (Signal-to-Noise Ratio)**: Mantener una relación señal-ruido ≥ 20 dB
+🎯 **Objetivos Principales:**
 
-### Progresión de Niveles
+1. **Sintonización de Frecuencia**: Ajusta la frecuencia exacta mostrada como objetivo
+2. **Control de Potencia**: Configura la potencia al valor requerido (aleatorio por nivel)
+3. **Optimización de Ancho de Banda**: Ajusta el ancho de banda correcto (aleatorio por nivel)  
+4. **Calidad SNR**: Mantiene una relación señal-ruido ≥ 20 dB para óptima transmisión
 
-**Nivel 1**: Enfoque en frecuencia y conceptos básicos
-- Frecuencia objetivo: Banda WiFi 2.4 GHz
-- Objetivos: Frecuencia + Ancho de banda + Potencia aleatoria
+### Progresión de Niveles (3 Niveles)
 
-**Nivel 2**: Mayor complejidad en múltiples parámetros
-- Frecuencia objetivo: Banda Bluetooth + WiFi
-- Objetivos: Frecuencia + Ancho de banda + Potencia aleatoria
+**Nivel 1**: WiFi 2.4 GHz - Conceptos básicos de sintonización
 
-**Nivel 3**: Máxima dificultad con precisión extrema
-- Frecuencia objetivo: Banda GSM 900
-- Objetivos: Frecuencia + Ancho de banda + Potencia aleatoria
+**Nivel 2**: Bluetooth + WiFi (2.45 GHz) - Complejidad intermedia
 
-### Sistema de Puntuación
+**Nivel 3**: GSM 900 MHz - Maestría en telecomunicaciones
 
-- **Puntos Base**: 100 puntos por nivel completado
+🏆 **Cada nivel tiene objetivos aleatorios** para mayor rejugabilidad
+
+### Sistema de Puntuación y Recompensas
+
+🏅 **Puntuación:**
+
+- **Puntos Base**: 100 puntos por nivel completado  
 - **Penalización**: -2 puntos por cada MHz de error en frecuencia
-- **FLAG**: Al completar cada nivel recibes un FLAG único: `FLAG{SPECTRUM_MASTER_L[NIVEL]_[PUNTUACIÓN]}`
+- **Bonus de Precisión**: +10 puntos por SNR > 25 dB
+- **Bonus de Velocidad**: +20 puntos por completar en < 30 segundos
+
+🏴 **FLAGS Únicas**: `FLAG{SPECTRUM_MASTER_L[NIVEL]}`
+
+🏆 **Sistema de Logros**: 10 logros desbloqueables incluyendo:
+
+- Primera Victoria.
+- Corredor de Velocidad.
+- Sintonización Perfecta.
+- Maestro Nivel 1.
+- Maestro Nivel 2.
+- Maestro Nivel 3.
+- Completista.
+- Experto en Precisión.
+- Eficiencia.
+- Maestro de Rachas.
 
 ## ⚡ Consejos y Estrategias
 
-1. **Observa el Espectrograma**: La visualización en tiempo real te ayuda a entender cómo tus ajustes afectan la señal
-2. **Ajusta Gradualmente**: Pequeños cambios son más precisos que grandes saltos
-3. **Prioriza la SNR**: Asegúrate de mantener una buena relación señal-ruido
-4. **Usa la Línea Guía**: La línea punteada blanca te muestra exactamente dónde debe estar tu señal
-5. **Verifica Frecuentemente**: Usa el botón "Verificar Sintonización" para obtener retroalimentación
+1. **👀 Observa el Espectrograma**: La visualización en tiempo real muestra el impacto inmediato de tus ajustes
+2. **🐌 Ajusta Gradualmente**: Movimientos pequeños y precisos son mejor que saltos grandes
+3. **📶 Prioriza la SNR**: Mantén siempre la relación señal-ruido por encima de 20 dB
+4. **🎯 Usa el Feedback Visual**: El círculo de estado cambia de color según tu precisión
+5. **💡 Solicita Pistas**: Si fallas, el juego te mostrará pistas específicas para mejorar
+6. **⏱️ Optimiza Tiempo**: Los logros de velocidad requieren completar niveles en menos de 30s
 
 ## 🏛️ Requisitos para Desbloquear TELECO
 
@@ -86,23 +105,25 @@ El pilar de TELECO representa el dominio de conceptos avanzados de telecomunicac
 
 ## 🎓 Conceptos Educativos
 
-### Qué Aprenderás
+### 🎓 Qué Aprenderás
 
-- **Espectro de Frecuencias**: Cómo las señales ocupan diferentes bandas
-- **Análisis Espectral**: Interpretación de espectrogramas reales
-- **Parámetros de RF**: Frecuencia, potencia, ancho de banda y su interrelación
-- **Calidad de Señal**: SNR y su impacto en las comunicaciones
-- **Bandas de Telecomunicaciones**: WiFi, Bluetooth, GSM, LTE, 5G
+**Conceptos Fundamentales:**
 
-### Aplicaciones Reales
+- 🌊 **Espectro de Frecuencias**: Cómo las señales ocupan bandas específicas
+- 📊 **Análisis Espectral**: Interpretación de espectrogramas profesionales
+- ⚙️ **Parámetros RF**: Frecuencia, potencia, ancho de banda y su sinergia
+- 📶 **Calidad de Señal**: SNR, ruido y su impacto en comunicaciones
+- 📡 **Bandas de Telecomunicaciones**: WiFi, Bluetooth, GSM, LTE, 5G
 
-- Diseño de sistemas de comunicación
-- Optimización de redes inalámbricas
-- Análisis de interferencias
-- Certificación de equipos RF
-- Planificación de espectro radioeléctrico
+**Aplicaciones Profesionales:**
 
-## 🚀 ¡Comienza tu Aventura!
+- 🚀 Diseño de sistemas de comunicación avanzados
+- 🌐 Optimización de redes inalámbricas
+- 🔍 Análisis y mitigación de interferencias
+- 📜 Certificación de equipos RF
+- 📊 Planificación del espectro radioeléctrico
+
+## 🚀 Comienza tu Aventura
 
 1. Haz clic en "▶️ Iniciar Juego"
 2. Observa los objetivos del nivel actual
@@ -110,4 +131,4 @@ El pilar de TELECO representa el dominio de conceptos avanzados de telecomunicac
 4. Verifica tu sintonización
 5. ¡Avanza al siguiente nivel!
 
-**¡Demuestra tu maestría en el espectro y desbloquea el poder del pilar de TELECO!** 📡✨
+**Demuestra tu maestría en el espectro y desbloquea el poder del pilar de TELECO** 📡✨

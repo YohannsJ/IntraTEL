@@ -90,6 +90,51 @@ export function evaluateCircuit(nodes, connections, manualOverrides = {}) {
         }
       }
       
+      if (n.type === NODE_TYPES.NOR) {
+        const key0 = `${n.id}:in0`;
+        const key1 = `${n.id}:in1`;
+        const src0 = incoming.get(key0);
+        const src1 = incoming.get(key1);
+        const a = src0 ? valueOut.get(src0.fromId) : undefined;
+        const b = src1 ? valueOut.get(src1.fromId) : undefined;
+        const y = a === undefined || b === undefined ? undefined : !(a || b);
+        
+        if (valueOut.get(n.id) !== y) {
+          valueOut.set(n.id, y);
+          changed = true;
+        }
+      }
+      
+      if (n.type === NODE_TYPES.XOR) {
+        const key0 = `${n.id}:in0`;
+        const key1 = `${n.id}:in1`;
+        const src0 = incoming.get(key0);
+        const src1 = incoming.get(key1);
+        const a = src0 ? valueOut.get(src0.fromId) : undefined;
+        const b = src1 ? valueOut.get(src1.fromId) : undefined;
+        const y = a === undefined || b === undefined ? undefined : (a !== b);
+        
+        if (valueOut.get(n.id) !== y) {
+          valueOut.set(n.id, y);
+          changed = true;
+        }
+      }
+      
+      if (n.type === NODE_TYPES.XNOR) {
+        const key0 = `${n.id}:in0`;
+        const key1 = `${n.id}:in1`;
+        const src0 = incoming.get(key0);
+        const src1 = incoming.get(key1);
+        const a = src0 ? valueOut.get(src0.fromId) : undefined;
+        const b = src1 ? valueOut.get(src1.fromId) : undefined;
+        const y = a === undefined || b === undefined ? undefined : (a === b);
+        
+        if (valueOut.get(n.id) !== y) {
+          valueOut.set(n.id, y);
+          changed = true;
+        }
+      }
+      
       if (n.type === NODE_TYPES.OUTPUT) {
         const key = `${n.id}:in`;
         const src = incoming.get(key);

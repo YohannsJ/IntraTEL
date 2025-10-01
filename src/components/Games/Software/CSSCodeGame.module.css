@@ -1,0 +1,135 @@
+/* CSS Code Game Main Styles */
+
+.cssCodeGame {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 1rem;
+}
+
+.gameContent {
+  display: grid;
+  grid-template-columns: 300px 1fr 400px;
+  gap: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: calc(100vh - 200px);
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel {
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.leftPanel {
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.centerPanel {
+  min-height: 0; /* Permite que flex-child se contraiga */
+}
+
+.rightPanel {
+  padding: 1rem;
+}
+
+/* Notificaciones */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 1000;
+  max-width: 400px;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.notification.info {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.notification.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.notification.error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.notification.flag {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  font-family: 'Courier New', monospace;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .gameContent {
+    grid-template-columns: 280px 1fr 350px;
+  }
+}
+
+@media (max-width: 992px) {
+  .gameContent {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    height: auto;
+    gap: 1rem;
+  }
+  
+  .leftPanel {
+    order: 1;
+  }
+  
+  .rightPanel {
+    order: 2;
+  }
+  
+  .centerPanel {
+    order: 3;
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cssCodeGame {
+    padding: 0.5rem;
+  }
+  
+  .gameContent {
+    gap: 0.5rem;
+  }
+  
+  .leftPanel,
+  .centerPanel,
+  .rightPanel {
+    padding: 0.75rem;
+  }
+}

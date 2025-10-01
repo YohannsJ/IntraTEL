@@ -40,6 +40,22 @@
   grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   gap: 0.5rem;
   margin-bottom: 1rem;
+  width: 100%;
+}
+
+/* Responsive grid para móviles */
+@media (max-width: 768px) {
+  .gateGrid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gateGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
 }
 
 .gateButton {
@@ -55,6 +71,26 @@
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 60px;
+  /* Mejoras para dispositivos táctiles */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Tamaños responsivos para botones */
+@media (max-width: 768px) {
+  .gateButton {
+    min-height: 70px;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gateButton {
+    min-height: 65px;
+    padding: 0.5rem;
+  }
 }
 
 .gateButton:hover {
@@ -65,6 +101,23 @@
 
 .gateButton:active {
   transform: translateY(0);
+  background-color: var(--theme-primary);
+  border-color: var(--theme-primary);
+  color: white;
+}
+
+/* Estados específicos para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .gateButton:hover {
+    transform: none; /* Desabilitar transformación hover en táctil */
+  }
+  
+  .gateButton:active {
+    transform: scale(0.95);
+    background-color: var(--theme-primary);
+    border-color: var(--theme-primary);
+    color: white;
+  }
 }
 
 .gateIcon {

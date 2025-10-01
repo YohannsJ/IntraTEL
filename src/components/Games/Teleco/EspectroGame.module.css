@@ -1,45 +1,256 @@
 .gameContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 35%, #475569 100%);
   color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Layout principal con grid de 3 columnas para desktop */
+.gameLayout {
+  display: grid;
+  grid-template-columns: 300px 1fr 350px;
+  gap: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: calc(100vh - 140px);
+  min-height: 600px;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel {
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.leftPanel {
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.centerPanel {
+  min-height: 0;
+  padding: 1rem;
+}
+
+.rightPanel {
+  padding: 1rem;
+}
+
+.gameContainer::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+  animation: backgroundShift 20s ease-in-out infinite alternate;
+  z-index: -1;
+}
+
+@keyframes backgroundShift {
+  0% { transform: translateX(-10px) translateY(-5px); }
+  100% { transform: translateX(10px) translateY(5px); }
 }
 
 .header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto 1rem auto;
 }
 
 .header h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.titleEmoji {
+  font-size: 2.5rem;
+  filter: none;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.titleText {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  0% { 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transform: scale(1);
+  }
+  100% { 
+    text-shadow: 2px 2px 20px rgba(59,130,246,0.4), 0 0 30px rgba(139,92,246,0.3);
+    transform: scale(1.02);
+  }
 }
 
 .header p {
   font-size: 1.2rem;
   opacity: 0.9;
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
 }
 
 .gameStats {
   display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gameStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.gameStatsGrid .stat {
+  margin: 0;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.gameArea {
+  display: contents;
+}
+
+.controlsPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.controlsHeader {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.controlsTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+}
+
+.controlsContent {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.spectrumPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.spectrumHeader {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.spectrumTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+}
+
+.spectrumContent {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .stat {
   background: rgba(255, 255, 255, 0.1);
   padding: 15px 25px;
   border-radius: 15px;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
   min-width: 120px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.stat:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border-color: rgba(168, 237, 234, 0.5);
+}
+
+.stat:hover::before {
+  left: 100%;
 }
 
 .stat label {
@@ -47,11 +258,15 @@
   font-size: 0.9rem;
   opacity: 0.8;
   margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .stat span {
   font-size: 1.5rem;
   font-weight: bold;
+  display: block;
+  transition: all 0.3s ease;
 }
 
 .good {
@@ -76,8 +291,37 @@
   border-radius: 25px;
   cursor: pointer;
   transition: all 0.3s ease;
-  transition: all 0.3s ease;
   box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.startButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.startButton:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  background: linear-gradient(45deg, #ff5252, #d84315);
+}
+
+.startButton:hover::before {
+  left: 100%;
+}
+
+.startButton:active {
+  transform: translateY(-1px) scale(1.01);
 }
 
 .stopButton:hover {
@@ -186,7 +430,7 @@
 .spectrumDisplay {
   position: relative;
   height: 150px;
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
+  background: linear-gradient(to bottom, #0f172a, #1e293b);
   border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
@@ -266,8 +510,72 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 25px;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 1400px;
+  margin: 1rem auto;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .gameLayout {
+    grid-template-columns: 280px 1fr 320px;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .gameLayout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    height: auto;
+    min-height: auto;
+  }
+  
+  .leftPanel,
+  .rightPanel {
+    order: 2;
+  }
+  
+  .centerPanel {
+    order: 1;
+  }
+  
+  .gameStats {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .gameStatsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .gameContainer {
+    padding: 0.5rem;
+  }
+  
+  .header {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .gameLayout {
+    gap: 0.5rem;
+  }
+  
+  .gameStatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .theory {
+    padding: 1rem;
+    margin: 0.5rem auto;
+  }
 }
 
 .theory h4 {
@@ -291,6 +599,442 @@
 
 .theory strong {
   color: #4ade80;
+}
+
+/* Nuevos estilos para mejoras */
+.achievementsPanel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  max-width: 300px;
+  z-index: 1000;
+  transform: translateX(320px);
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.achievementsPanel h3 {
+  margin: 0 0 15px 0;
+  color: #4ade80;
+  text-align: center;
+}
+
+.toggleButton {
+  background: linear-gradient(45deg, #4ade80, #22d3ee);
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.toggleButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+}
+
+.spectrogramControls {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.achievementsPanel.show {
+  transform: translateX(0);
+}
+
+.achievementItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.achievementItem.unlocked {
+  background: linear-gradient(45deg, #4ade80, #22d3ee);
+  color: #000;
+  animation: achievementPulse 0.6s ease;
+}
+
+@keyframes achievementPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.tutorial {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  max-width: 400px;
+  z-index: 1001;
+  border: 2px solid #4ade80;
+  animation: tutorialSlideIn 0.5s ease;
+}
+
+@keyframes tutorialSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tutorialArrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #4ade80;
+}
+
+.particles {
+  position: absolute;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: particleFloat 2s ease-out forwards;
+}
+
+@keyframes particleFloat {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(0);
+  }
+}
+
+.levelTransition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #334155, #475569);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: levelTransitionAnim 3s ease-in-out;
+}
+
+@keyframes levelTransitionAnim {
+  0% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.2); }
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(45deg, #4ade80, #22d3ee);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  animation: progressGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes progressGlow {
+  0% { box-shadow: 0 0 5px #4ade80; }
+  100% { box-shadow: 0 0 20px #4ade80, 0 0 30px #22d3ee; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* Modales mejorados */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.successModal {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  border: 2px solid #4ade80;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.successModal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(74, 222, 128, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(34, 211, 238, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.completionModal {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  border: 3px solid #ffd700;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.completionModal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(255, 105, 180, 0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hintModal {
+  background: rgba(0, 0, 0, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  max-width: 450px;
+  width: 90%;
+  border: 2px solid #ff6b6b;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalTitle {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.modalContent {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+
+.flagDisplay {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #4ade80;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4ade80;
+  letter-spacing: 2px;
+  animation: flagGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes flagGlow {
+  0% { box-shadow: 0 0 10px #4ade80; }
+  100% { box-shadow: 0 0 25px #4ade80, inset 0 0 15px rgba(74, 222, 128, 0.2); }
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+.statCard h4 {
+  margin: 0 0 5px 0;
+  color: #22d3ee;
+  font-size: 0.9rem;
+}
+
+.statCard p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.achievementsList {
+  margin: 20px 0;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.achievementItem2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  margin: 5px 0;
+  background: rgba(74, 222, 128, 0.2);
+  border-radius: 8px;
+  border-left: 4px solid #4ade80;
+  animation: achievementSlide 0.5s ease;
+}
+
+@keyframes achievementSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.modalButtons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.modalButton {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.modalButtonPrimary {
+  background: linear-gradient(45deg, #4ade80, #22d3ee);
+  color: #000;
+}
+
+.modalButtonSecondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.modalButtonDanger {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  color: white;
+}
+
+.modalButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hintItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px;
+  margin: 10px 0;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #ff6b6b;
+}
+
+.hintIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.hintContent h4 {
+  margin: 0 0 5px 0;
+  color: #ff6b6b;
+  font-size: 1rem;
+}
+
+.hintContent p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.hintContent .current {
+  color: #ffd700;
+  font-weight: bold;
 }
 
 /* Responsive design */
@@ -329,5 +1073,20 @@
   .checkButton,
   .resetButton {
     width: 100%;
+  }
+
+  .achievementsPanel {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
+    max-width: 100%;
+    margin: 20px 0;
+  }
+
+  .tutorial {
+    position: relative;
+    max-width: 100%;
+    margin: 20px 0;
   }
 }

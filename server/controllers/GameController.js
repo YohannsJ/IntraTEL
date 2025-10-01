@@ -1,6 +1,32 @@
 import GameProgress from '../models/GameProgress.js';
+import { getUserAchievements, addUserAchievements } from '../models/AchievementsStore.js';
 
 class GameController {
+  // Obtener logros en memoria del usuario actual
+  static async getMyAchievements(req, res) {
+    try {
+      const achievements = getUserAchievements(req.user.id);
+      return res.json({ success: true, data: { achievements } });
+    } catch (error) {
+      console.error('Error obteniendo logros:', error);
+      return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+  }
+
+  // Agregar/actualizar logros del usuario actual
+  static async saveMyAchievements(req, res) {
+    try {
+      const { achievements } = req.body;
+      if (!Array.isArray(achievements)) {
+        return res.status(400).json({ success: false, message: 'Formato inválido: achievements debe ser un array' });
+      }
+      const merged = addUserAchievements(req.user.id, achievements);
+      return res.json({ success: true, message: 'Logros actualizados', data: { achievements: merged } });
+    } catch (error) {
+      console.error('Error guardando logros:', error);
+      return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+  }
   // Guardar o actualizar progreso del juego
   static async saveProgress(req, res) {
     try {
@@ -233,7 +259,6 @@ class GameController {
     }
   }
 
-  // Eliminar todo el progreso de un usuario (solo admin del grupo o del sistema)
   static async deleteUserProgress(req, res) {
     try {
       const { userId } = req.params;

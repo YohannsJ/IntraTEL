@@ -100,7 +100,7 @@ const AppLayout = () => {
               <Link to="/Espectro" className={styles.dropdownItem} onClick={handleGameSelection}>
                 📡 Espectro (Teleco)
               </Link>
-              <Link to="/Juego4" className={styles.dropdownItem} onClick={handleGameSelection}>
+              <Link to="/Software" className={styles.dropdownItem} onClick={handleGameSelection}>
                 💻 Código (Software)
               </Link>
               <Link to="/Datos" className={styles.dropdownItem} onClick={handleGameSelection}>

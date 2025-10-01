@@ -8,6 +8,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LandingPage from './layouts/LandingPage.jsx';
 import NandGame from './components/Games/G1/NAND_Layouts.jsx';
 import EspectroGame from './components/Games/Teleco/EspectroGame.jsx';
+import CSSCodeGame from './components/Games/Software/CSSCodeGame.jsx';
 import NotFoundPage from './layouts/404.jsx';
 import Auth from './layouts/Auth.jsx';
 import { DataProvider } from './context/DataContext.jsx';
@@ -34,8 +35,8 @@ const router = createBrowserRouter([
       { path: 'auth', element: <AuthPage /> },
       { path: 'NandGame', element: <NandGame /> },
       { path: 'Espectro', element: <EspectroGame /> },
-      { path: 'Datos', element: <GestionWorkshop /> },
-
+      { path: 'Datos', element: <GestionWorkshop /> }
+      { path: 'Software', element: <CSSCodeGame /> },
       { 
         path: 'grupos', 
         element: (

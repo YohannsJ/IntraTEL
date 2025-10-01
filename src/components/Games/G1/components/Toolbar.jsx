@@ -4,13 +4,21 @@ import styles from './Toolbar.module.css';
 
 /**
  * Componente Toolbar - Barra de herramientas para agregar nuevos elementos
+ * Solo disponible en modo sandbox
  */
 export function Toolbar({ onAddNode, extraNodesCount, mode }) {
+  // Solo mostrar toolbar en modo sandbox
+  if (mode !== 'sandbox') {
+    return null;
+  }
   const gateTypes = [
     { type: NODE_TYPES.NAND, label: 'NAND', icon: '⊼' },
     { type: NODE_TYPES.NOT, label: 'NOT', icon: '¬' },
     { type: NODE_TYPES.AND, label: 'AND', icon: '∧' },
     { type: NODE_TYPES.OR, label: 'OR', icon: '∨' },
+    { type: NODE_TYPES.NOR, label: 'NOR', icon: '⊽' },
+    { type: NODE_TYPES.XOR, label: 'XOR', icon: '⊕' },
+    { type: NODE_TYPES.XNOR, label: 'XNOR', icon: '⊙' },
     { type: NODE_TYPES.INPUT, label: 'INPUT', icon: '⚬' },
     { type: NODE_TYPES.OUTPUT, label: 'OUTPUT', icon: '💡' },
     { type: NODE_TYPES.CONST, label: 'CONST', icon: '1' },
@@ -21,14 +29,13 @@ export function Toolbar({ onAddNode, extraNodesCount, mode }) {
     const x = 30 + Math.random() * 50;
     const y = 30 + Math.random() * 50;
     
-    let nodeCounter = 1;
     const newNode = {
       id: uid(gateType.toLowerCase()),
       type: gateType,
       label: gateType === NODE_TYPES.INPUT ? 'A' : 
              gateType === NODE_TYPES.OUTPUT ? 'Y' : 
              gateType === NODE_TYPES.CONST ? '1' :
-             `${gateType}${nodeCounter++}`,
+             gateType, // El label inicial será el tipo, addNode se encargará de la enumeración
       x,
       y,
       manual: gateType === NODE_TYPES.INPUT ? false : undefined,

@@ -1,0 +1,27 @@
+:root { --panel:#111a2f; --muted:#9fb0d0; --text:#e9f0ff; --ok:#3bd389; --err:#ff6b6b; }
+
+.gameHeader{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin:8px 16px 0;border:1px solid #223;border-radius:12px;background:#0b1530;color:var(--text)}
+.title h1{margin:0 0 4px 0}.title p{margin:0;color:var(--muted)}
+.actions{display:flex;gap:8px}
+.btnGhost{background:transparent;border:1px solid #325;color:#cde;padding:8px 12px;border-radius:10px;cursor:pointer}
+
+.grid{display:grid;grid-template-columns:1.4fr .95fr;gap:16px;padding:12px 16px;max-width:1400px;margin:0 auto}
+.panel{background:var(--panel);border:1px solid #223;border-radius:14px;padding:12px}
+.canvas{height:520px;background:#0a1327;border-color:#1d2b52;overflow:hidden}
+.legend{margin-top:8px;display:flex;gap:18px;color:#c8d7f7}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}.ok{background:var(--ok)}.err{background:var(--err)}
+.status{margin:0;background:#0a1325;border:1px solid #223;border-radius:8px;padding:8px;white-space:pre;color:var(--text)}
+.objectives{margin:.3rem 0 0;padding-left:18px}
+.success{color:var(--ok);font-weight:600}
+
+/* Globales para el SVG y consola */
+:global(.node){cursor:grab}:global(.node:active){cursor:grabbing}
+:global(.dev){fill:#12254d;stroke:#2d468b;stroke-width:2}
+:global(.dev.router){fill:#1b2f6b}:global(.dev.switch){fill:#1b365f}:global(.dev.pc){fill:#173656}
+:global(.label){fill:#d7e6ff;font-size:12px;font-weight:600;pointer-events:none}
+:global(.port){ cursor: crosshair; }         /* puntero de cableo tipo NandGame */
+:global(.link.ghost){ stroke-dasharray:6 6; }/* línea fantasma mientras arrastras */
+:global(.port){fill:#0f1c38;stroke:#35579a;stroke-width:1.5}:global(.port:hover){stroke:#78a7ff}
+:global(.link){stroke:#7fa6ff;stroke-width:3}:global(.link.ok){stroke:var(--ok)}:global(.link.bad){stroke:var(--err)}
+:global(.console-box){background:#070d1b;border:1px solid #223;border-radius:8px;height:240px;overflow:auto;font-family:ui-monospace,Consolas,Menlo,monospace;padding:10px;white-space:pre-wrap;color:var(--text)}
+:global(.console-input){width:100%;padding:10px;background:#0b1430;border:1px solid #24355f;border-radius:8px;color:#eaf2ff;font-family:ui-monospace,Consolas}

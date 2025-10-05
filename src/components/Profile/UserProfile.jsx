@@ -114,10 +114,10 @@ const UserProfile = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const result = await changePassword({
-        currentPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword
-      });
+      const result = await changePassword(
+        passwordData.currentPassword,
+        passwordData.newPassword
+      );
 
       if (result.success) {
         setMessage({ type: 'success', text: 'Contraseña cambiada exitosamente' });

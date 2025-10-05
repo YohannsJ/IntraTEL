@@ -20,5 +20,7 @@ router.get('/groups/:groupId', FlagController.getGroupFlags);
 router.get('/admin/all', FlagController.getAllUserFlags);
 router.post('/admin/create', FlagController.createFlag);
 router.get('/admin/available', FlagController.getAllAvailableFlags);
+router.put('/admin/:flagId', FlagController.updateFlag);
+router.delete('/admin/:flagId', FlagController.deleteFlag);
 
 export default router;

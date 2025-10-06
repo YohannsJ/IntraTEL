@@ -10,6 +10,7 @@ import NandGame from './components/Games/NandGame/NAND_Layouts.jsx';
 import EspectroGame from './components/Games/Teleco/EspectroGame.jsx';
 import CSSCodeGame from './components/Games/Software/CSSCodeGame.jsx';
 import NotFoundPage from './layouts/404.jsx';
+import Network from './components/Games/Network/Network.jsx';
 import Auth from './layouts/Auth.jsx';
 import { DataProvider } from './context/DataContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
       { path: 'Espectro', element: <EspectroGame /> },
       { path: 'Datos', element: <GestionWorkshop /> },
       { path: 'Software', element: <CSSCodeGame /> },
+      { path: 'Redes', element: <Network /> },
       { 
         path: 'grupos', 
         element: (

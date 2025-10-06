@@ -233,6 +233,77 @@ class Flag {
     }
   }
 
+  static async updateFlag(flagId, flagData) {
+    try {
+      const { flagName, flagValue, description, points } = flagData;
+      
+      // Obtener la flag actual para comparar
+      const currentFlag = await this.getFlagById(flagId);
+      if (!currentFlag) {
+        throw new Error('Flag no encontrada');
+      }
+      console.log(flagData)
+      // Actualizar la flag disponible
+      await database.run(
+        `UPDATE available_flags 
+         SET flag_name = ?, flag_value = ?, description = ?, points = ?, 
+             updated_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+        [flagName, flagValue, description, points || 0, flagId]
+      );
+
+      // Si el valor de la flag cambió, crear nuevas entradas en user_flags
+      // para preservar los valores antiguos de los usuarios que ya la tenían
+      if (currentFlag.flag_value !== flagValue) {
+        // Obtener todos los usuarios que ya tienen esta flag
+        const usersWithFlag = await database.all(
+          'SELECT user_id, flag_value, obtained_at FROM user_flags WHERE flag_id = ?',
+          [flagId]
+        );
+
+        if (usersWithFlag.length > 0) {
+          // Para cada usuario, actualizar solo el flag_id referenciado,
+          // pero mantener su flag_value original
+          // Esto significa que seguirán viendo el valor que originalmente enviaron
+          console.log(`Flag ${flagId} valor cambiado de "${currentFlag.flag_value}" a "${flagValue}"`);
+          console.log(`${usersWithFlag.length} usuarios mantienen su valor original`);
+        }
+      }
+
+      return await this.getFlagById(flagId);
+    } catch (error) {
+      throw new Error(`Error actualizando flag: ${error.message}`);
+    }
+  }
+
+  static async deleteFlag(flagId) {
+    try {
+      // Verificar si existen usuarios con esta flag
+      const usersWithFlag = await database.get(
+        'SELECT COUNT(*) as count FROM user_flags WHERE flag_id = ?',
+        [flagId]
+      );
+
+      if (usersWithFlag.count > 0) {
+        // Si hay usuarios con esta flag, solo marcarla como inactiva
+        await database.run(
+          'UPDATE available_flags SET is_active = 0 WHERE id = ?',
+          [flagId]
+        );
+        return { deleted: false, deactivated: true, affectedUsers: usersWithFlag.count };
+      } else {
+        // Si no hay usuarios con esta flag, eliminarla completamente
+        await database.run(
+          'DELETE FROM available_flags WHERE id = ?',
+          [flagId]
+        );
+        return { deleted: true, deactivated: false, affectedUsers: 0 };
+      }
+    } catch (error) {
+      throw new Error(`Error eliminando flag: ${error.message}`);
+    }
+  }
+
   static async getGroupLeaderboard(limit = 10) {
     try {
       const groupLeaderboard = await database.all(

@@ -277,6 +277,92 @@ class FlagController {
       });
     }
   }
+
+  // Actualizar flag (solo admin)
+  static async updateFlag(req, res) {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: 'Acceso denegado. Se requieren permisos de administrador.'
+        });
+      }
+
+      const { flagId } = req.params;
+      const { flagName, flagValue, description, points } = req.body;
+
+      if (!flagName || !flagValue) {
+        return res.status(400).json({
+          success: false,
+          message: 'Nombre y valor de la flag son requeridos'
+        });
+      }
+
+      const updatedFlag = await Flag.updateFlag(flagId, {
+        flagName,
+        flagValue,
+        description,
+        points: parseInt(points) || 0
+      });
+
+      res.json({
+        success: true,
+        message: 'Flag actualizada exitosamente',
+        data: updatedFlag
+      });
+
+    } catch (error) {
+      console.error('Error actualizando flag:', error);
+      
+      if (error.message.includes('Flag no encontrada')) {
+        return res.status(404).json({
+          success: false,
+          message: 'Flag no encontrada'
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  }
+
+  // Eliminar flag (solo admin)
+  static async deleteFlag(req, res) {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: 'Acceso denegado. Se requieren permisos de administrador.'
+        });
+      }
+
+      const { flagId } = req.params;
+      const result = await Flag.deleteFlag(flagId);
+
+      if (result.deleted) {
+        res.json({
+          success: true,
+          message: 'Flag eliminada exitosamente',
+          data: result
+        });
+      } else if (result.deactivated) {
+        res.json({
+          success: true,
+          message: `Flag desactivada exitosamente. No se eliminó porque ${result.affectedUsers} usuarios ya la tienen asignada.`,
+          data: result
+        });
+      }
+
+    } catch (error) {
+      console.error('Error eliminando flag:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  }
 }
 
 export default FlagController;

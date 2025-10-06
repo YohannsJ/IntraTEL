@@ -25,6 +25,12 @@ export default function Topology({ topo, setTopo }) {
     let selectedPort = null // { nodeId, portIdx, element }
     let selectionIndicator = null
     let selectedLinkId = null // para borrar con tecla
+    
+    // ---------- Estado local para drag de nodos ----------
+    let draggingNode = null // { nodeId, offX, offY }
+    let animationFrameId = null
+    let pendingUpdate = null
+
 
     // ---------- Helpers ----------
     const portAbs = (nodeId, portIdx) => {
@@ -136,6 +142,19 @@ export default function Topology({ topo, setTopo }) {
         selectedLinkId = L.id
         markSelected(L.id, true)
       })
+      path.addEventListener('touchstart', (e) => {
+        e.preventDefault()
+        if (selectedLinkId === L.id) {
+          markSelected(L.id, false)
+          selectedLinkId = null
+          return
+        }
+        if (selectedLinkId) {
+          markSelected(selectedLinkId, false)
+        }
+        selectedLinkId = L.id
+        markSelected(L.id, true)
+      })
       path.addEventListener('contextmenu', (e) => {
         e.preventDefault()
         setTopo((currentTopo) => ({
@@ -156,8 +175,8 @@ export default function Topology({ topo, setTopo }) {
       const img = document.createElementNS(NS, 'image')
       img.setAttribute('x', 0)
       img.setAttribute('y', 0)
-      img.setAttribute('width', 60)
-      img.setAttribute('height', 60)
+      img.setAttribute('width', 80)
+      img.setAttribute('height', 80)
       if (n.type === 'router') img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', routerPng)
       else if (n.type === 'switch') img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', switchPng)
       else if (n.type === 'pc') img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', pcPng)
@@ -166,7 +185,7 @@ export default function Topology({ topo, setTopo }) {
       // Etiqueta del dispositivo (encima del icono)
       const label = document.createElementNS(NS, 'text')
       label.setAttribute('class', 'label')
-      label.setAttribute('x', 30)
+      label.setAttribute('x', 40)
       label.setAttribute('y', -5)
       label.setAttribute('text-anchor', 'middle')
       label.textContent = `${n.type.toUpperCase()} (${n.id})`
@@ -208,6 +227,7 @@ export default function Topology({ topo, setTopo }) {
         // Two-tap: primer toque selecciona, segundo toque conecta
         const onPortTap = (e) => {
           e.stopPropagation()
+          e.preventDefault()
 
           // Si ya hay un puerto seleccionado, intentar conectar
           if (selectedPort) {
@@ -262,7 +282,7 @@ export default function Topology({ topo, setTopo }) {
         }
 
         c.addEventListener('click', onPortTap)
-        c.addEventListener('touchstart', onPortTap)
+        c.addEventListener('touchstart', onPortTap, { passive: false })
 
         portGroup.appendChild(c)
         portGroup.appendChild(jack)
@@ -273,10 +293,10 @@ export default function Topology({ topo, setTopo }) {
       if (n.type === 'router') {
         // Mostrar info de cada interfaz
         n.ports.forEach((p, idx) => {
-          const yOffset = 90 + idx * 18
+          const yOffset = 110 + idx * 18
           const info = document.createElementNS(NS, 'text')
           info.setAttribute('class', 'iface-info router-iface')
-          info.setAttribute('x', 30)
+          info.setAttribute('x', 40)
           info.setAttribute('y', yOffset)
           info.setAttribute('text-anchor', 'middle')
           const ip = p.ip || 'unassigned'
@@ -307,8 +327,8 @@ export default function Topology({ topo, setTopo }) {
         // Línea IP
         const infoIP = document.createElementNS(NS, 'text')
         infoIP.setAttribute('class', 'iface-info pc-iface')
-        infoIP.setAttribute('x', 30)
-        infoIP.setAttribute('y', 90)
+        infoIP.setAttribute('x', 40)
+        infoIP.setAttribute('y', 110)
         infoIP.setAttribute('text-anchor', 'middle')
         infoIP.textContent = `IP: ${ip}/${mask}`
         infoIP.style.fill = '#4fc3f7'
@@ -317,48 +337,117 @@ export default function Topology({ topo, setTopo }) {
         // Línea Gateway
         const infoGW = document.createElementNS(NS, 'text')
         infoGW.setAttribute('class', 'iface-info pc-iface')
-        infoGW.setAttribute('x', 30)
-        infoGW.setAttribute('y', 105)
+        infoGW.setAttribute('x', 40)
+        infoGW.setAttribute('y', 125)
         infoGW.setAttribute('text-anchor', 'middle')
         infoGW.textContent = `GW: ${gw}`
         infoGW.style.fill = '#ffb74d'
         g.appendChild(infoGW)
       }
 
-      // Drag de los nodos
-      let draggingNode = false,
-        offX = 0,
-        offY = 0
+      // Drag de los nodos (mouse y touch) - Sistema centralizado
       g.addEventListener('mousedown', (e) => {
-        if (e.target && e.target.classList.contains('port')) return
-        draggingNode = true
+        if (e.target && (e.target.classList.contains('port') || e.target.classList.contains('port-jack'))) return
         const grid = toSvg(e)
-        offX = grid.x - n.x
-        offY = grid.y - n.y
+        draggingNode = { nodeId: n.id, offX: grid.x - n.x, offY: grid.y - n.y }
         e.preventDefault()
+        e.stopPropagation()
       })
-      const onMove = (e) => {
-        if (!draggingNode) return
-        const grid = toSvg(e)
-        n.x = grid.x - offX
-        n.y = grid.y - offY
-        topo.links.forEach((L) => {
-          const upd = (end) => {
-            if (end.nodeId !== n.id) return end
-            const port = topo.nodes.find((nn) => nn.id === n.id).ports[end.portIdx]
-            return { ...end, x: n.x + port.x, y: n.y + port.y }
-          }
-          L.a = upd(L.a)
-          L.b = upd(L.b)
-        })
-        setTopo((t) => ({ ...t }))
-      }
-      const onUp = () => (draggingNode = false)
-      window.addEventListener('mousemove', onMove)
-      window.addEventListener('mouseup', onUp)
+      
+      g.addEventListener('touchstart', (e) => {
+        if (e.target && (e.target.classList.contains('port') || e.target.classList.contains('port-jack'))) return
+        const touch = e.touches[0]
+        pt.x = touch.clientX
+        pt.y = touch.clientY
+        const grid = pt.matrixTransform(svg.getScreenCTM().inverse())
+        draggingNode = { nodeId: n.id, offX: grid.x - n.x, offY: grid.y - n.y }
+        e.preventDefault()
+        e.stopPropagation()
+      }, { passive: false })
 
       svg.appendChild(g)
     })
+
+    // ---------- Eventos globales de drag ----------
+    const updateNodePosition = (nodeId, newX, newY) => {
+      const node = topo.nodes.find(n => n.id === nodeId)
+      if (!node) return
+      
+      node.x = newX
+      node.y = newY
+      
+      // Actualizar enlaces conectados a este nodo
+      topo.links.forEach((L) => {
+        if (L.a.nodeId === node.id) {
+          const port = node.ports[L.a.portIdx]
+          L.a.x = node.x + port.x
+          L.a.y = node.y + port.y
+        }
+        if (L.b.nodeId === node.id) {
+          const port = node.ports[L.b.portIdx]
+          L.b.x = node.x + port.x
+          L.b.y = node.y + port.y
+        }
+      })
+    }
+    
+    const scheduleUpdate = () => {
+      if (animationFrameId) return
+      
+      animationFrameId = requestAnimationFrame(() => {
+        if (pendingUpdate) {
+          updateNodePosition(pendingUpdate.nodeId, pendingUpdate.x, pendingUpdate.y)
+          setTopo(t => ({ ...t }))
+          pendingUpdate = null
+        }
+        animationFrameId = null
+      })
+    }
+    
+    const onMouseMove = (e) => {
+      if (!draggingNode) return
+      const grid = toSvg(e)
+      pendingUpdate = {
+        nodeId: draggingNode.nodeId,
+        x: grid.x - draggingNode.offX,
+        y: grid.y - draggingNode.offY
+      }
+      scheduleUpdate()
+    }
+    
+    const onTouchMove = (e) => {
+      if (!draggingNode) return
+      const touch = e.touches[0]
+      pt.x = touch.clientX
+      pt.y = touch.clientY
+      const grid = pt.matrixTransform(svg.getScreenCTM().inverse())
+      pendingUpdate = {
+        nodeId: draggingNode.nodeId,
+        x: grid.x - draggingNode.offX,
+        y: grid.y - draggingNode.offY
+      }
+      scheduleUpdate()
+      e.preventDefault()
+    }
+    
+    const onDragEnd = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+        animationFrameId = null
+      }
+      if (pendingUpdate) {
+        updateNodePosition(pendingUpdate.nodeId, pendingUpdate.x, pendingUpdate.y)
+        setTopo(t => ({ ...t }))
+        pendingUpdate = null
+      }
+      draggingNode = null
+    }
+    
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onDragEnd)
+    window.addEventListener('touchmove', onTouchMove, { passive: false })
+    window.addEventListener('touchend', onDragEnd)
+    window.addEventListener('touchcancel', onDragEnd)
 
     // ---------- Eventos globales ----------
     const onKey = (e) => {
@@ -380,6 +469,11 @@ export default function Topology({ topo, setTopo }) {
     // cleanup
     return () => {
       window.removeEventListener('keydown', onKey)
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onDragEnd)
+      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('touchend', onDragEnd)
+      window.removeEventListener('touchcancel', onDragEnd)
     }
   }, [topo, setTopo])
 
@@ -387,7 +481,11 @@ export default function Topology({ topo, setTopo }) {
     <svg
       ref={ref}
       viewBox="0 0 1000 520"
-      style={{ width: '100%', height: '100%' }}
+      style={{ 
+        width: '100%', 
+        height: '100%',
+        touchAction: 'none' // Prevenir zoom y scroll en móviles
+      }}
     ></svg>
   )
 }

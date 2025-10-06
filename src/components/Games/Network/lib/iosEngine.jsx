@@ -427,6 +427,7 @@ function createRouterEngine(ctx){
     return res;
   }
 
-  printStatus();
+  // No llamar printStatus() aquí - causa setState durante render
+  // printStatus() se llamará automáticamente después del primer comando
   return { handle, getPrompt, checkConnection };
 }

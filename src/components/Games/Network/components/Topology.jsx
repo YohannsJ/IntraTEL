@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-export default function Topology({ topo, setTopo }) {
+export default function Topology({ topo, setTopo, ctx }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -50,6 +50,43 @@ export default function Topology({ topo, setTopo }) {
           (L.a.nodeId === nodeId && L.a.portIdx === portIdx) ||
           (L.b.nodeId === nodeId && L.b.portIdx === portIdx)
       )
+    }
+    
+    // Verificar si se han hecho las conexiones correctas (Router-Switch y PC-Switch)
+    const checkConnectionsFlag = () => {
+      if (!ctx || !ctx.setFlags || !ctx.flags) return
+      
+      // Verificar si ya tiene la bandera de conexión
+      if (ctx.flags.some(f => f.id === 'connection')) return
+      
+      // Verificar que existan Router-Switch y PC-Switch
+      const hasRouterSwitch = topo.links.some(L => {
+        const nodeA = topo.nodes.find(n => n.id === L.a.nodeId)
+        const nodeB = topo.nodes.find(n => n.id === L.b.nodeId)
+        if (!nodeA || !nodeB) return false
+        const types = [nodeA.type, nodeB.type].sort().join('-')
+        return types === 'router-switch'
+      })
+      
+      const hasPCSwitch = topo.links.some(L => {
+        const nodeA = topo.nodes.find(n => n.id === L.a.nodeId)
+        const nodeB = topo.nodes.find(n => n.id === L.b.nodeId)
+        if (!nodeA || !nodeB) return false
+        const types = [nodeA.type, nodeB.type].sort().join('-')
+        return types === 'pc-switch'
+      })
+      
+      // Si ambas conexiones están hechas, otorgar bandera
+      if (hasRouterSwitch && hasPCSwitch) {
+        ctx.setFlags(currentFlags => [
+          ...currentFlags,
+          {
+            id: 'connection',
+            title: 'Conexión Física Completada',
+            code: 'FLAG{NETWORK_C4BL1NG_M4ST3R}'
+          }
+        ])
+      }
     }
 
     const markSelected = (id, on) => {
@@ -256,10 +293,15 @@ export default function Topology({ topo, setTopo }) {
               const ok = pairOk(sourceNode.type, targetNode.type)
               const newLink = { id: Math.random().toString(36).slice(2, 8), a, b, ok }
 
-              setTopo((currentTopo) => ({
-                ...currentTopo,
-                links: [...currentTopo.links, newLink],
-              }))
+              setTopo((currentTopo) => {
+                const updatedTopo = {
+                  ...currentTopo,
+                  links: [...currentTopo.links, newLink],
+                }
+                // Verificar banderas después de actualizar la topología
+                setTimeout(() => checkConnectionsFlag(), 100)
+                return updatedTopo
+              })
 
               successFeedback(b.x, b.y)
               hideSelection()
@@ -484,6 +526,9 @@ export default function Topology({ topo, setTopo }) {
       style={{ 
         width: '100%', 
         height: '100%',
+        minWidth: '350px',
+        // minHeight: '400px',
+
         touchAction: 'none' // Prevenir zoom y scroll en móviles
       }}
     ></svg>

@@ -8,15 +8,16 @@ import { IOSProvider } from './lib/iosEngine.jsx';
 export default function Network(){
   const [topo, setTopo] = useState(createInitialTopology());
   const [status, setStatus] = useState('');
-  const [objectiveDone, setObjectiveDone] = useState(false);
+  const [flags, setFlags] = useState([]); // Array de banderas conseguidas
 
   // Mantener ctx estable usando ref para topo actual
-  const ctxRef = useRef({ topo, setTopo, setStatus, setObjectiveDone });
+  const ctxRef = useRef({ topo, setTopo, setStatus, flags, setFlags });
   // Actualizar ref cuando cambien los valores, pero no recrear el objeto ctx
   ctxRef.current.topo = topo;
   ctxRef.current.setTopo = setTopo;
   ctxRef.current.setStatus = setStatus;
-  ctxRef.current.setObjectiveDone = setObjectiveDone;
+  ctxRef.current.flags = flags;
+  ctxRef.current.setFlags = setFlags;
   
   // ctx estable (solo se crea una vez)
   const ctx = useMemo(() => ctxRef.current, []);
@@ -34,7 +35,7 @@ export default function Network(){
             onClick={()=>{
               setTopo(createInitialTopology());
               setStatus('');
-              setObjectiveDone(false);
+              setFlags([]);
             }}
           >
             Reiniciar
@@ -45,7 +46,7 @@ export default function Network(){
       <main className={styles.grid}>
         <section className={styles.left}>
           <div className={`${styles.panel} ${styles.canvas}`}>
-            <Topology topo={topo} setTopo={setTopo} />
+            <Topology topo={topo} setTopo={setTopo} ctx={ctx} />
           </div>
 
           <div className={styles.legend}>
@@ -74,10 +75,27 @@ export default function Network(){
               <li>Validar: <code>show ip int brief</code> (en consola Router)</li>
               <li>Consola PC: <code>ping 192.168.1.1</code> para probar conectividad</li>
             </ul>
-            {objectiveDone && (
+            
+            {/* Mostrar banderas conseguidas */}
+            {flags.length > 0 && (
+              <div className={styles.flagsPanel}>
+                <h4>🏁 Banderas conseguidas:</h4>
+                {flags.map((flag, idx) => (
+                  <div key={idx} className={styles.flagItem}>
+                    <span className={styles.flagIcon}>🚩</span>
+                    <div className={styles.flagContent}>
+                      <strong>{flag.title}</strong>
+                      <code className={styles.flagCode}>{flag.code}</code>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {flags.length === 2 && (
               <div className={styles.successPanel}>
                 <p className={styles.success}>🏆 ¡Desafío completado!</p>
-                <p className={styles.flagMessage}>🚩 Revisa la consola para obtener tu FLAG</p>
+                <p className={styles.flagMessage}>✅ Has conseguido todas las banderas</p>
               </div>
             )}
           </div>

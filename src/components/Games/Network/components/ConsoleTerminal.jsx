@@ -47,7 +47,7 @@ export default function ConsoleTerminal({ type, persistentState, setPersistentSt
     const prompt = type === 'router' ? (isConnected ? engine.getPrompt() : 'Desconectado>') : engine.getPrompt();
     
     if (connected) {
-      const refreshMsg = '✅ Conexión verificada correctamente.';
+      const refreshMsg = '✅ Conexión verificada correctamente.\nD1ft3l{F1rst_St3p.Ph1s1c4l_L4y3r}';
       setLines(prev => [...prev, prompt + ' refresh', refreshMsg, '']);
       
       // Si cambió de desconectado a conectado, mostrar mensajes de bienvenida

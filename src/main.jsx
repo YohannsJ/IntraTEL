@@ -6,7 +6,7 @@ import './index.css'
 import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LandingPage from './layouts/LandingPage.jsx';
-import NandGame from './components/Games/G1/NAND_Layouts.jsx';
+import NandGame from './components/Games/NandGame/NAND_Layouts.jsx';
 import EspectroGame from './components/Games/Teleco/EspectroGame.jsx';
 import CSSCodeGame from './components/Games/Software/CSSCodeGame.jsx';
 import NotFoundPage from './layouts/404.jsx';

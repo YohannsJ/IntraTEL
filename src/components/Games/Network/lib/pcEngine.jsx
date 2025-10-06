@@ -75,17 +75,33 @@ export function createPCEngine(ctx) {
     }
 
     // Verificar que el router tenga la IP configurada correctamente
-    // Buscar el router en la topología y verificar su configuración
+    // Y que el PUERTO CONECTADO sea el que está configurado
     let routerConfigured = false;
-    if (ctx && ctx.topo && ctx.topo.nodes) {
+    if (ctx && ctx.topo && ctx.topo.nodes && ctx.topo.links) {
       const router = ctx.topo.nodes.find(n => n.type === 'router');
-      if (router && router.ports) {
-        // Verificar que alguna interfaz tenga la IP correcta y esté up
-        routerConfigured = router.ports.some(p => 
-          p.ip === '192.168.1.1' && 
-          p.mask === '255.255.255.0' && 
-          p.status === 'up'
-        );
+      const switchNode = ctx.topo.nodes.find(n => n.type === 'switch');
+      
+      // Encontrar qué puerto del router está conectado al switch
+      const routerToSwitch = ctx.topo.links.find(L => {
+        const nodeA = ctx.topo.nodes.find(n => n.id === L.a.nodeId);
+        const nodeB = ctx.topo.nodes.find(n => n.id === L.b.nodeId);
+        if (!nodeA || !nodeB) return false;
+        const types = [nodeA.type, nodeB.type].sort().join('-');
+        return types === 'router-switch';
+      });
+      
+      if (router && router.ports && routerToSwitch) {
+        // Identificar qué puerto del router está en el link
+        const routerPortIdx = routerToSwitch.a.nodeId === router.id 
+          ? routerToSwitch.a.portIdx 
+          : routerToSwitch.b.portIdx;
+        
+        // Verificar que ESE puerto específico tenga la IP correcta y esté up
+        const connectedPort = router.ports[routerPortIdx];
+        routerConfigured = connectedPort && 
+          connectedPort.ip === '192.168.1.1' && 
+          connectedPort.mask === '255.255.255.0' && 
+          connectedPort.status === 'up';
       }
     }
 

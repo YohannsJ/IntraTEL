@@ -275,27 +275,54 @@ export default function Topology({ topo, setTopo }) {
         n.ports.forEach((p, idx) => {
           const yOffset = 90 + idx * 18
           const info = document.createElementNS(NS, 'text')
-          info.setAttribute('class', 'iface-info')
+          info.setAttribute('class', 'iface-info router-iface')
           info.setAttribute('x', 30)
           info.setAttribute('y', yOffset)
           info.setAttribute('text-anchor', 'middle')
           const ip = p.ip || 'unassigned'
           const mask = p.mask || ''
           const status = p.status || 'down'
-          info.textContent = `${p.name}: ${ip}${mask ? '/' + mask : ''} (${status})`
+          
+          // Formato mejorado
+          if (ip === 'unassigned') {
+            info.textContent = `${p.name}: ${ip} (${status})`
+          } else {
+            info.textContent = `${p.name}: ${ip}/${mask} (${status})`
+          }
+          
+          // Color según estado
+          if (status === 'up') {
+            info.style.fill = '#00ff88'
+          } else {
+            info.style.fill = '#ff6b6b'
+          }
           g.appendChild(info)
         })
       } else if (n.type === 'pc') {
-        const info = document.createElementNS(NS, 'text')
-        info.setAttribute('class', 'iface-info')
-        info.setAttribute('x', 30)
-        info.setAttribute('y', 90)
-        info.setAttribute('text-anchor', 'middle')
+        // Info del PC en formato mejorado
         const ip = n.ip || 'No IP'
         const mask = n.mask || ''
         const gw = n.gw || ''
-        info.textContent = `IP: ${ip}${mask ? '/' + mask : ''} GW: ${gw}`
-        g.appendChild(info)
+        
+        // Línea IP
+        const infoIP = document.createElementNS(NS, 'text')
+        infoIP.setAttribute('class', 'iface-info pc-iface')
+        infoIP.setAttribute('x', 30)
+        infoIP.setAttribute('y', 90)
+        infoIP.setAttribute('text-anchor', 'middle')
+        infoIP.textContent = `IP: ${ip}/${mask}`
+        infoIP.style.fill = '#4fc3f7'
+        g.appendChild(infoIP)
+        
+        // Línea Gateway
+        const infoGW = document.createElementNS(NS, 'text')
+        infoGW.setAttribute('class', 'iface-info pc-iface')
+        infoGW.setAttribute('x', 30)
+        infoGW.setAttribute('y', 105)
+        infoGW.setAttribute('text-anchor', 'middle')
+        infoGW.textContent = `GW: ${gw}`
+        infoGW.style.fill = '#ffb74d'
+        g.appendChild(infoGW)
       }
 
       // Drag de los nodos

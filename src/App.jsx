@@ -18,6 +18,7 @@ const AppLayout = () => {
   const { user, logout, isAuthenticated } = useAuth(); // Usamos el nuevo AuthContext
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [gamesDropdownOpen, setGamesDropdownOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -28,12 +29,14 @@ const AppLayout = () => {
     // Cerrar dropdown de juegos al abrir/cerrar mobile menu
     if (!mobileMenuOpen) {
       setGamesDropdownOpen(false);
+      setUserDropdownOpen(false);
     }
   };
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
     setGamesDropdownOpen(false);
+    setUserDropdownOpen(false);
   };
 
   const toggleGamesDropdown = () => {
@@ -44,9 +47,23 @@ const AppLayout = () => {
     setGamesDropdownOpen(false);
   };
 
+  const toggleUserDropdown = () => {
+    setUserDropdownOpen(!userDropdownOpen);
+  };
+
+  const closeUserDropdown = () => {
+    setUserDropdownOpen(false);
+  };
+
   const handleGameSelection = () => {
     // Cerrar ambos menús al seleccionar un juego
     setGamesDropdownOpen(false);
+    setMobileMenuOpen(false);
+  };
+
+  const handleUserMenuSelection = () => {
+    // Cerrar ambos menús al seleccionar una opción de usuario
+    setUserDropdownOpen(false);
     setMobileMenuOpen(false);
   };
 
@@ -59,6 +76,10 @@ const AppLayout = () => {
     // Close games dropdown when clicking outside
     if (gamesDropdownOpen && !e.target.closest(`.${styles.gamesDropdown}`)) {
       closeGamesDropdown();
+    }
+    // Close user dropdown when clicking outside
+    if (userDropdownOpen && !e.target.closest(`.${styles.userDropdown}`)) {
+      closeUserDropdown();
     }
   };
 // console.log(ThemeContext.Consumer.);
@@ -110,40 +131,47 @@ const AppLayout = () => {
           </div>
 
           <Link to="/Templo" className={styles.navLink} onClick={closeMobileMenu}>🏛️ Templo</Link>
+          
+          {/* Dropdown de Usuario (solo cuando está autenticado) */}
           {isAuthenticated && (
-            <>
-              <Link to="/grupos" className={styles.navLink} onClick={closeMobileMenu}>👥 Grupos</Link>
-              <Link to="/ranking" className={styles.navLink} onClick={closeMobileMenu}>🏆 Ranking</Link>
-              <Link to="/mis-flags" className={styles.navLink} onClick={closeMobileMenu}>🏁 Mis Flags</Link>
-              {/* <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>Mi Perfil</Link> */}
-              {user?.role === 'admin' && (
-                <>
-                  <Link to="/admin" className={styles.navLink} onClick={closeMobileMenu}>👑 Admin</Link>
-                  <Link to="/admin/flags" className={styles.navLink} onClick={closeMobileMenu}>📊 Flags Admin</Link>
-                </>
-              )}
-            </>
+            <div className={styles.userDropdown}>
+              <button 
+                className={`${styles.navLink} ${styles.dropdownToggle}`}
+                onClick={toggleUserDropdown}
+                aria-expanded={userDropdownOpen}
+              >
+                Hola, {user?.first_name || user?.username} {user?.role === 'admin' ? '👑' : user?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'} {userDropdownOpen ? '▲' : '▼'}
+              </button>
+              <div className={`${styles.dropdownMenu} ${userDropdownOpen ? styles.dropdownOpen : ''}`}>
+                <Link to="/grupos" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                  👥 Grupos
+                </Link>
+                <Link to="/ranking" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                  � Ranking
+                </Link>
+                <Link to="/mis-flags" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                  🏁 Mis Flags
+                </Link>
+                {user?.role === 'admin' && (
+                  <>
+                    <Link to="/admin" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                      👑 Admin
+                    </Link>
+                    <Link to="/admin/flags" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                      📊 Flags Admin
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
           )}
+          
           {isRefreshing && <div className={styles.refreshIndicator}>🔄️</div>}
           
           {/* Mobile auth section */}
           <div className={`${styles.authSection} ${styles.mobileOnly}`}>
             {isAuthenticated ? (
               <div className={styles.userInfo}>
-                  <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>
-                  <span className={styles.welcomeText}>
-                    Hola, {user?.first_name || user?.username}
-                  </span>
-                  {user?.group_name && (
-                  <span className={styles.groupInfo}>
-                    ({user.group_name})
-                  </span>
-                )}
-                <span className={styles.roleInfo}>
-                  {user?.role === 'admin' ? ' 👑' : 
-                   user?.role === 'teacher' ? ' 👨‍🏫' : ' 👨‍🎓'}
-                </span>
-                </Link>
                 <button 
                   onClick={handleLogout}
                   className={styles.logoutButton}
@@ -164,20 +192,6 @@ const AppLayout = () => {
         <div className={`${styles.authSection} ${styles.desktopOnly}`}>
           {isAuthenticated ? (
             <div className={styles.userInfo}>
-                <Link to="/perfil" className={styles.navLink} onClick={closeMobileMenu}>
-                <span className={styles.welcomeText}>
-                  Hola, {user?.first_name || user?.username}
-                </span>
-                {user?.group_name && (
-                <span className={styles.groupInfo}>
-                  ({user.group_name})
-                </span>
-              )}
-              <span className={styles.roleInfo}>
-                {user?.role === 'admin' ? ' 👑' : 
-                 user?.role === 'teacher' ? ' 👨‍🏫' : ' 👨‍🎓'}
-              </span>
-              </Link>
               <button 
                 onClick={handleLogout}
                 className={styles.logoutButton}

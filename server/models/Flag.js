@@ -246,9 +246,10 @@ class Flag {
       // Actualizar la flag disponible
       await database.run(
         `UPDATE available_flags 
-         SET flag_name = ?, flag_value = ?, description = ?, points = ?
+         SET flag_name = ?, flag_value = ?, description = ?, points = ?, 
+             updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
-        [flagName, flagValue, description, points || 10, flagId]
+        [flagName, flagValue, description, points || 0, flagId]
       );
 
       // Si el valor de la flag cambió, crear nuevas entradas en user_flags

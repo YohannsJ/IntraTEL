@@ -302,7 +302,7 @@ class FlagController {
         flagName,
         flagValue,
         description,
-        points: parseInt(points) || 10
+        points: parseInt(points) || 0
       });
 
       res.json({

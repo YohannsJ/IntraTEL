@@ -64,7 +64,12 @@ export default function Network(){
               <li>Validar: <code>show ip int brief</code></li>
               <li>Finalizar: <code>ping 192.168.1.10</code></li>
             </ul>
-            {objectiveDone && <p className={styles.success}>🏆 ¡Desafío completado!</p>}
+            {objectiveDone && (
+              <div className={styles.successPanel}>
+                <p className={styles.success}>🏆 ¡Desafío completado!</p>
+                <p className={styles.flagMessage}>🚩 Revisa la consola para obtener tu FLAG</p>
+              </div>
+            )}
           </div>
         </section>
       </main>

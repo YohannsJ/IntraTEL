@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import styles from './Network.module.css';
 import Topology from './components/Topology.jsx';
-import Console from './components/Console.jsx';
+import ConsoleWithTabs from './components/ConsoleWithTabs.jsx';
 import { createInitialTopology } from './lib/topologyState.js';
 import { IOSProvider } from './lib/iosEngine.jsx';
 
@@ -10,7 +10,16 @@ export default function Network(){
   const [status, setStatus] = useState('');
   const [objectiveDone, setObjectiveDone] = useState(false);
 
-  const ctx = useMemo(()=>({ topo, setTopo, setStatus, setObjectiveDone }),[topo]);
+  // Mantener ctx estable usando ref para topo actual
+  const ctxRef = useRef({ topo, setTopo, setStatus, setObjectiveDone });
+  // Actualizar ref cuando cambien los valores, pero no recrear el objeto ctx
+  ctxRef.current.topo = topo;
+  ctxRef.current.setTopo = setTopo;
+  ctxRef.current.setStatus = setStatus;
+  ctxRef.current.setObjectiveDone = setObjectiveDone;
+  
+  // ctx estable (solo se crea una vez)
+  const ctx = useMemo(() => ctxRef.current, []);
 
   return (
     <IOSProvider ctx={ctx}>
@@ -48,7 +57,7 @@ export default function Network(){
         <section className={styles.right}>
           <div className={styles.panel}>
             <h3>Consola</h3>
-            <Console />
+            <ConsoleWithTabs />
           </div>
 
           <div className={styles.panel}>
@@ -60,9 +69,10 @@ export default function Network(){
             <h3>Objetivo</h3>
             <ul className={styles.objectives}>
               <li>Conectar Router↔Switch y PC↔Switch (clic en dos puertos para crear cada cable).</li>
-              <li>Consola: <code>enable → conf t → interface fa0/0 → ip address 192.168.1.1 255.255.255.0 → no shutdown</code></li>
-              <li>Validar: <code>show ip int brief</code></li>
-              <li>Finalizar: <code>ping 192.168.1.10</code></li>
+              <li>Consola Router: Escribe <code>refresh</code> para habilitar la consola tras conectar cables.</li>
+              <li>Configurar: <code>enable → conf t → interface fa0/0 → ip address 192.168.1.1 255.255.255.0 → no shutdown</code></li>
+              <li>Validar: <code>show ip int brief</code> (en consola Router)</li>
+              <li>Consola PC: <code>ping 192.168.1.1</code> para probar conectividad</li>
             </ul>
             {objectiveDone && (
               <div className={styles.successPanel}>

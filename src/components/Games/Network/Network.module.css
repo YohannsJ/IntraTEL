@@ -10,21 +10,39 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     padding: 12px 16px;
     margin: 8px 16px 0;
     border: 1px solid #223;
     border-radius: 12px;
     background: #0b1530;
-    color: var(--text)
+    color: var(--text);
+    gap: 12px;
+}
+
+.title {
+    flex: 1 1 auto;
+    min-width: 250px;
 }
 
 .title h1 {
-    margin: 0 0 4px 0
+    margin: 0 0 4px 0;
+    font-size: 1.5rem;
 }
 
 .title p {
     margin: 0;
-    color: var(--muted)
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+    .title h1 {
+        font-size: 2rem;
+    }
+    .title p {
+        font-size: 1rem;
+    }
 }
 
 .btnGhost {
@@ -43,11 +61,18 @@
 
 .grid {
     display: grid;
-    grid-template-columns: 1.4fr .95fr;
+    grid-template-columns: 1fr;
     gap: 16px;
     padding: 12px 16px;
     max-width: 1400px;
     margin: 0 auto
+}
+
+/* Desktop: dos columnas */
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: 1.4fr .95fr;
+    }
 }
 
 .panel {
@@ -58,11 +83,24 @@
     text-align: left;
 }
 
+.left, .right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .canvas {
-    height: 520px;
+    height: 400px;
     background: #0a1327;
     border-color: #1d2b52;
     overflow: hidden
+}
+
+/* Desktop: altura mayor */
+@media (min-width: 768px) {
+    .canvas {
+        height: 520px;
+    }
 }
 
 .legend {
@@ -122,6 +160,59 @@
     font-weight: 600;
     margin: 0.3rem 0 0 0;
     font-size: 0.9rem;
+}
+
+/* Console tabs */
+.consoleTabsContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.consoleTabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: -1px;
+    padding: 0 12px;
+}
+
+.consoleTab {
+    background: #0a1325;
+    border: 1px solid #223;
+    border-bottom: none;
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+@media (min-width: 768px) {
+    .consoleTab {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+.consoleTab:hover {
+    background: #0d1b35;
+    color: var(--text);
+}
+
+.consoleTab.active {
+    background: #000000;
+    color: var(--text);
+    border-color: #333;
+    position: relative;
+    z-index: 1;
+}
+
+.consoleContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Globales para el SVG y consola */
@@ -196,19 +287,32 @@
     border: 1px solid #333;
     border-radius: 8px;
     font-family: 'Courier New', monospace;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.4;
     color: #ffffff;
 }
 
+@media (min-width: 768px) {
+    :global(.console-container) {
+        font-size: 14px;
+    }
+}
+
 :global(.console-box) {
-    height: 280px;
+    height: 200px;
     overflow: auto;
-    padding: 12px;
+    padding: 8px;
     white-space: pre-wrap;
     margin: 0;
     background: transparent;
     border: none;
+}
+
+@media (min-width: 768px) {
+    :global(.console-box) {
+        height: 280px;
+        padding: 12px;
+    }
 }
 
 :global(.console-input-container) {
@@ -259,4 +363,35 @@
     background: rgba(255, 215, 0, 0.1);
     padding: 2px 4px;
     border-radius: 3px;
+}
+
+/* Interface info under devices */
+:global(.iface-info) {
+    fill: #e8f2ff;
+    font-size: 13px;
+    font-weight: 600;
+    pointer-events: none;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+:global(.iface-info.gw) {
+    fill: #ffe4b3;
+    font-size: 13px;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Port labels (fa0/0, fa0/1) */
+:global(.port-label) {
+    fill: #ffd700;
+    font-size: 11px;
+    font-weight: 600;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Port jack visual */
+:global(.port-jack) {
+    fill: #333;
+    pointer-events: none;
 }

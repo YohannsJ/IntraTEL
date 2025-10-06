@@ -1,13 +1,21 @@
 import React, { createContext, useMemo } from 'react';
+import { createPCEngine } from './pcEngine.jsx';
 
 export const IOSEngineContext = createContext({});
 
 export function IOSProvider({ children, ctx }){
-  const engine = useMemo(()=>createEngine(ctx), [ctx]);
-  return <IOSEngineContext.Provider value={{ engine }}>{children}</IOSEngineContext.Provider>;
+  // Crear ambos engines solo una vez
+  const routerEngine = useMemo(()=>createRouterEngine(ctx), []);
+  const pcEngine = useMemo(()=>createPCEngine(ctx), []);
+  
+  return (
+    <IOSEngineContext.Provider value={{ routerEngine, pcEngine, ctx }}>
+      {children}
+    </IOSEngineContext.Provider>
+  );
 }
 
-function createEngine(ctx){
+function createRouterEngine(ctx){
   const state = {
     hostname: 'Router',
     mode: 'user',           // user | enable | config | int
@@ -37,6 +45,38 @@ function createEngine(ctx){
       `PC IP: ${state.pc.ip}  Mask: ${state.pc.mask}`
     ].join('\n');
     ctx.setStatus(txt);
+  }
+
+  function syncToTopology(){
+    // Update topology state to reflect console/engine changes
+    // Only call this from handlers that actually modify interface state
+    try {
+      if (ctx && ctx.setTopo) {
+        ctx.setTopo(currentTopo => {
+          const newNodes = (currentTopo.nodes || []).map(n => {
+            if (n.type === 'router') {
+              const ports = (n.ports || []).map(p => {
+                const ifc = state.routerIf[p.name] || {};
+                return { 
+                  ...p, 
+                  ip: ifc.ip || 'unassigned', 
+                  mask: ifc.mask || '', 
+                  status: (ifc.up ? 'up' : 'down')
+                };
+              });
+              return { ...n, ports };
+            }
+            if (n.type === 'pc') {
+              return { ...n, ip: state.pc.ip, mask: state.pc.mask };
+            }
+            return n;
+          });
+          return { ...currentTopo, nodes: newNodes };
+        });
+      }
+    } catch (err) {
+      // ignore sync errors
+    }
   }
 
   function showIpIntBrief(){
@@ -185,12 +225,22 @@ function createEngine(ctx){
 
   function cablingOK(){
     // requiere Router↔Switch y PC↔Switch
-    const hasRS = ctx.topo.links.some(L=>{
-      const types = [ctx.topo.nodes.find(n=>n.id===L.a.nodeId)?.type, ctx.topo.nodes.find(n=>n.id===L.b.nodeId)?.type].sort().join('-');
+    // Acceder a topo actual de forma segura
+    if (!ctx || !ctx.topo || !ctx.topo.links || !ctx.topo.nodes) return false;
+    
+    const currentTopo = ctx.topo;
+    const hasRS = currentTopo.links.some(L=>{
+      const nodeA = currentTopo.nodes.find(n=>n.id===L.a.nodeId);
+      const nodeB = currentTopo.nodes.find(n=>n.id===L.b.nodeId);
+      if (!nodeA || !nodeB) return false;
+      const types = [nodeA.type, nodeB.type].sort().join('-');
       return types==='router-switch';
     });
-    const hasPS = ctx.topo.links.some(L=>{
-      const types = [ctx.topo.nodes.find(n=>n.id===L.a.nodeId)?.type, ctx.topo.nodes.find(n=>n.id===L.b.nodeId)?.type].sort().join('-');
+    const hasPS = currentTopo.links.some(L=>{
+      const nodeA = currentTopo.nodes.find(n=>n.id===L.a.nodeId);
+      const nodeB = currentTopo.nodes.find(n=>n.id===L.b.nodeId);
+      if (!nodeA || !nodeB) return false;
+      const types = [nodeA.type, nodeB.type].sort().join('-');
       return types==='pc-switch';
     });
     return hasRS && hasPS;
@@ -342,9 +392,9 @@ function createEngine(ctx){
     'conf t':              () => handlers['configure terminal'](),
     'hostname':            (args) => { if (state.mode!=='config') return '% Enter configuration mode'; state.hostname = args || 'Router'; return null },
     'interface':           (args) => { if (state.mode!=='config') return '% Enter configuration mode'; if (!state.routerIf[args]) return '% Invalid interface (use fa0/0 or fa0/1)'; state.currentInt=args; state.mode='int'; return null },
-    'ip address':          (args) => { if (state.mode!=='int') return '% Enter interface config mode'; const [ip,mask]=args.split(/\s+/); if (!ip||!mask) return '% Usage: ip address <ip> <mask>'; state.routerIf[state.currentInt].ip=ip; state.routerIf[state.currentInt].mask=mask; printStatus(); return `Assigned ${ip} ${mask} to ${state.currentInt}` },
-    'no shutdown':         () => { if (state.mode!=='int') return '% Enter interface config mode'; state.routerIf[state.currentInt].up=true; printStatus(); return `${state.currentInt} changed state to up` },
-    'shutdown':            () => { if (state.mode!=='int') return '% Enter interface config mode'; state.routerIf[state.currentInt].up=false; printStatus(); return `${state.currentInt} changed state to down` },
+    'ip address':          (args) => { if (state.mode!=='int') return '% Enter interface config mode'; const [ip,mask]=args.split(/\s+/); if (!ip||!mask) return '% Usage: ip address <ip> <mask>'; state.routerIf[state.currentInt].ip=ip; state.routerIf[state.currentInt].mask=mask; printStatus(); syncToTopology(); return `Assigned ${ip} ${mask} to ${state.currentInt}` },
+    'no shutdown':         () => { if (state.mode!=='int') return '% Enter interface config mode'; state.routerIf[state.currentInt].up=true; printStatus(); syncToTopology(); return `${state.currentInt} changed state to up` },
+    'shutdown':            () => { if (state.mode!=='int') return '% Enter interface config mode'; state.routerIf[state.currentInt].up=false; printStatus(); syncToTopology(); return `${state.currentInt} changed state to down` },
 
     // show commands
     'show ?':              () => getShowHelp(),
@@ -367,10 +417,9 @@ function createEngine(ctx){
     if (!match) return '% Comando no reconocido';
     const args = raw.slice(match.length).trim();
     
-    // Comando ping especial con callback
+    // Comando ping especial con callback - retornar la Promise
     if (match === 'ping' && callback) {
-      handlers[match](args, callback);
-      return null;
+      return handlers[match](args, callback);
     }
     
     const res = handlers[match](args);

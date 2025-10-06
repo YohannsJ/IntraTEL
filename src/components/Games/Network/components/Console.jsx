@@ -17,18 +17,21 @@ export default function Console(){
     }
   }, [lines]);
 
-  // Verificar conexión al montar el componente y cuando cambie la topología
+  // Verificar conexión solo al montar el componente
   useEffect(() => {
     checkConnection();
-  }, [engine]);
+  }, []); // Sin dependencias - solo ejecutar una vez
 
   function checkConnection() {
     const connected = engine.checkConnection();
+    const wasConnected = isConnected;
     setIsConnected(connected);
     
-    if (connected) {
-      setLines(['Conexión establecida con el router.', 'Escribe "enable" para acceder al modo privilegiado.', 'Usa "help" o "?" para ver comandos disponibles.', '']);
-    } else {
+    // Solo mostrar mensajes iniciales si es la primera vez o cambió el estado
+    if (connected && !wasConnected) {
+      setLines(prev => [...prev, 'Conexión establecida con el router.', 'Escribe "enable" para acceder al modo privilegiado.', 'Usa "help" o "?" para ver comandos disponibles.', '']);
+    } else if (!connected && lines.length === 0) {
+      // Solo si no hay líneas previas (primera carga)
       setLines([
         'Error: No hay conexión entre router y switch.',
         'Para acceder a la consola, debes conectar:',

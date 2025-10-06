@@ -128,6 +128,22 @@ export function createPCEngine(ctx) {
         ``,
         `✅ Conexión exitosa con el router!`
       ]);
+      
+      // Otorgar segunda bandera si el ping fue exitoso
+      if (ctx && ctx.setFlags && ctx.flags) {
+        // Verificar que no tenga ya la bandera
+        if (!ctx.flags.some(f => f.id === 'ping')) {
+          ctx.setFlags(currentFlags => [
+            ...currentFlags,
+            {
+              id: 'ping',
+              title: 'Configuración Exitosa',
+            //   code: 'FLAG{P1NG_SUCC3SSFUL_C0NF1G}'
+              code: 'D1ft3l{F1n4l_St4g3.N3tw0rk-4Dm1n}'
+            }
+          ]);
+        }
+      }
     } else {
       callback([
         ``,

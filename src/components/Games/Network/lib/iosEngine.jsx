@@ -334,7 +334,8 @@ function createRouterEngine(ctx){
     if (ok){
       ctx.setObjectiveDone(true);
       // Generar flag única basada en la configuración exitosa
-      const flag = 'INTRATEL{n3tw0rk_c0nf1g_m4st3r_2025}';
+      // const flag = 'INTRATEL{n3tw0rk_c0nf1g_m4st3r_2025}';
+      const flag = ' D1ft3l{S3c0nd-2do&3er_L4y3r}';
       
       callback([
         ``,
@@ -375,7 +376,7 @@ function createRouterEngine(ctx){
 
   const handlers = {
     // comandos especiales
-    'refresh':          () => { return cablingOK() ? 'Conexión verificada correctamente.' : 'Error: Sin conexión entre router y switch.' },
+    'refresh':          () => { return cablingOK() ? 'Conexión verificada correctamente. \nD1ft3l{F1rst_St3p.Ph1s1c4l_L4y3r}' : 'Error: Sin conexión entre router y switch.' },
     
     // ayuda
     'help':             () => getHelpCommands(),

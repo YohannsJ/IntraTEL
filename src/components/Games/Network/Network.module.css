@@ -162,6 +162,65 @@
     font-size: 0.9rem;
 }
 
+/* Flags panel */
+.flagsPanel {
+    background: rgba(255, 215, 0, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 16px;
+}
+
+.flagsPanel h4 {
+    margin: 0 0 12px 0;
+    color: #ffd700;
+    font-size: 1rem;
+}
+
+.flagItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+    background: rgba(255, 215, 0, 0.08);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.flagItem:last-child {
+    margin-bottom: 0;
+}
+
+.flagIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.flagContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.flagContent strong {
+    color: #ffd700;
+    font-size: 0.95rem;
+}
+
+.flagCode {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    display: inline-block;
+    word-break: break-all;
+}
+
 /* Console tabs */
 .consoleTabsContainer {
     display: flex;

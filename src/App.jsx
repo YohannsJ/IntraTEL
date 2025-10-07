@@ -4,7 +4,7 @@ import viteLogo from '/LogoTEL.png'
 import './App.css'
 import {PilarTelematica} from "./components/Pilar/PilarTelematica";
 import HomeHero from "./layouts/TemploTEL";
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useData } from './context/DataContext';
 import { useAuth } from './context/AuthContext';
 import { ThemeToggle } from './components/etc/ThemeToggle';
@@ -14,6 +14,7 @@ import styles from './App.module.css';
 import { useTheme } from './context/ThemeContext.jsx';
 // Creamos un componente interno para que pueda acceder a los contextos
 const AppLayout = () => {
+  const location = useLocation();
   const { isRefreshing } = useData(); // Mantenemos el estado de refresh del DataContext
   const { user, logout, isAuthenticated } = useAuth(); // Usamos el nuevo AuthContext
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -185,14 +186,14 @@ const AppLayout = () => {
                     </Link>
                   </>
                 )}
-                <div className={styles.dropdownDivider}></div>
+                {/* <div className={styles.dropdownDivider}></div>
                 <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
                     <span>Tema</span>
                     <ThemeToggle />
                   </div>
                 </div>
-                <div className={styles.dropdownDivider}></div>
+                <div className={styles.dropdownDivider}></div> */}
                 <button 
                   onClick={() => { handleLogout(); handleUserMenuSelection(); }}
                   className={`${styles.dropdownItem} ${styles.logoutDropdownButton}`}
@@ -206,7 +207,7 @@ const AppLayout = () => {
           {isRefreshing && <div className={styles.refreshIndicator}>🔄️</div>}
           
           {/* Sección de auth para usuarios no autenticados en mobile */}
-          {!isAuthenticated && (
+          {!isAuthenticated && location.pathname !== '/auth' && (
             <div className={`${styles.authSection} ${styles.mobileOnly}`} style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--theme-border)' }}>
               <Link to="/auth" className={styles.loginButton}>
                 Iniciar Sesión
@@ -263,9 +264,11 @@ const AppLayout = () => {
               </div>
             </div>
           ) : (
-            <Link to="/auth" className={styles.loginButton}>
-              Iniciar Sesión
-            </Link>
+            location.pathname !== '/auth' && (
+              <Link to="/auth" className={styles.loginButton}>
+                Iniciar Sesión
+              </Link>
+            )
           )}
         </div>
       </nav>

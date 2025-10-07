@@ -186,7 +186,12 @@ const LandingPage = () => {
         </div>
         
         <div className={styles.stepsContainer}>
-          <div className={styles.step}>
+          <div 
+            className={styles.step}
+            onClick={() => navigate('/auth')}
+            style={{ cursor: 'pointer' }}
+            title="Ir a Registro"
+          >
             <div className={styles.stepNumber}>1</div>
             <div className={styles.stepContent}>
               <h3 className={styles.stepTitle}>Regístrate</h3>

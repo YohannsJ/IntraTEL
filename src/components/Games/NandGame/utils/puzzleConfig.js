@@ -40,7 +40,7 @@ export function buildPuzzleNOT() {
     expected: (inputs) => !inputs[0],
     inputLabels: ["A"],
     outputLabel: "Y",
-    flag: "FLAG{N0T_G4T3_M4ST3R}",
+    flag: "D1FT3L{N0T_G4T3_4M4T3UR}",
   };
 }
 
@@ -100,7 +100,7 @@ export function buildPuzzleAND() {
     expected: (inputs) => Boolean(inputs[0] && inputs[1]),
     inputLabels: ["A", "B"],
     outputLabel: "Y",
-    flag: "FLAG{4ND_L0G1C_W1Z4RD}",
+    flag: "D1FT3L{4ND_L0G1C_W1Z4RD}",
   };
 }
 
@@ -167,7 +167,7 @@ export function buildPuzzleOR() {
     expected: (inputs) => Boolean(inputs[0] || inputs[1]),
     inputLabels: ["A", "B"],
     outputLabel: "Y",
-    flag: "FLAG{0R_G4T3_CH4MP10N}",
+    flag: "D1FT3L{0R_G4T3_CH4MP10N}",
   };
 }
 
@@ -238,7 +238,7 @@ export function buildPuzzleXOR() {
     expected: (inputs) => Boolean(inputs[0] ^ inputs[1]),
     inputLabels: ["A", "B"],
     outputLabel: "Y",
-    flag: "FLAG{X0R_M4ST3R_H4CK3R}",
+    flag: "D1FT3L{X0R_M4ST3R_H4CK3R}",
   };
 }
 

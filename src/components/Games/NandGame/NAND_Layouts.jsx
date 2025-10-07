@@ -648,7 +648,7 @@ export default function NandGame() {
             type: 'success',
             title: '🏆 ¡Maestro NAND!',
             message: '¡Increíble! Has completado todos los puzzles NAND. Eres un verdadero maestro de la lógica digital. Aquí tienes tu flag especial:',
-            flagValue: 'FLAG{NAND_TOTAL_MASTER_4_DE_4}',
+            flagValue: 'D1FT3L{NAND_TOTAL_MASTER_4_DE_4}',
             showCopyButton: true,
             autoClose: false
           });

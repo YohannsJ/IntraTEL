@@ -702,10 +702,10 @@ const EspectroGame = () => {
             completionTime,
             flag: (() => {
               switch(level) {
-                case 1: return 'FLAG{FREQUENCY_TUNER_2400MHZ_PRECISION}';
-                case 2: return 'FLAG{BAND_DETECTIVE_5G_BLUETOOTH_MASTER}';
-                case 3: return 'FLAG{NYQUIST_ENGINEER_POWER_CALCULATOR}';
-                default: return `FLAG{SPECTRUM_MASTER_L${level}}`;
+                case 1: return  'D1FT3L{FREQUENCY_TUNER_2400MHZ_PRECISION}';
+                case 2: return  'D1FT3L{BAND_DETECTIVE_5G_BLUETOOTH_MASTER}';
+                case 3: return  'D1FT3L{NYQUIST_ENGINEER_POWER_CALCULATOR}';
+                default: return `D1FT3L{SPECTRUM_MASTER_L${level}}`;
               }
             })(),
             isGameComplete: true,
@@ -726,10 +726,10 @@ const EspectroGame = () => {
             completionTime,
             flag: (() => {
               switch(level) {
-                case 1: return 'FLAG{FREQUENCY_TUNER_2400MHZ_PRECISION}';
-                case 2: return 'FLAG{BAND_DETECTIVE_5G_BLUETOOTH_MASTER}';
-                case 3: return 'FLAG{NYQUIST_ENGINEER_POWER_CALCULATOR}';
-                default: return `FLAG{SPECTRUM_MASTER_L${level}}`;
+                case 1: return  'D1FT3L{FREQUENCY_TUNER_2400MHZ_PRECISION}';
+                case 2: return  'D1FT3L{BAND_DETECTIVE_5G_BLUETOOTH_MASTER}';
+                case 3: return  'D1FT3L{NYQUIST_ENGINEER_POWER_CALCULATOR}';
+                default: return `D1FT3L{SPECTRUM_MASTER_L${level}}`;
               }
             })(),
             isGameComplete: false

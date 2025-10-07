@@ -7,7 +7,7 @@ import { TruthTable } from './components/TruthTable.jsx';
 import { DynamicTruthTable } from './components/DynamicTruthTable.jsx';
 import { Toolbar } from './components/Toolbar.jsx';
 import StylishAlert from './components/StylishAlert.jsx';
-import GameCredits from '../../GameCredits/GameCredits.jsx';
+import Footer from '../../Footer/Footer.jsx';
 import styles from './styles/NandGame.module.css';
 
 /**
@@ -1015,12 +1015,8 @@ export default function NandGame() {
         autoCloseDelay={alert.autoCloseDelay}
       />
       
-      {/* Créditos */}
-      <GameCredits 
-        creator={{ name: 'Yohanns Jiménez', github: 'YohannsJ' }}
-        emoji="🔧"
-        gameName="NandGame"
-      />
+      {/* Footer con créditos de todos los creadores */}
+      <Footer />
     </div>
   );
 }

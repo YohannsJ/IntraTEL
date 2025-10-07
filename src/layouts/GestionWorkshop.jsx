@@ -1,23 +1,19 @@
 
 import React from "react";
 import NetworkManager from "../components/Games/Gestion/NetworkManager";
-import GameCredits from "../components/GameCredits/GameCredits";
+import Footer from "../components/Footer/Footer";
 
 const GestionWorkshop = () => {
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '50px 0px 0px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>
         Administrador de Red Escolar
       </h1>
       {/* Welcome paragraph removed per user request */}
       <NetworkManager />
       
-      {/* Créditos */}
-      <GameCredits 
-        creator={{ name: 'Gabriel García', github: 'gabsgcx' }}
-        emoji="📊"
-        gameName="Gestión de Red"
-      />
+      {/* Footer con créditos de todos los creadores */}
+      <Footer />
     </div>
   );
 };

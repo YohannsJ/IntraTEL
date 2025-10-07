@@ -6,6 +6,11 @@
     --err: #ff6b6b;
 }
 
+.networkWrapper {
+    min-height: 100vh;
+    padding: 80px 0 20px;
+}
+
 .gameHeader {
     display: flex;
     align-items: center;

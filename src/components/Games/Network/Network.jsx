@@ -4,7 +4,7 @@ import Topology from './components/Topology.jsx';
 import ConsoleWithTabs from './components/ConsoleWithTabs.jsx';
 import { createInitialTopology } from './lib/topologyState.js';
 import { IOSProvider } from './lib/iosEngine.jsx';
-import GameCredits from '../../GameCredits/GameCredits.jsx';
+import Footer from '../../Footer/Footer.jsx';
 
 export default function Network(){
   const [topo, setTopo] = useState(createInitialTopology());
@@ -25,24 +25,25 @@ export default function Network(){
 
   return (
     <IOSProvider ctx={ctx}>
-      <header className={styles.gameHeader}>
-        <div className={styles.title}>
-          <h1>Network Challenge</h1>
-          <p>Conecta Router↔Switch y PC↔Switch. Configura <code>fa0/0 = 192.168.1.1/24</code>, <code>no shutdown</code> y prueba <code>ping 192.168.1.10</code>.</p>
-        </div>
-        <div className={styles.actions}>
-          <button
-            className={styles.btnGhost}
-            onClick={()=>{
-              setTopo(createInitialTopology());
-              setStatus('');
-              setFlags([]);
-            }}
-          >
-            Reiniciar
-          </button>
-        </div>
-      </header>
+      <div className={styles.networkWrapper}>
+        <header className={styles.gameHeader}>
+          <div className={styles.title}>
+            <h1>Network Challenge</h1>
+            <p>Conecta Router↔Switch y PC↔Switch. Configura <code>fa0/0 = 192.168.1.1/24</code>, <code>no shutdown</code> y prueba <code>ping 192.168.1.10</code>.</p>
+          </div>
+          <div className={styles.actions}>
+            <button
+              className={styles.btnGhost}
+              onClick={()=>{
+                setTopo(createInitialTopology());
+                setStatus('');
+                setFlags([]);
+              }}
+            >
+              Reiniciar
+            </button>
+          </div>
+        </header>
 
       <main className={styles.grid}>
         <section className={styles.left}>
@@ -83,12 +84,9 @@ export default function Network(){
         </section>
       </main>
       
-      {/* Créditos */}
-      <GameCredits 
-        creator={{ name: 'Tejos MV', github: 'tejosmv' }}
-        emoji="🌐"
-        gameName="Network Challenge"
-      />
+      {/* Footer con créditos de todos los creadores */}
+      <Footer />
+      </div>
     </IOSProvider>
   );
 }

@@ -1,6 +1,6 @@
 .gameContainer {
   min-height: 100vh;
-  padding: 0.5rem;
+  padding: 80px 0.5rem 0.5rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #1e293b 0%, #334155 35%, #475569 100%);
   color: white;
@@ -389,6 +389,7 @@
   background: rgba(255, 255, 255, 0.2);
   outline: none;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .slider::-webkit-slider-thumb {

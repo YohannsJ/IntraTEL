@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { apiUrl, apiHeaders } from '../../../config/index.js';
 import { useNavigate } from 'react-router-dom';
 import Spectrogram from './Spectrogram.jsx';
-import GameCredits from '../../GameCredits/GameCredits.jsx';
+import Footer from '../../Footer/Footer.jsx';
 import styles from './EspectroGame.module.css';
 
 // Componente memoizado del Spectrogram para optimización
@@ -1793,12 +1793,8 @@ const EspectroGame = () => {
         </p>
       </div>
       
-      {/* Créditos */}
-      <GameCredits 
-        creator={{ name: 'Juan Villalón', github: 'juanvillalon' }}
-        emoji="📡"
-        gameName="Espectro Teleco"
-      />
+      {/* Footer con créditos de todos los creadores */}
+      <Footer />
     </div>
   );
 };

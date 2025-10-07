@@ -4,7 +4,7 @@
   min-height: 100vh;
   background-color: var(--theme-background);
   color: var(--theme-text);
-  padding: 1rem;
+  padding: 80px 1rem 1rem;
   box-sizing: border-box;
   overflow-x: hidden;
 }

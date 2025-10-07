@@ -139,7 +139,7 @@ const AppLayout = () => {
             </button>
             <div className={`${styles.dropdownMenu} ${gamesDropdownOpen ? styles.dropdownOpen : ''}`}>
               <Link to="/NandGame" className={styles.dropdownItem} onClick={handleGameSelection}>
-                🔧 NandGame (Hardware)
+                📟 NandGame (Hardware)
               </Link>
               <Link to="/Redes" className={styles.dropdownItem} onClick={handleGameSelection}>
                 🌐 Consola (Redes)

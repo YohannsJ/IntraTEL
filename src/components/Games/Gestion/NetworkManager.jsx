@@ -143,26 +143,7 @@ const NetworkManager = () => {
 
   // Estado para mantener track de las preguntas ya usadas
   const [usedProblemIds, setUsedProblemIds] = useState([]);
-
-  useEffect(() => {
-    if (!currentProblem && !gameOver) {
-      // Filtrar problemas que aún no se han usado
-      const availableProblems = problems.filter(p => !usedProblemIds.includes(p.id));
-      
-      // Si no quedan problemas disponibles, reiniciar la lista
-      if (availableProblems.length === 0) {
-        setUsedProblemIds([]);
-        return;
-      }
-      
-      // Seleccionar un problema aleatorio de los disponibles
-      const nextProblem = availableProblems[Math.floor(Math.random() * availableProblems.length)];
-      setCurrentProblem(nextProblem);
-      
-      // Agregar el ID a la lista de usados
-      setUsedProblemIds([...usedProblemIds, nextProblem.id]);
-    }
-  }, [currentProblem, gameOver, usedProblemIds]);
+  
 
   useEffect(() => {
     if (stability <= 0) {
@@ -215,10 +196,27 @@ const NetworkManager = () => {
     'Atención: si te piden instalar algo o abrir un archivo, pide ayuda primero.',
     'Sugerencia: revisa rápido antes de hacer cambios importantes.',
     'Recuerda: si dudas, pregunta a un compañero o a un docente.',
-    'Buen hábito: anota lo que hiciste por si hay que revisarlo después.'
+    'Buen hábito: anota lo que hiciste por si hay que revisarlo después.',
+    '¿No estás seguro? Espera y revisa los detalles del remitente.',
+    'Si te prometen recompensas por instalar algo, desconfía y verifica primero.',
+    'Moverse rápido está bien, pero verificar dos segundos puede evitar un problema.',
+    'Truco: URLs raras y errores de ortografía suelen indicar phishing.',
+    'Consejo práctico: cuando veas una descarga inesperada, no la aceptes de inmediato.'
   ];
   const [mascotTip, setMascotTip] = useState({ visible: false, text: '' });
   const mascotTipRef = useRef(null);
+  // Frases cortas para el estado idle para no repetir siempre '¡Listo!'
+  const idlePhrases = [
+    'Aquí estoy.',
+    'Listo para ayudar.',
+    '¿Necesitas un tip?',
+    'Vamos con la siguiente.',
+    'Preparado para el desafío.'
+  ];
+  const [mascotIdleText, setMascotIdleText] = useState('');
+
+  // Opción: dejar la alerta principal quieta (sin animación)
+  const [alertsStatic, setAlertsStatic] = useState(false);
 
   const showMascotTip = () => {
     // elegir tip aleatorio
@@ -233,22 +231,85 @@ const NetworkManager = () => {
       setMascotMood('idle');
     }, 4000);
   };
-  // Tutorial modal shown on first load (persistencia en localStorage)
-  const [showTutorial, setShowTutorial] = useState(() => {
-    try {
-      return !localStorage.getItem('nm_seenTutorial');
-    } catch (e) {
-      return true;
-    }
-  });
+
+  // ...existing code...
+
+  // ensure mascot mood messages show briefly after actions even if user didn't click the mascot
+  useEffect(() => {
+    if (mascotMood === 'idle') return;
+    // keep positive/negative reactions visible longer so players notice
+    let duration = 3000;
+    if (mascotMood === 'happy' || mascotMood === 'sad') duration = 5000;
+    if (mascotMood === 'cheer') duration = 6000;
+    if (mascotMood === 'thinking') duration = 3000;
+    const t = setTimeout(() => setMascotMood('idle'), duration);
+    return () => clearTimeout(t);
+  }, [mascotMood]);
+  // Tutorial shown inline on first load: show by default on page load
+  // The user can check "No mostrar de nuevo" to persist that preference.
+  const [showTutorial, setShowTutorial] = useState(true);
   const [tutorialDontShowAgain, setTutorialDontShowAgain] = useState(false);
   // El juego NO comienza hasta que el usuario pulse "Comenzar" en la pantalla de inicio
   // (si el tutorial ya fue visto, mostramos un panel de inicio donde debe elegirse rondas)
   const [gameStarted, setGameStarted] = useState(false);
   // estado temporal para la pantalla de inicio (rondas seleccionadas antes de comenzar)
-  const [startRounds, setStartRounds] = useState(12);
+  const [startRounds, setStartRounds] = useState(() => {
+    try {
+      const v = Number(localStorage.getItem('nm_prefRounds'));
+      return v && !Number.isNaN(v) ? v : 12;
+    } catch (e) { return 12; }
+  });
+  // opción para usar siempre la elección (persistida)
+  const [alwaysUseRounds, setAlwaysUseRounds] = useState(() => {
+    try { return localStorage.getItem('nm_alwaysUseRounds') === '1'; } catch (e) { return false; }
+  });
   // Items / recursos
   const [rebootAvailable, setRebootAvailable] = useState(2); // number of reboots available
+
+  // Mostrar tips periódicamente durante la partida para dar variedad sin que el usuario tenga que clicar
+  useEffect(() => {
+    if (!gameStarted) return;
+    const iv = setInterval(() => {
+      // mostrar tip si no hay uno visible y no hay un popup activo
+      if (!mascotTip.visible && !malwareActive) showMascotTip();
+    }, 17000); // cada ~17s
+    return () => clearInterval(iv);
+  }, [gameStarted, mascotTip.visible, malwareActive]);
+
+  // Cuando la mascota vuelve a idle, seleccionamos una frase idle aleatoria breve
+  useEffect(() => {
+    if (mascotMood !== 'idle') return;
+    // no forzamos frase si ya hay un tip visible o si no comenzó el juego
+    if (mascotTip.visible || !gameStarted) {
+      setMascotIdleText('');
+      return;
+    }
+    const choice = idlePhrases[Math.floor(Math.random() * idlePhrases.length)];
+    setMascotIdleText(choice);
+    const t = setTimeout(() => setMascotIdleText(''), 6000); // desaparece tras 6s
+    return () => clearTimeout(t);
+  }, [mascotMood, mascotTip.visible, gameStarted]);
+
+  useEffect(() => {
+    // only pick a new problem when the game has been started
+    if (!currentProblem && !gameOver && gameStarted) {
+      // Filtrar problemas que aún no se han usado
+      const availableProblems = problems.filter(p => !usedProblemIds.includes(p.id));
+      
+      // Si no quedan problemas disponibles, reiniciar la lista
+      if (availableProblems.length === 0) {
+        setUsedProblemIds([]);
+        return;
+      }
+      
+      // Seleccionar un problema aleatorio de los disponibles
+      const nextProblem = availableProblems[Math.floor(Math.random() * availableProblems.length)];
+      setCurrentProblem(nextProblem);
+      
+      // Agregar el ID a la lista de usados
+      setUsedProblemIds([...usedProblemIds, nextProblem.id]);
+    }
+  }, [currentProblem, gameOver, usedProblemIds, gameStarted]);
 
   // Rondas especiales eliminadas: usamos solo los problemas principales y los popups.
 
@@ -287,15 +348,17 @@ const NetworkManager = () => {
     }
     return next;
   });
+
   setRound(prev => prev + 1);
 
-    // Mostrar siguiente pregunta inmediatamente
+    // Mantener la selección visible por un momento para mostrar el icono ✓/✖
+    const delay = correct ? 600 : 300;
     setTimeout(() => {
       setCurrentProblem(null);
       setIsAnswering(false);
       setSelectedIndex(null);
       setHintUsed(false);
-    }, 0);
+    }, delay);
   };
 
   // Problemas tipo 'popup malicioso' para hacer el juego más entretenido
@@ -392,29 +455,14 @@ const NetworkManager = () => {
       return;
     }
 
-  // fallo: penaliza la estabilidad con penalización dependiente de la dificultad
-  const basePenalty = 15;
-  // escala según progreso: entre 1x y 1.6x
-  const scale = 1 + (round / Math.max(1, totalRounds)) * 0.6;
+  // Respuesta incorrecta en popup: aplicamos una penalización suave y educativa
+  // Penalización base pequeña; escalamos ligeramente con el progreso
+  const basePenalty = 4;
+  const scale = 1 + (round / Math.max(1, totalRounds)) * 0.3; // hasta ~1.3x
   const penalty = Math.round(basePenalty * scale);
-  setStability(prev => {
-    const next = Math.max(0, prev - penalty);
-    // si el popup causa que la estabilidad llegue a 0, marcamos que la pérdida vino de un popup
-    if (next === 0) {
-      setLostByPopup(true);
-      // iniciar animación del popup (se quitará después y se mostrará el modal final)
-      setMalwareLostAnim(true);
-      // tras la animación, cerramos popup y activamos game over
-      setTimeout(() => {
-        setMalwareLostAnim(false);
-        setMalwareActive(false);
-        setGameOver(true);
-        setGameWon(false);
-      }, 900); // duración coordinada con CSS
-    }
-    return next;
-  });
-    setMascotMood('sad');
+  // restar estabilidad pero dejando siempre al menos 5 puntos para evitar muertes instantáneas por popup
+  setStability(prev => Math.max(5, prev - penalty));
+  setMascotMood('sad');
     // En lugar de abrir el modal principal, mostramos la burbuja de la mascota junto al popup
     const chosenWrong = malwareCurrent && malwareCurrent.options[optionIndex];
   const explanation = (chosenWrong && chosenWrong.explanation) || (malwareCurrent && malwareCurrent.options.find(o => !o.correct)?.explanation) || 'Eso no fue seguro, mejor la próxima vez cerrar la ventana.';
@@ -462,14 +510,15 @@ const NetworkManager = () => {
   };
 
   const closeTutorial = (saveDontShow = false) => {
-    setShowTutorial(false);
-    try {
-      if (saveDontShow || tutorialDontShowAgain) localStorage.setItem('nm_seenTutorial', '1');
-    } catch (e) {
-      // ignore
+    // persist preference only if the user explicitly asked to not show again
+    if (saveDontShow) {
+      try { localStorage.setItem('nm_seenTutorial', '1'); } catch (e) {}
     }
-    // No iniciamos el juego aquí: el usuario debe escoger rondas y pulsar 'Comenzar' en la pantalla de inicio.
+    setShowTutorial(false);
+    // do not auto-start here; we want to show the rounds selection after closing tutorial
   };
+
+  // (tutorial interactivo eliminado; se mantiene el tutorial estático)
 
   const startGame = (rounds) => {
     const r = rounds || startRounds || 12;
@@ -480,10 +529,34 @@ const NetworkManager = () => {
     // mostrar un mensaje inmediato en la mascota para evitar que quede un mensaje anterior
     setPopupMascotExplain({ visible: false, text: '', side: 'right' });
     // Hacer el mensaje persistente: limpiar cualquier timeout previo y no iniciar uno nuevo.
-    if (mascotTipRef.current) { clearTimeout(mascotTipRef.current); mascotTipRef.current = null; }
-    setMascotTip({ visible: true, text: '¡Listo! Comencemos.' });
-    setMascotMood('happy');
+  if (mascotTipRef.current) { clearTimeout(mascotTipRef.current); mascotTipRef.current = null; }
+  setMascotTip({ visible: true, text: 'Perfecto — iniciando partida...' });
+  // auto-hide the temporary tip so it doesn't persist into question view
+  mascotTipRef.current = setTimeout(() => { setMascotTip({ visible: false, text: '' }); mascotTipRef.current = null; }, 2500);
+  setMascotMood('happy');
+    // Clear any lingering explanation/modal state so it doesn't show from previous game
+    setShowExplanation(false);
+    setExplanationText('');
+    setExplanationIsHint(false);
+    setExplanationAdvance(true);
+    setSelectedIndex(null);
+    setIsAnswering(false);
+    setHintUsed(false);
+    setPopupMascotExplain({ visible: false, text: '', side: 'right' });
+    setMalwareActive(false);
+    setLostByPopup(false);
+    // ensure currentProblem is null so the effect picks a fresh, unused problem
+    setCurrentProblem(null);
   };
+
+  // Si el usuario marcó "usar siempre" y ya no está el tutorial, iniciamos automáticamente
+  useEffect(() => {
+    if (!showTutorial && !gameStarted && alwaysUseRounds) {
+      // usar un pequeño timeout para evitar colisiones en el flujo de render inicial
+      const t = setTimeout(() => startGame(startRounds), 50);
+      return () => clearTimeout(t);
+    }
+  }, [showTutorial, gameStarted, alwaysUseRounds, startRounds]);
 
   const closeExplanation = (advance = true) => {
     setShowExplanation(false);
@@ -527,13 +600,26 @@ const NetworkManager = () => {
     setGameOver(false);
     setGameWon(false);
     setRound(1);
+    // clear current problem and UI state but preserve usedProblemIds so restarted games
+    // don't immediately show previously answered questions
     setCurrentProblem(null);
-    setUsedProblemIds([]);
     setPopupSuccessCount(0);
     setCorrectStreak(0);
     setMascotMood('idle');
     setConfettiActive(false);
     setConfettiPieces([]);
+    // Close any open explanation modal and reset related flags
+    setShowExplanation(false);
+    setExplanationText('');
+    setExplanationIsHint(false);
+    setExplanationAdvance(true);
+    setSelectedIndex(null);
+    setIsAnswering(false);
+    setHintUsed(false);
+    // close any popup mascot explanation and malware popup
+    setPopupMascotExplain({ visible: false, text: '', side: 'right' });
+    setMalwareActive(false);
+    setLostByPopup(false);
     if (malwareScheduleRef.current) {
       clearTimeout(malwareScheduleRef.current);
       malwareScheduleRef.current = null;
@@ -607,22 +693,30 @@ const NetworkManager = () => {
   return (
     <div className={styles.gameContainer}>
       <div className={styles.header}>
-        <div className={styles.statsContainer}>
-          <div className={styles.stabilityBar}>
+  {/* Hide stats until the game has started */}
+  {gameStarted && (
+    <div className={styles.statsContainer}>
+          <div className={`${styles.stabilityBar} ${stability <= 20 ? styles.critical : ''}`}>
             <div 
-              className={styles.stabilityFill} 
-              style={{ 
-                width: `${stability}%`,
-                backgroundColor: stability > 60 ? '#4CAF50' : stability > 30 ? '#FFA726' : '#F44336'
-              }}
+              className={`${styles.stabilityFill} ${stability > 60 ? styles.high : stability > 30 ? styles.medium : styles.low}`}
+              style={{ width: `${stability}%` }}
             />
           </div>
             <div className={styles.stats}>
-            <span>Estabilidad de la Red: {stability}%</span>
-            <span>Puntuación: {score}</span>
-            <span>Ronda: {round}/{totalRounds}</span>
+              <div className={styles.statLeft}><span>Estabilidad de la Red: {stability}%</span></div>
+              <div className={styles.statCenter}><span>Puntuación: {score}</span></div>
+              <div className={styles.statRight}><span>Ronda: {round}/{totalRounds}</span></div>
             </div>
+            {/* Control: dejar la alerta principal quieta (sin movimiento) */}
+            {gameStarted && (
+              <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <input type="checkbox" checked={alertsStatic} onChange={e => setAlertsStatic(e.target.checked)} /> Dejar alerta principal quieta
+                </label>
+              </div>
+            )}
             {/* rounds selection moved to the start modal; hide control here since rounds are fixed after start */}
+    </div>) }
           {showExplanation && (
             <div className={styles.modalBackdrop} onClick={() => closeExplanation(explanationAdvance)}>
               <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -635,55 +729,31 @@ const NetworkManager = () => {
             </div>
           )}
           {/* Tutorial modal shown on first load */}
+          {/* Inline tutorial panel: always shown on page load until closed */}
           {showTutorial && (
-            <div className={styles.modalBackdrop} onClick={() => closeTutorial()}>
-              <div className={styles.modal} onClick={e => e.stopPropagation()}>
-                <h4>Bienvenido a Network Manager</h4>
-                <p>En este juego aprenderás a tomar decisiones para mantener la red estable. Responde las alertas, evita popups sospechosos y usa pistas cuando las necesites. Las pistas <strong>no</strong> restan estabilidad: son consejos específicos para la pregunta actual y se consumen de tu inventario de pistas.</p>
-                <ul>
-                  <li>Popups: cuando aparezcan, aprende a identificarlos; algunos son maliciosos y debes cerrarlos con seguridad.</li>
-                  <li>Reboot: es un recurso limitado que restaura +20% de estabilidad. Úsalo con cuidado; la interfaz muestra cuántos Reboots te quedan.</li>
-                  <li>Puedes reiniciar la partida desde los controles o ver este tutorial otra vez si lo necesitas.</li>
-                  <li>Cómo conseguir pistas: cada 3 respuestas correctas <em>consecutivas</em> te otorgan +1 pista adicional.</li>
-                  <li>La mascota te dará consejos rápidos y explicaciones cuando los necesites.</li>
-                </ul>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <input type="checkbox" checked={tutorialDontShowAgain} onChange={e => setTutorialDontShowAgain(e.target.checked)} /> No mostrar de nuevo
-                  </label>
-                  <div>
-                    { !gameStarted ? (
-                      <button onClick={() => { closeTutorial(true); startGame(startRounds); }} className={styles.resetButton}>Comenzar</button>
-                    ) : (
-                      <button onClick={() => closeTutorial()} className={styles.resetButton}>Volver al juego</button>
-                    ) }
-                  </div>
+            <div className={styles.tutorialPanel}>
+              <h3>Bienvenido a Network Manager</h3>
+              {/* intro paragraph removed per user request */}
+              <ul className={styles.tutorialList}>
+                <li><strong>Popups</strong>: cuando aparezcan, aprende a identificarlos; algunos son maliciosos y debes cerrarlos con seguridad.</li>
+                <li><strong>Reboot</strong>: es un recurso limitado que restaura +20% de estabilidad. Úsalo con cuidado.</li>
+                <li>Cómo conseguir <strong>pistas</strong>: cada 3 respuestas correctas <em>consecutivas</em> te otorgan +1 pista adicional.</li>
+                <li>La <strong>mascota</strong> te dará consejos rápidos y explicaciones cuando los necesites.</li>
+              </ul>
+              <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'space-between', alignItems: 'center' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <input type="checkbox" checked={tutorialDontShowAgain} onChange={e => setTutorialDontShowAgain(e.target.checked)} /> No mostrar de nuevo
+                </label>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className={styles.resetButton} onClick={() => { closeTutorial(tutorialDontShowAgain); }}>Comenzar</button>
                 </div>
               </div>
             </div>
           )}
-          {/* Start screen: require rounds selection before starting (only when tutorial closed and game not started) */}
-          {!showTutorial && !gameStarted && (
-            <div className={styles.modalBackdrop} onClick={() => {}}>
-              <div className={styles.modal} onClick={e => e.stopPropagation()}>
-                <h4>Preparar partida</h4>
-                <p>Elige cuántas rondas quieres jugar. Esta elección será fija hasta que termine la partida.</p>
-                <div style={{ marginTop: 8 }}>
-                  <label style={{ marginRight: 8 }}>Rondas:</label>
-                  <select value={startRounds} onChange={e => setStartRounds(Number(e.target.value))} className={styles.roundControl}>
-                    <option value={10}>10</option>
-                    <option value={12}>12</option>
-                    <option value={15}>15</option>
-                    <option value={20}>20</option>
-                  </select>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
-                  <button className={styles.primaryButton} style={{ order: 0 }} onClick={() => { setShowTutorial(true); }}>Ver tutorial</button>
-                  <button className={styles.resetButton} style={{ order: 1 }} onClick={() => startGame(startRounds)}>Comenzar</button>
-                </div>
-              </div>
-            </div>
-          )}
+
+          {/* Interactive tutorial (stepped) */}
+          {/* interactive tutorial removed; static tutorial modal remains above */}
+          {/* startPanel moved into mainContent (rendered there) */}
           {/* Reboot item (single) removed — controls consolidated below */}
           {/* Malware popup mini-event */}
           {malwareActive && malwareCurrent && (
@@ -725,12 +795,20 @@ const NetworkManager = () => {
           {/* Leaderboard modal */}
           {/* Leaderboard and Achievements are now persistently shown in the left sidebar */}
           {/* Inline controls row: left = actions, right = tutorial (small). Hidden while game over. */}
-          {!gameOver && (
+          {!gameOver && gameStarted && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, alignItems: 'center', gap: 12 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <button className={styles.hintButton} onClick={useReboot} disabled={rebootAvailable <= 0}>{rebootAvailable > 0 ? `Usar Reboot (+20%) (${rebootAvailable})` : 'Reboot usado'}</button>
+                <button className={styles.hintButton} onClick={useReboot} disabled={rebootAvailable <= 0}>{rebootAvailable > 0 ? `Reboot (+20%) (${rebootAvailable})` : 'Reboot usado'}</button>
+                <button
+                  className={styles.hintButton}
+                  onClick={useHint}
+                  disabled={!currentProblem || hintUsed || hintCount <= 0}
+                  title={hintCount > 0 ? `Pistas disponibles: ${hintCount}` : 'No hay pistas disponibles'}
+                >
+                  {hintCount > 0 ? `Pista (${hintCount})` : 'Sin pistas'}
+                </button>
               </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <button className={styles.hintButton} onClick={resetGame}>Reiniciar partida</button>
                 <button className={styles.hintButton} style={{ padding: '6px 8px', fontSize: '0.85rem' }} onClick={() => setShowTutorial(true)}>Ver tutorial</button>
               </div>
@@ -749,11 +827,22 @@ const NetworkManager = () => {
                   </div>
                 ) : (
                   <div style={{ fontSize: '0.85rem' }}>
-                    {mascotMood === 'idle' && '¡Listo!'}
-                    {mascotMood === 'happy' && '¡Buen trabajo!'}
-                    {mascotMood === 'sad' && 'Oh...' }
-                    {mascotMood === 'cheer' && '¡Genial!'}
-                    {mascotMood === 'thinking' && 'Mmm...'}
+                    {/* Context-aware idle text: when on start panel show guidance; during tutorial keep bubble; during gameplay show mood brief messages */}
+                    {!showTutorial && !gameStarted ? (
+                      'Elige el número de rondas y pulsa Comenzar.'
+                    ) : showTutorial ? (
+                      ''
+                    ) : (
+                      /* during active game, show mood messages or a short idle phrase */
+                      (mascotMood !== 'idle' ? (
+                        (mascotMood === 'happy' && '¡Buen trabajo!') ||
+                        (mascotMood === 'sad' && 'Oh...') ||
+                        (mascotMood === 'cheer' && '¡Genial!') ||
+                        (mascotMood === 'thinking' && 'Mmm...') || ''
+                      ) : (
+                        mascotIdleText || ''
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -765,6 +854,25 @@ const NetworkManager = () => {
                   <div style={{ fontWeight: 700 }}>{mascotName}</div>
                 </div>
                 <div>¡Hola! ¡Vamos a estabilizar la red!</div>
+              </div>
+            )}
+            {showTutorial && (
+              <div className={`${styles.popupMascotBubble} ${styles.right}`} style={{ position: 'fixed', bottom: 90, right: 24 }}>
+                <div className={styles.bubbleHeader}>
+                  <div className={styles.mascotFace}>👾</div>
+                  <div style={{ fontWeight: 700 }}>{mascotName}</div>
+                </div>
+                <div>Lee las instrucciones del tutorial y pulsa <strong>Comenzar</strong> cuando estés listo.</div>
+              </div>
+            )}
+            {/* show a helpful bubble when the player is on the start panel (select rounds) */}
+            {!showTutorial && !gameStarted && (
+              <div className={`${styles.popupMascotBubble} ${styles.right}`} style={{ position: 'fixed', bottom: 90, right: 24 }}>
+                <div className={styles.bubbleHeader}>
+                  <div className={styles.mascotFace}>👾</div>
+                  <div style={{ fontWeight: 700 }}>{mascotName}</div>
+                </div>
+                <div>Elige cuántas rondas quieres jugar y pulsa <strong>Comenzar</strong>. ¡Teli te acompañará durante la partida!</div>
               </div>
             )}
           </div>
@@ -783,11 +891,56 @@ const NetworkManager = () => {
           {/* Achievements removed */}
           
         </div>
-      </div>
 
       {/* Ranking and Achievements removed as requested */}
 
   <div className={styles.mainContent}>
+          {/* start panel: placed here so it's visually lower on the page */}
+          {!showTutorial && !gameStarted && (
+            <div className={styles.startPanel} onClick={e => e.stopPropagation()}>
+              <div className={styles.startTitle}><strong>Preparar partida</strong> — Elige rondas</div>
+              <div className={styles.roundPills} role="tablist" aria-label="Seleccionar rondas">
+                {[10, 12, 15, 20].map(r => (
+                  <button
+                    key={r}
+                    className={`${styles.roundPill} ${startRounds === r ? styles.selectedPill : ''}`}
+                    onClick={() => {
+                      setStartRounds(r);
+                      try { localStorage.setItem('nm_prefRounds', String(r)); } catch (e) {}
+                    }}
+                    aria-pressed={startRounds === r}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+              <label className={styles.alwaysUseLabel} style={{ marginLeft: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input type="checkbox" checked={alwaysUseRounds} onChange={e => {
+                  const val = e.target.checked;
+                  setAlwaysUseRounds(val);
+                  try { localStorage.setItem('nm_alwaysUseRounds', val ? '1' : '0'); } catch (err) {}
+                  if (val) {
+                    try { localStorage.setItem('nm_prefRounds', String(startRounds)); } catch (err) {}
+                  }
+                }} />
+                <span style={{ color: '#d6dbe0', fontSize: '0.9rem' }}>Usar siempre esta elección</span>
+              </label>
+              <div className={styles.startControls}>
+                <button className={styles.resetButton} onClick={() => {
+                  try { localStorage.setItem('nm_prefRounds', String(startRounds)); } catch (e) {}
+                  startGame(startRounds);
+                }}>Comenzar</button>
+                {/* 'Ver tutorial' moved here; top small control will be hidden while not started */}
+                <button className={`${styles.resetButton} ${styles.greenButton}`} onClick={() => {
+                  // Force showing the tutorial and clear any persistent "no mostrar" flag
+                  try { localStorage.removeItem('nm_seenTutorial'); } catch (e) {}
+                  setTutorialDontShowAgain(false);
+                  setShowTutorial(true);
+                }}>Ver tutorial</button>
+              </div>
+            </div>
+          )}
+
           {gameOver ? (
           <div className={styles.modalBackdrop} onClick={() => {}}>
             <div className={`${styles.modal} ${!gameWon ? styles.lostModal : ''}`} onClick={e => e.stopPropagation()}>
@@ -810,7 +963,7 @@ const NetworkManager = () => {
           </div>
         ) : currentProblem ? (
           <div className={styles.problem}>
-            <div className={styles.alert}>
+            <div className={`${styles.alert} ${alertsStatic ? styles.noPulse : ''}`}>
               <h3>¡Alerta en la red!</h3>
               <p>{currentProblem.description}</p>
             </div>
@@ -818,29 +971,30 @@ const NetworkManager = () => {
               {currentProblem.options.map((option, index) => {
                 const classes = [styles.optionButton];
                 if (selectedIndex === index) classes.push(styles.selected);
+                if (selectedIndex !== null && index === selectedIndex) {
+                  if (option.correct) classes.push(styles.correct);
+                  else classes.push(styles.incorrect);
+                }
                 return (
                   <button
                     key={index}
                     onClick={() => handleAnswer(option.correct, index)}
                     className={classes.join(' ')}
                   >
-                    {option.text}
+                    <span>{option.text}</span>
+                    <span className={styles.optionIcon} aria-hidden>
+                      {selectedIndex === index ? (option.correct ? '✓' : '✖') : ''}
+                    </span>
                   </button>
                 );
               })}
 
-              <button
-                className={styles.hintButton}
-                onClick={useHint}
-                disabled={hintUsed || hintCount <= 0}
-              >
-                {hintUsed ? 'Pista usada' : `Pista ${hintCount > 0 ? `(x${hintCount})` : ''}`}
-              </button>
+              {/* hint button removed from here; use the hint control next to Reboot in the top controls */}
             </div>
           </div>
         ) : (
           <div className={styles.loading}>
-            <p>Buscando alertas... ¡estate atento!</p>
+            {/* Empty state when there is no current problem and game hasn't started; kept intentionally blank */}
           </div>
         )}
       </div>

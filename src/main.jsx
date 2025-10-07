@@ -18,8 +18,9 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { TemploTelematica } from './components/Pilar/PilarTelematica.js';
 import HomeHero from './layouts/TemploTEL.js';
 import AuthPage from './components/Auth/AuthPage.jsx';
-import GroupDashboard from './components/Groups/GroupDashboard.jsx';
-import GroupLeaderboard from './components/Groups/GroupLeaderboard.jsx';
+// SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+// import GroupDashboard from './components/Groups/GroupDashboard.jsx';
+// import GroupLeaderboard from './components/Groups/GroupLeaderboard.jsx';
 import UserFlagsList from './components/Flags/UserFlagsList.jsx';
 import AdminFlagsPanel from './components/Admin/AdminFlagsPanel.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
@@ -39,22 +40,23 @@ const router = createBrowserRouter([
       { path: 'Datos', element: <GestionWorkshop /> },
       { path: 'Software', element: <CSSCodeGame /> },
       { path: 'Redes', element: <Network /> },
-      { 
-        path: 'grupos', 
-        element: (
-          <ProtectedRoute>
-            <GroupDashboard />
-          </ProtectedRoute>
-        ) 
-      },
-      { 
-        path: 'ranking', 
-        element: (
-          <ProtectedRoute>
-            <GroupLeaderboard />
-          </ProtectedRoute>
-        ) 
-      },
+      // SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+      // { 
+      //   path: 'grupos', 
+      //   element: (
+      //     <ProtectedRoute>
+      //       <GroupDashboard />
+      //     </ProtectedRoute>
+      //   ) 
+      // },
+      // { 
+      //   path: 'ranking', 
+      //   element: (
+      //     <ProtectedRoute>
+      //       <GroupLeaderboard />
+      //     </ProtectedRoute>
+      //   ) 
+      // },
       { 
         path: 'mis-flags', 
         element: (

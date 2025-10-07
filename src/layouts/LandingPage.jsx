@@ -24,12 +24,13 @@ const LandingPage = () => {
       icon: "🚩",
       details: ["Puntuación automática", "Ranking competitivo", "Logros desbloqueables"]
     },
-    {
-      title: "Colaboración en Grupos",
-      description: "Forma equipos con tus compañeros y colabora en proyectos mientras compites con otros grupos.",
-      icon: "👥",
-      details: ["Creación de grupos", "Estadísticas compartidas", "Competencias entre equipos"]
-    },
+    // SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+    // {
+    //   title: "Colaboración en Grupos",
+    //   description: "Forma equipos con tus compañeros y colabora en proyectos mientras compites con otros grupos.",
+    //   icon: "👥",
+    //   details: ["Creación de grupos", "Estadísticas compartidas", "Competencias entre equipos"]
+    // },
     {
       title: "Pilares Telemáticos",
       description: "Explora los fundamentos de la ingeniería civil telemática a través de contenido interactivo y práctico.",
@@ -189,7 +190,7 @@ const LandingPage = () => {
             <div className={styles.stepContent}>
               <h3 className={styles.stepTitle}>Regístrate</h3>
               <p className={styles.stepDescription}>
-                Crea tu cuenta y únete a un grupo de estudio o forma tu propio equipo
+                Crea tu cuenta individual y comienza tu aventura de aprendizaje
               </p>
             </div>
           </div>

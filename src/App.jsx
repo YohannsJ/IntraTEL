@@ -143,12 +143,13 @@ const AppLayout = () => {
                 Hola, {user?.first_name || user?.username} {user?.role === 'admin' ? '👑' : user?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'} {userDropdownOpen ? '▲' : '▼'}
               </button>
               <div className={`${styles.dropdownMenu} ${userDropdownOpen ? styles.dropdownOpen : ''}`}>
-                <Link to="/grupos" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                {/* SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente */}
+                {/* <Link to="/grupos" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
                   👥 Grupos
                 </Link>
                 <Link to="/ranking" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
-                  � Ranking
-                </Link>
+                  🏆 Ranking
+                </Link> */}
                 <Link to="/mis-flags" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
                   🏁 Mis Flags
                 </Link>

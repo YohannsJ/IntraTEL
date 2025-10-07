@@ -181,54 +181,55 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const joinGroup = async (groupCode) => {
-    try {
-      const response = await fetch(getApiUrl('/groups/join'), {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ groupCode })
-      });
+  // SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+  // const joinGroup = async (groupCode) => {
+  //   try {
+  //     const response = await fetch(getApiUrl('/groups/join'), {
+  //       method: 'POST',
+  //       headers: getAuthHeaders(),
+  //       body: JSON.stringify({ groupCode })
+  //     });
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (response.ok && data.success) {
-        // Refrescar información del usuario
-        await checkAuth();
-        log('Joined group successfully:', data.data.group.name);
-        return { success: true, data: data.data };
-      } else {
-        logError('Failed to join group:', data.message);
-        return { success: false, message: data.message };
-      }
-    } catch (error) {
-      logError('Error joining group:', error);
-      return { success: false, message: 'Error de conexión' };
-    }
-  };
+  //     if (response.ok && data.success) {
+  //       // Refrescar información del usuario
+  //       await checkAuth();
+  //       log('Joined group successfully:', data.data.group.name);
+  //       return { success: true, data: data.data };
+  //     } else {
+  //       logError('Failed to join group:', data.message);
+  //       return { success: false, message: data.message };
+  //     }
+  //   } catch (error) {
+  //     logError('Error joining group:', error);
+  //     return { success: false, message: 'Error de conexión' };
+  //   }
+  // };
 
-  const leaveGroup = async () => {
-    try {
-      const response = await fetch(getApiUrl('/groups/leave'), {
-        method: 'POST',
-        headers: getAuthHeaders()
-      });
+  // const leaveGroup = async () => {
+  //   try {
+  //     const response = await fetch(getApiUrl('/groups/leave'), {
+  //       method: 'POST',
+  //       headers: getAuthHeaders()
+  //     });
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (response.ok && data.success) {
-        // Refrescar información del usuario
-        await checkAuth();
-        log('Left group successfully');
-        return { success: true };
-      } else {
-        logError('Failed to leave group:', data.message);
-        return { success: false, message: data.message };
-      }
-    } catch (error) {
-      logError('Error leaving group:', error);
-      return { success: false, message: 'Error de conexión' };
-    }
-  };
+  //     if (response.ok && data.success) {
+  //       // Refreshar información del usuario
+  //       await checkAuth();
+  //       log('Left group successfully');
+  //       return { success: true };
+  //     } else {
+  //       logError('Failed to leave group:', data.message);
+  //       return { success: false, message: data.message };
+  //     }
+  //   } catch (error) {
+  //     logError('Error leaving group:', error);
+  //     return { success: false, message: 'Error de conexión' };
+  //   }
+  // };
 
   const apiCall = async (endpoint, options = {}) => {
     const url = endpoint.startsWith('http') ? endpoint : getApiUrl(endpoint);
@@ -261,8 +262,9 @@ export const AuthProvider = ({ children }) => {
     checkAuth,
     updateProfile,
     changePassword,
-    joinGroup,
-    leaveGroup,
+    // SISTEMA DE GRUPOS DESHABILITADO
+    // joinGroup,
+    // leaveGroup,
     apiCall,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',

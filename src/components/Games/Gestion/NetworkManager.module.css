@@ -1,7 +1,7 @@
 .gameContainer {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 100px 20px 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 28px;
+  margin-top: 0;
   box-shadow: 0 8px 24px rgba(2,6,10,0.6);
 }
 .startTitle { color: #d6dbe0; font-size: 0.95rem; }

@@ -1,6 +1,6 @@
 /* Profile Tab Container */
 .profileTabContainer {
-  padding: 2rem;
+  padding: 100px 2rem 2rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;

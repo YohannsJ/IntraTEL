@@ -3,8 +3,8 @@
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
-  background: #0f1419;
+  padding: 100px 2rem 2rem; /* Ajustado para navbar fija */
+  /* background: #0f1419; */
   color: #f1f5f9;
   min-height: 100vh;
 }
@@ -241,8 +241,8 @@
 }
 
 .points {
-  background: #22c55e;
-  color: #1f2937;
+  /* background: #22c55e; */
+  color: #8c8e91;
   padding: 0.2rem 0.5rem;
   border-radius: 12px;
   font-size: 0.8rem;

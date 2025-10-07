@@ -6,6 +6,7 @@ import { GameHeader } from './components/GameHeader.jsx';
 import { ProgressTracker } from './components/ProgressTracker.jsx';
 import { generateCSS, validateLevel } from './utils/cssGenerator.js';
 import { LEVELS } from './config/levelData.js';
+import Footer from '../../Footer/Footer.jsx';
 import styles from './CSSCodeGame.module.css';
 
 const GAME_STATE_KEY = 'cssCodeGame_state';
@@ -227,6 +228,9 @@ export default function CSSCodeGame() {
           />
         </div>
       </div>
+      
+      {/* Footer con créditos de todos los creadores */}
+      <Footer />
     </div>
   );
 }

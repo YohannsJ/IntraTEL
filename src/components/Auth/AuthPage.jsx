@@ -20,7 +20,7 @@ const AuthPage = () => {
       const result = await login(email, password);
       
       if (result.success) {
-        navigate('/perfil');
+        navigate('/');
       } else {
         setMessage(result.message || 'Error en el inicio de sesión');
       }
@@ -39,7 +39,8 @@ const AuthPage = () => {
       const result = await register(userData);
       
       if (result.success) {
-        navigate('/dashboard');
+        // Redirigir a la página de bienvenida para nuevos usuarios
+        navigate('/bienvenida');
       } else {
         setMessage(result.message || 'Error en el registro');
       }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer/Footer';
 import styles from './LandingPage.module.css';
 
 const LandingPage = () => {
@@ -73,7 +74,7 @@ const LandingPage = () => {
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate('/ranking');
+      navigate('/');
     } else {
       navigate('/auth');
     }
@@ -185,7 +186,12 @@ const LandingPage = () => {
         </div>
         
         <div className={styles.stepsContainer}>
-          <div className={styles.step}>
+          <div 
+            className={styles.step}
+            onClick={() => navigate('/auth')}
+            style={{ cursor: 'pointer' }}
+            title="Ir a Registro"
+          >
             <div className={styles.stepNumber}>1</div>
             <div className={styles.stepContent}>
               <h3 className={styles.stepTitle}>Regístrate</h3>
@@ -216,6 +222,7 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

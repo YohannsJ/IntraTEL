@@ -26,21 +26,28 @@ export default function Network(){
   return (
     <IOSProvider ctx={ctx}>
       <div className={styles.networkWrapper}>
+        {/* Título del juego con gradiente */}
+        <h1 className={styles.gameTitle}>Network Challenge</h1>
+        
+        {/* Header con instrucciones destacadas */}
         <header className={styles.gameHeader}>
-          <div className={styles.title}>
-            <h1>Network Challenge</h1>
-            <p>Conecta Router↔Switch y PC↔Switch. Configura <code>fa0/0 = 192.168.1.1/24</code>, <code>no shutdown</code> y prueba <code>ping 192.168.1.10</code>.</p>
+          <div className={styles.instructionsBox}>
+            <p className={styles.instructions}>
+              Conecta <span className={styles.highlight}>Router↔Switch</span> y <span className={styles.highlight}>PC↔Switch</span>. 
+              Configura <code className={styles.codeHighlight}>fa0/0 = 192.168.1.1/24</code>, <code className={styles.codeHighlight}>no shutdown</code> y 
+              prueba <code className={styles.codeHighlight}>ping 192.168.1.10</code>.
+            </p>
           </div>
           <div className={styles.actions}>
             <button
-              className={styles.btnGhost}
+              className={styles.btnReset}
               onClick={()=>{
                 setTopo(createInitialTopology());
                 setStatus('');
                 setFlags([]);
               }}
             >
-              Reiniciar
+              🔄 Reiniciar
             </button>
           </div>
         </header>

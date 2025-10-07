@@ -188,7 +188,7 @@ const AppLayout = () => {
                 <div className={styles.dropdownDivider}></div>
                 <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                    <span>🎨 Tema</span>
+                    <span>Tema</span>
                     <ThemeToggle />
                   </div>
                 </div>
@@ -197,7 +197,7 @@ const AppLayout = () => {
                   onClick={() => { handleLogout(); handleUserMenuSelection(); }}
                   className={`${styles.dropdownItem} ${styles.logoutDropdownButton}`}
                 >
-                  🚪 Cerrar Sesión
+                  Cerrar Sesión
                 </button>
               </div>
             </div>
@@ -227,7 +227,7 @@ const AppLayout = () => {
                 onClick={toggleUserDropdown}
                 aria-expanded={userDropdownOpen}
               >
-                Hola, {user?.first_name || user?.username} {user?.role === 'admin' ? '👑' : user?.role === 'teacher' ? '👨‍🏫' : '👨‍�'} {userDropdownOpen ? '▲' : '▼'}
+                Hola, {user?.first_name || user?.username} {user?.role === 'admin' ? '👑' : user?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'} {userDropdownOpen ? '▲' : '▼'}
               </button>
               <div className={`${styles.dropdownMenu} ${styles.userDropdownMenu} ${userDropdownOpen ? styles.dropdownOpen : ''}`}>
                 <Link to="/perfil" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
@@ -246,19 +246,19 @@ const AppLayout = () => {
                     </Link>
                   </>
                 )}
-                <div className={styles.dropdownDivider}></div>
+                {/*<div className={styles.dropdownDivider}></div>
                 <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
                     <span>🎨 Tema</span>
                     <ThemeToggle />
-                  </div>
-                </div>
+                  </div> 
+                </div>*/}
                 <div className={styles.dropdownDivider}></div>
                 <button 
                   onClick={() => { handleLogout(); handleUserMenuSelection(); }}
                   className={`${styles.dropdownItem} ${styles.logoutDropdownButton}`}
                 >
-                  🚪 Cerrar Sesión
+                  Cerrar Sesión
                 </button>
               </div>
             </div>

@@ -49,7 +49,7 @@ const Footer = () => {
     </div>
 
     <div className={styles.right}>
-      <p>Hecho con ❤️ por estudiantes.</p>
+      <p>Hecho con ❤️ por estudiantes de TEL.</p>
     </div>
   </div>
 

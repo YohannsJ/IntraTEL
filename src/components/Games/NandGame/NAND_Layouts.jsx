@@ -666,8 +666,8 @@ export default function NandGame() {
         type: 'error',
         title: '❌ Intento Fallido',
         message: `La tabla de verdad no coincide con el resultado esperado. Revisa tus conexiones y vuelve a intentarlo.\n\nIntentos fallidos: ${newFailedAttempts}`,
-        autoClose: true,
-        autoCloseDelay: 4000
+        autoClose: false,
+        // autoCloseDelay: 4000
       });
     }
   }, [nodes, connections, currentPuzzle, solved, mode, showAlert, failedAttempts]);

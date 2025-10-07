@@ -153,6 +153,9 @@ class AuthController {
         });
       }
 
+      // Actualizar last_login
+      await User.updateLastLogin(user.id);
+
       // Obtener información completa del usuario
       const fullUser = await User.findById(user.id);
 

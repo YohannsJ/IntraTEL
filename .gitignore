@@ -13,6 +13,12 @@ dist-ssr
 *.local
 .env
 docs/*
+
+# Base de datos de producción (SQLite)
+server/data/*.db
+server/data/*.db-shm
+server/data/*.db-wal
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

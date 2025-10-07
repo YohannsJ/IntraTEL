@@ -162,36 +162,51 @@ export default function Topology({ topo, setTopo, ctx }) {
 
     // ---------- Links (render + eventos) ----------
     topo.links.forEach((L) => {
+      // Grupo para el cable y sus extremos
+      const linkGroup = document.createElementNS(NS, 'g')
+      linkGroup.setAttribute('id', 'link-group-' + L.id)
+      linkGroup.setAttribute('class', 'link-group')
+      
+      // Línea del cable
       const path = document.createElementNS(NS, 'path')
       path.setAttribute('id', 'link-' + L.id)
       path.setAttribute('class', 'link ' + (L.ok ? 'ok' : 'bad'))
       path.setAttribute('d', `M ${L.a.x} ${L.a.y} L ${L.b.x} ${L.b.y}`)
+      
+      // Círculo en el extremo A (origen)
+      const circleA = document.createElementNS(NS, 'circle')
+      circleA.setAttribute('class', 'link-endpoint')
+      circleA.setAttribute('cx', L.a.x)
+      circleA.setAttribute('cy', L.a.y)
+      circleA.setAttribute('r', 5)
+      circleA.style.fill = L.ok ? 'var(--ok)' : 'var(--err)'
+      circleA.style.stroke = '#fff'
+      circleA.style.strokeWidth = '1.5'
+      circleA.style.pointerEvents = 'none'
+      
+      // Círculo en el extremo B (destino)
+      const circleB = document.createElementNS(NS, 'circle')
+      circleB.setAttribute('class', 'link-endpoint')
+      circleB.setAttribute('cx', L.b.x)
+      circleB.setAttribute('cy', L.b.y)
+      circleB.setAttribute('r', 5)
+      circleB.style.fill = L.ok ? 'var(--ok)' : 'var(--err)'
+      circleB.style.stroke = '#fff'
+      circleB.style.strokeWidth = '1.5'
+      circleB.style.pointerEvents = 'none'
 
-      path.addEventListener('click', () => {
-        if (selectedLinkId === L.id) {
-          markSelected(L.id, false)
-          selectedLinkId = null
-          return
-        }
-        if (selectedLinkId) {
-          markSelected(selectedLinkId, false)
-        }
-        selectedLinkId = L.id
-        markSelected(L.id, true)
-      })
-      path.addEventListener('touchstart', (e) => {
+      const handleLinkClick = (e) => {
         e.preventDefault()
-        if (selectedLinkId === L.id) {
-          markSelected(L.id, false)
-          selectedLinkId = null
-          return
-        }
-        if (selectedLinkId) {
-          markSelected(selectedLinkId, false)
-        }
-        selectedLinkId = L.id
-        markSelected(L.id, true)
-      })
+        e.stopPropagation()
+        // Eliminar el cable directamente con un solo click/toque
+        setTopo((currentTopo) => ({
+          ...currentTopo,
+          links: currentTopo.links.filter((x) => x.id !== L.id),
+        }))
+      }
+
+      path.addEventListener('click', handleLinkClick)
+      path.addEventListener('touchstart', handleLinkClick)
       path.addEventListener('contextmenu', (e) => {
         e.preventDefault()
         setTopo((currentTopo) => ({
@@ -199,21 +214,26 @@ export default function Topology({ topo, setTopo, ctx }) {
           links: currentTopo.links.filter((x) => x.id !== L.id),
         }))
       })
-      svg.appendChild(path)
+      
+      linkGroup.appendChild(path)
+      linkGroup.appendChild(circleA)
+      linkGroup.appendChild(circleB)
+      svg.appendChild(linkGroup)
     })
 
     // ---------- Nodos ----------
     topo.nodes.forEach((n) => {
       const g = document.createElementNS(NS, 'g')
       g.setAttribute('class', 'node')
+      g.setAttribute('data-node-id', n.id)
       g.setAttribute('transform', `translate(${n.x},${n.y})`)
 
       // Icono del dispositivo (sin rectángulo de fondo)
       const img = document.createElementNS(NS, 'image')
-      img.setAttribute('x', 0)
-      img.setAttribute('y', 0)
-      img.setAttribute('width', 80)
-      img.setAttribute('height', 80)
+      img.setAttribute('x', -10)
+      img.setAttribute('y', -10)
+      img.setAttribute('width', 120)
+      img.setAttribute('height', 120)
       if (n.type === 'router') img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', routerPng)
       else if (n.type === 'switch') img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', switchPng)
       else if (n.type === 'pc') img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', pcPng)
@@ -222,8 +242,8 @@ export default function Topology({ topo, setTopo, ctx }) {
       // Etiqueta del dispositivo (encima del icono)
       const label = document.createElementNS(NS, 'text')
       label.setAttribute('class', 'label')
-      label.setAttribute('x', 40)
-      label.setAttribute('y', -5)
+      label.setAttribute('x', 50)
+      label.setAttribute('y', -10)
       label.setAttribute('text-anchor', 'middle')
       label.textContent = `${n.type.toUpperCase()} (${n.id})`
       g.appendChild(label)
@@ -235,19 +255,27 @@ export default function Topology({ topo, setTopo, ctx }) {
         // Puerto clickable (más grande para fácil selección)
         const c = document.createElementNS(NS, 'circle')
         c.setAttribute('class', 'port')
-        c.setAttribute('r', 12)
+        c.setAttribute('r', 15)
         c.setAttribute('cx', p.x)
         c.setAttribute('cy', p.y)
         c.dataset.node = n.id
         c.dataset.port = String(idx)
+        
+        // Verificar si el puerto está en uso y colorearlo
+        const portUsed = isPortUsed(n.id, idx)
+        if (portUsed) {
+          c.style.fill = '#1a4d2e'
+          c.style.stroke = '#4ade80'
+          c.style.strokeWidth = '2.5'
+        }
 
         // Jack visual (círculo más pequeño)
         const jack = document.createElementNS(NS, 'circle')
         jack.setAttribute('class', 'port-jack')
-        jack.setAttribute('r', 5)
+        jack.setAttribute('r', 6)
         jack.setAttribute('cx', p.x)
         jack.setAttribute('cy', p.y)
-        jack.style.fill = '#333'
+        jack.style.fill = portUsed ? '#4ade80' : '#333'
         jack.style.pointerEvents = 'none'
 
         // Etiqueta del puerto (solo para router)
@@ -335,10 +363,10 @@ export default function Topology({ topo, setTopo, ctx }) {
       if (n.type === 'router') {
         // Mostrar info de cada interfaz
         n.ports.forEach((p, idx) => {
-          const yOffset = 110 + idx * 18
+          const yOffset = 130 + idx * 20
           const info = document.createElementNS(NS, 'text')
           info.setAttribute('class', 'iface-info router-iface')
-          info.setAttribute('x', 40)
+          info.setAttribute('x', 50)
           info.setAttribute('y', yOffset)
           info.setAttribute('text-anchor', 'middle')
           const ip = p.ip || 'unassigned'
@@ -369,8 +397,8 @@ export default function Topology({ topo, setTopo, ctx }) {
         // Línea IP
         const infoIP = document.createElementNS(NS, 'text')
         infoIP.setAttribute('class', 'iface-info pc-iface')
-        infoIP.setAttribute('x', 40)
-        infoIP.setAttribute('y', 110)
+        infoIP.setAttribute('x', 50)
+        infoIP.setAttribute('y', 130)
         infoIP.setAttribute('text-anchor', 'middle')
         infoIP.textContent = `IP: ${ip}/${mask}`
         infoIP.style.fill = '#4fc3f7'
@@ -379,32 +407,38 @@ export default function Topology({ topo, setTopo, ctx }) {
         // Línea Gateway
         const infoGW = document.createElementNS(NS, 'text')
         infoGW.setAttribute('class', 'iface-info pc-iface')
-        infoGW.setAttribute('x', 40)
-        infoGW.setAttribute('y', 125)
+        infoGW.setAttribute('x', 50)
+        infoGW.setAttribute('y', 148)
         infoGW.setAttribute('text-anchor', 'middle')
         infoGW.textContent = `GW: ${gw}`
         infoGW.style.fill = '#ffb74d'
         g.appendChild(infoGW)
       }
 
-      // Drag de los nodos (mouse y touch) - Sistema centralizado
-      g.addEventListener('mousedown', (e) => {
-        if (e.target && (e.target.classList.contains('port') || e.target.classList.contains('port-jack'))) return
-        const grid = toSvg(e)
+      // Drag de los nodos (mouse y touch) - Sistema mejorado
+      const startDrag = (clientX, clientY, e) => {
+        if (e.target && (e.target.classList.contains('port') || e.target.classList.contains('port-jack'))) return false
+        pt.x = clientX
+        pt.y = clientY
+        const grid = pt.matrixTransform(svg.getScreenCTM().inverse())
         draggingNode = { nodeId: n.id, offX: grid.x - n.x, offY: grid.y - n.y }
-        e.preventDefault()
-        e.stopPropagation()
+        g.style.cursor = 'grabbing'
+        return true
+      }
+      
+      g.addEventListener('mousedown', (e) => {
+        if (startDrag(e.clientX, e.clientY, e)) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
       })
       
       g.addEventListener('touchstart', (e) => {
-        if (e.target && (e.target.classList.contains('port') || e.target.classList.contains('port-jack'))) return
         const touch = e.touches[0]
-        pt.x = touch.clientX
-        pt.y = touch.clientY
-        const grid = pt.matrixTransform(svg.getScreenCTM().inverse())
-        draggingNode = { nodeId: n.id, offX: grid.x - n.x, offY: grid.y - n.y }
-        e.preventDefault()
-        e.stopPropagation()
+        if (startDrag(touch.clientX, touch.clientY, e)) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
       }, { passive: false })
 
       svg.appendChild(g)
@@ -418,71 +452,98 @@ export default function Topology({ topo, setTopo, ctx }) {
       node.x = newX
       node.y = newY
       
+      // Actualizar visualmente el nodo en el DOM sin re-render
+      const nodeGroup = document.querySelector(`g.node[data-node-id="${nodeId}"]`)
+      if (nodeGroup) {
+        nodeGroup.setAttribute('transform', `translate(${newX},${newY})`)
+      }
+      
       // Actualizar enlaces conectados a este nodo
       topo.links.forEach((L) => {
         if (L.a.nodeId === node.id) {
           const port = node.ports[L.a.portIdx]
           L.a.x = node.x + port.x
           L.a.y = node.y + port.y
+          
+          // Actualizar visualmente el path del link
+          const linkPath = document.getElementById('link-' + L.id)
+          if (linkPath) {
+            linkPath.setAttribute('d', `M ${L.a.x} ${L.a.y} L ${L.b.x} ${L.b.y}`)
+          }
+          // Actualizar círculo del extremo A
+          const circles = document.querySelectorAll(`#link-group-${L.id} .link-endpoint`)
+          if (circles[0]) {
+            circles[0].setAttribute('cx', L.a.x)
+            circles[0].setAttribute('cy', L.a.y)
+          }
         }
         if (L.b.nodeId === node.id) {
           const port = node.ports[L.b.portIdx]
           L.b.x = node.x + port.x
           L.b.y = node.y + port.y
+          
+          // Actualizar visualmente el path del link
+          const linkPath = document.getElementById('link-' + L.id)
+          if (linkPath) {
+            linkPath.setAttribute('d', `M ${L.a.x} ${L.a.y} L ${L.b.x} ${L.b.y}`)
+          }
+          // Actualizar círculo del extremo B
+          const circles = document.querySelectorAll(`#link-group-${L.id} .link-endpoint`)
+          if (circles[1]) {
+            circles[1].setAttribute('cx', L.b.x)
+            circles[1].setAttribute('cy', L.b.y)
+          }
         }
       })
     }
     
     const scheduleUpdate = () => {
-      if (animationFrameId) return
+      if (!pendingUpdate) return
       
-      animationFrameId = requestAnimationFrame(() => {
-        if (pendingUpdate) {
-          updateNodePosition(pendingUpdate.nodeId, pendingUpdate.x, pendingUpdate.y)
-          setTopo(t => ({ ...t }))
-          pendingUpdate = null
-        }
-        animationFrameId = null
-      })
+      // Actualizar inmediatamente el DOM
+      updateNodePosition(pendingUpdate.nodeId, pendingUpdate.x, pendingUpdate.y)
+      pendingUpdate = null
     }
     
     const onMouseMove = (e) => {
       if (!draggingNode) return
-      const grid = toSvg(e)
+      e.preventDefault()
+      pt.x = e.clientX
+      pt.y = e.clientY
+      const grid = pt.matrixTransform(svg.getScreenCTM().inverse())
       pendingUpdate = {
         nodeId: draggingNode.nodeId,
-        x: grid.x - draggingNode.offX,
-        y: grid.y - draggingNode.offY
+        x: Math.max(50, Math.min(950, grid.x - draggingNode.offX)),
+        y: Math.max(50, Math.min(470, grid.y - draggingNode.offY))
       }
       scheduleUpdate()
     }
     
     const onTouchMove = (e) => {
       if (!draggingNode) return
+      e.preventDefault()
       const touch = e.touches[0]
       pt.x = touch.clientX
       pt.y = touch.clientY
       const grid = pt.matrixTransform(svg.getScreenCTM().inverse())
       pendingUpdate = {
         nodeId: draggingNode.nodeId,
-        x: grid.x - draggingNode.offX,
-        y: grid.y - draggingNode.offY
+        x: Math.max(50, Math.min(950, grid.x - draggingNode.offX)),
+        y: Math.max(50, Math.min(470, grid.y - draggingNode.offY))
       }
       scheduleUpdate()
-      e.preventDefault()
     }
     
     const onDragEnd = () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId)
-        animationFrameId = null
-      }
       if (pendingUpdate) {
         updateNodePosition(pendingUpdate.nodeId, pendingUpdate.x, pendingUpdate.y)
-        setTopo(t => ({ ...t }))
         pendingUpdate = null
       }
-      draggingNode = null
+      if (draggingNode) {
+        // Sincronizar el estado final con React
+        setTopo(t => ({ ...t }))
+        draggingNode = null
+      }
     }
     
     window.addEventListener('mousemove', onMouseMove)

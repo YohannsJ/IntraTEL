@@ -276,11 +276,16 @@
 
 /* Globales para el SVG y consola */
 :global(.node) {
-    cursor: grab
+    cursor: grab;
+    transition: filter 0.2s ease;
+}
+
+:global(.node:hover) {
+    filter: drop-shadow(0 0 8px rgba(120, 167, 255, 0.4));
 }
 
 :global(.node:active) {
-    cursor: grabbing
+    cursor: grabbing;
 }
 
 :global(.dev) {
@@ -303,34 +308,42 @@
 
 :global(.label) {
     fill: #d7e6ff;
-    font-size: 12px;
-    font-weight: 600;
-    pointer-events: none
+    font-size: 14px;
+    font-weight: 700;
+    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 :global(.port) {
     cursor: crosshair;
+    fill: #0f1c38;
+    stroke: #35579a;
+    stroke-width: 2;
+    transition: all 0.2s ease;
 }
 
-/* puntero de cableo tipo NandGame */
+:global(.port:hover) {
+    stroke: #78a7ff;
+    stroke-width: 2.5;
+    fill: #1a2d52;
+    filter: drop-shadow(0 0 6px rgba(120, 167, 255, 0.6));
+}
+
+/* Puntero de cableado tipo NandGame */
 :global(.link.ghost) {
     stroke-dasharray: 6 6;
 }
 
-/* línea fantasma mientras arrastras */
-:global(.port) {
-    fill: #0f1c38;
-    stroke: #35579a;
-    stroke-width: 1.5
-}
-
-:global(.port:hover) {
-    stroke: #78a7ff
-}
-
 :global(.link) {
     stroke: #7fa6ff;
-    stroke-width: 3
+    stroke-width: 3;
+    transition: stroke-width 0.2s ease;
+    cursor: pointer;
+}
+
+:global(.link:hover) {
+    stroke-width: 4;
+    filter: drop-shadow(0 0 6px currentColor);
 }
 
 :global(.link.ok) {
@@ -339,6 +352,20 @@
 
 :global(.link.bad) {
     stroke: var(--err)
+}
+
+/* Endpoints de los cables */
+:global(.link-endpoint) {
+    transition: all 0.2s ease;
+}
+
+:global(.link-group:hover .link-endpoint) {
+    r: 6;
+    filter: drop-shadow(0 0 4px currentColor);
+}
+
+:global(.link-group:hover .link) {
+    stroke-width: 4;
 }
 
 :global(.console-container) {
@@ -427,30 +454,32 @@
 /* Interface info under devices */
 :global(.iface-info) {
     fill: #e8f2ff;
-    font-size: 13px;
+    font-size: 18px;
     font-weight: 600;
     pointer-events: none;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 :global(.iface-info.gw) {
     fill: #ffe4b3;
-    font-size: 13px;
+    font-size: 18px;
     font-weight: 600;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 /* Port labels (fa0/0, fa0/1) */
 :global(.port-label) {
     fill: #ffd700;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     pointer-events: none;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.9);
 }
 
 /* Port jack visual */
 :global(.port-jack) {
-    fill: #333;
+    fill: #1a1a1a;
+    stroke: #555;
+    stroke-width: 0.5;
     pointer-events: none;
 }

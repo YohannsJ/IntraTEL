@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getApiUrl, getAuthHeaders, logError } from '../../config';
+import ProgressDashboard from './ProgressDashboard';
 import styles from './AdminFlagsPanel.module.css';
 
 const AdminFlagsPanel = () => {
@@ -11,7 +12,7 @@ const AdminFlagsPanel = () => {
   const [groupLeaderboard, setGroupLeaderboard] = useState([]);
   const [individualLeaderboard, setIndividualLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('recent');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showCreateFlag, setShowCreateFlag] = useState(false);
   const [editingFlag, setEditingFlag] = useState(null);
@@ -303,6 +304,12 @@ const AdminFlagsPanel = () => {
 
       <div className={styles.tabs}>
         <button
+          className={`${styles.tab} ${activeTab === 'dashboard' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          📈 Dashboard de Progreso
+        </button>
+        <button
           className={`${styles.tab} ${activeTab === 'recent' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('recent')}
         >
@@ -335,6 +342,12 @@ const AdminFlagsPanel = () => {
       </div>
 
       <div className={styles.content}>
+        {activeTab === 'dashboard' && (
+          <div className={styles.section}>
+            <ProgressDashboard />
+          </div>
+        )}
+
         {activeTab === 'recent' && (
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>⚡ Actividad en Tiempo Real</h3>

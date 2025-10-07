@@ -363,6 +363,32 @@ class FlagController {
       });
     }
   }
+
+  // Obtener progreso de usuarios en el tiempo (solo admin)
+  static async getUserProgressOverTime(req, res) {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({
+          success: false,
+          message: 'Acceso denegado. Se requieren permisos de administrador.'
+        });
+      }
+
+      const progressData = await Flag.getUserProgressOverTime();
+
+      res.json({
+        success: true,
+        data: progressData
+      });
+
+    } catch (error) {
+      console.error('Error obteniendo progreso de usuarios:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  }
 }
 
 export default FlagController;

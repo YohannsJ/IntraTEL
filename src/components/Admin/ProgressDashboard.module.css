@@ -1,0 +1,503 @@
+.container {
+  padding: 2rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 12px;
+  color: #fff;
+  min-height: 600px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  flex: 1;
+  min-width: 300px;
+}
+
+.headerRight {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: #aaa;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.autoRefreshControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.checkboxLabel {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #ccc;
+  user-select: none;
+}
+
+.refreshButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.refreshButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.refreshButton:active {
+  transform: translateY(0);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.quickSelect {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dateFilters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: center;
+}
+
+.dateSelect {
+  background: rgba(30, 30, 50, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  color: #e0e0e0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.dateSelect option {
+  background: #1a1a2e;
+  color: #e0e0e0;
+  padding: 0.5rem;
+}
+
+.dateSelect:hover {
+  background: rgba(40, 40, 60, 0.9);
+  border-color: rgba(102, 126, 234, 0.6);
+}
+
+.dateSelect:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+  background: rgba(30, 30, 50, 1);
+}
+
+.customDateInputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.dateInput {
+  background: rgba(30, 30, 50, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  color: #e0e0e0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  outline: none;
+  cursor: pointer;
+}
+
+.dateInput:hover {
+  background: rgba(40, 40, 60, 0.9);
+  border-color: rgba(102, 126, 234, 0.6);
+}
+
+.dateInput:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+  background: rgba(30, 30, 50, 1);
+}
+
+/* Color scheme para date inputs */
+.dateInput::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) brightness(1.2);
+  cursor: pointer;
+}
+
+.controlLabel {
+  font-weight: 600;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.quickButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.quickButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.stats {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.stat {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.stat strong {
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.chartSection {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.customTooltip {
+  background: rgba(26, 26, 46, 0.98);
+  border: 2px solid rgba(102, 126, 234, 0.5);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  min-width: 220px;
+}
+
+.tooltipLabel {
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  color: #fff;
+  font-size: 0.95rem;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+  padding-bottom: 0.5rem;
+  text-align: center;
+}
+
+.tooltipEntry {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltipEntry:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.tooltipEntry p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.tooltipSubtext {
+  color: #aaa;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  font-style: italic;
+}
+
+.customTooltip p strong {
+  font-weight: 700;
+}
+
+.usersList {
+  margin-top: 2rem;
+}
+
+.usersListTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.usersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.userCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.userCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.userCard.selected {
+  background: rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.userCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.colorIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userUsername {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.userCheckbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.userStats {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.userStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.statValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading p {
+  color: #ccc;
+  font-size: 1rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.emptyState h3 {
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0;
+}
+
+.emptyState p {
+  color: #888;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .headerRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .quickSelect {
+    width: 100%;
+  }
+
+  .dateFilters {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .customDateInputs {
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .dateInput {
+    width: 100%;
+  }
+
+  .stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .usersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .chartSection {
+    padding: 1rem;
+  }
+}

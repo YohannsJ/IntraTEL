@@ -76,28 +76,8 @@ export default function Network(){
               <li>Consola PC: <code>ping 192.168.1.1</code> para probar conectividad</li>
             </ul>
             
-            {/* Mostrar banderas conseguidas */}
-            {flags.length > 0 && (
-              <div className={styles.flagsPanel}>
-                <h4>🏁 Banderas conseguidas:</h4>
-                {flags.map((flag, idx) => (
-                  <div key={idx} className={styles.flagItem}>
-                    <span className={styles.flagIcon}>🚩</span>
-                    <div className={styles.flagContent}>
-                      <strong>{flag.title}</strong>
-                      <code className={styles.flagCode}>{flag.code}</code>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+
             
-            {flags.length === 2 && (
-              <div className={styles.successPanel}>
-                <p className={styles.success}>🏆 ¡Desafío completado!</p>
-                <p className={styles.flagMessage}>✅ Has conseguido todas las banderas</p>
-              </div>
-            )}
           </div>
         </section>
       </main>

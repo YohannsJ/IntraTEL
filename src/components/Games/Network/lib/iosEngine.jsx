@@ -394,7 +394,33 @@ function createRouterEngine(ctx){
     'hostname':            (args) => { if (state.mode!=='config') return '% Enter configuration mode'; state.hostname = args || 'Router'; return null },
     'interface':           (args) => { if (state.mode!=='config') return '% Enter configuration mode'; if (!state.routerIf[args]) return '% Invalid interface (use fa0/0 or fa0/1)'; state.currentInt=args; state.mode='int'; return null },
     'ip address':          (args) => { if (state.mode!=='int') return '% Enter interface config mode'; const [ip,mask]=args.split(/\s+/); if (!ip||!mask) return '% Usage: ip address <ip> <mask>'; state.routerIf[state.currentInt].ip=ip; state.routerIf[state.currentInt].mask=mask; printStatus(); syncToTopology(); return `Assigned ${ip} ${mask} to ${state.currentInt}` },
-    'no shutdown':         () => { if (state.mode!=='int') return '% Enter interface config mode'; state.routerIf[state.currentInt].up=true; printStatus(); syncToTopology(); return `${state.currentInt} changed state to up` },
+    'no shutdown':         () => { 
+      if (state.mode!=='int') return '% Enter interface config mode'; 
+      state.routerIf[state.currentInt].up=true; 
+      printStatus(); 
+      syncToTopology(); 
+      
+      // Verificar si fa0/0 tiene la configuración correcta
+      if (state.currentInt === 'fa0/0' && 
+          state.routerIf['fa0/0'].ip === '192.168.1.1' && 
+          state.routerIf['fa0/0'].mask === '255.255.255.0') {
+        return [
+          `${state.currentInt} changed state to up`,
+          ``,
+          `🚩FLAG: D1ft3l{S3c0nd-2do&3er_L4y3r}`,
+          ``,
+          `✅ ¡Configuración correcta de la interfaz fa0/0!`,
+          `   IP: 192.168.1.1`,
+          `   Máscara: 255.255.255.0`,
+          `   Estado: UP`,
+          `   `,
+          `   A continuación, verifica la conectividad haciendo ping desde el PC (192.168.1.10) hasta el router (192.168.1.1)`,
+
+        ].join('\n');
+      }
+      
+      return `${state.currentInt} changed state to up`;
+    },
     'shutdown':            () => { if (state.mode!=='int') return '% Enter interface config mode'; state.routerIf[state.currentInt].up=false; printStatus(); syncToTopology(); return `${state.currentInt} changed state to down` },
 
     // show commands

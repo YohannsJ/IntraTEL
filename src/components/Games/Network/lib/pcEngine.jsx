@@ -126,7 +126,7 @@ export function createPCEngine(ctx) {
         `Approximate round trip times in milli-seconds:`,
         `    Minimum = 0ms, Maximum = 0ms, Average = 0ms`,
         ``,
-        `✅ Conexión exitosa con el router!`
+        `✅ Conexión exitosa con el router!\n\nD1ft3l{F1n4l_St4g3.N3tw0rk-4Dm1n}\n\n¡Felicidades!`
       ]);
       
       // Otorgar segunda bandera si el ping fue exitoso

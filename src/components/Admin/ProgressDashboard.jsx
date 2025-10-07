@@ -297,24 +297,12 @@ const ProgressDashboard = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <h2 className={styles.title}>📈 Dashboard de Progreso en Tiempo Real</h2>
+          <h2 className={styles.title}>Dashboard de Progreso en Tiempo Real</h2>
           <p className={styles.subtitle}>
             Visualiza el progreso acumulado de puntos de cada jugador
           </p>
         </div>
         <div className={styles.headerRight}>
-          <div className={styles.autoRefreshControl}>
-            <input
-              type="checkbox"
-              id="progressAutoRefresh"
-              checked={autoRefresh}
-              onChange={(e) => setAutoRefresh(e.target.checked)}
-              className={styles.checkbox}
-            />
-            <label htmlFor="progressAutoRefresh" className={styles.checkboxLabel}>
-              Auto-actualizar (10s)
-            </label>
-          </div>
           <button
             className={styles.refreshButton}
             onClick={fetchProgressData}

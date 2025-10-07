@@ -15,7 +15,7 @@ const AdminFlagsPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showCreateFlag, setShowCreateFlag] = useState(false);
-  const [editingFlag, setEditingFlag] = useState(null);
+  const [editingFlagId, setEditingFlagId] = useState(null); // Cambiado a solo guardar el ID
   const [flagForm, setFlagForm] = useState({
     flagName: '',
     flagValue: '',
@@ -187,9 +187,9 @@ const AdminFlagsPanel = () => {
     }
   };
 
-  const handleEditFlag = async () => {
+  const handleEditFlag = async (flagId) => {
     try {
-      const response = await fetch(getApiUrl(`/flags/admin/${editingFlag.id}`), {
+      const response = await fetch(getApiUrl(`/flags/admin/${flagId}`), {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify(flagForm)
@@ -199,8 +199,7 @@ const AdminFlagsPanel = () => {
       
       if (data.success) {
         alert('Flag actualizada exitosamente');
-        setEditingFlag(null);
-        setFlagForm({ flagName: '', flagValue: '', description: '', points: 10 });
+        setEditingFlagId(null);
         await Promise.all([fetchAvailableFlags(), fetchAllFlags(), fetchRecentFlags()]);
       } else {
         alert(data.message || 'Error actualizando flag');
@@ -237,7 +236,7 @@ const AdminFlagsPanel = () => {
   };
 
   const startEdit = (flag) => {
-    setEditingFlag(flag);
+    setEditingFlagId(flag.id);
     setFlagForm({
       flagName: flag.flag_name,
       flagValue: flag.flag_value,
@@ -247,7 +246,7 @@ const AdminFlagsPanel = () => {
   };
 
   const cancelEdit = () => {
-    setEditingFlag(null);
+    setEditingFlagId(null);
     setShowCreateFlag(false);
     setFlagForm({ flagName: '', flagValue: '', description: '', points: 10 });
   };
@@ -307,7 +306,7 @@ const AdminFlagsPanel = () => {
           className={`${styles.tab} ${activeTab === 'dashboard' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('dashboard')}
         >
-          📈 Dashboard de Progreso
+          Dashboard de Progreso
         </button>
         <button
           className={`${styles.tab} ${activeTab === 'recent' ? styles.activeTab : ''}`}
@@ -393,9 +392,9 @@ const AdminFlagsPanel = () => {
               </button>
             </div>
 
-            {(showCreateFlag || editingFlag) && (
+            {showCreateFlag && (
               <div className={styles.flagForm}>
-                <h4>{editingFlag ? 'Editar Flag' : 'Crear Nueva Flag'}</h4>
+                <h4>Crear Nueva Flag</h4>
                 <div className={styles.formGroup}>
                   <label>Nombre de la Flag:</label>
                   <input
@@ -436,9 +435,9 @@ const AdminFlagsPanel = () => {
                 <div className={styles.formActions}>
                   <button
                     className={styles.submitButton}
-                    onClick={editingFlag ? handleEditFlag : handleCreateFlag}
+                    onClick={showCreateFlag ? handleCreateFlag : null}
                   >
-                    {editingFlag ? 'Actualizar' : 'Crear'}
+                    Crear
                   </button>
                   <button
                     className={styles.cancelButton}
@@ -453,46 +452,109 @@ const AdminFlagsPanel = () => {
             <div className={styles.flagsList}>
               {availableFlags.map((flag) => (
                 <div key={flag.id} className={styles.flagCard}>
-                  <div className={styles.flagHeader}>
-                    <h4 className={styles.flagTitle}>{flag.flag_name}</h4>
-                    <div className={styles.flagActions}>
-                      <button
-                        className={styles.editButton}
-                        onClick={() => startEdit(flag)}
-                        title="Editar flag"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        className={styles.deleteButton}
-                        onClick={() => handleDeleteFlag(flag.id, flag.flag_name)}
-                        title="Eliminar flag"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </div>
-                  <div className={styles.flagDetails}>
-                    <div className={styles.flagValue}>
-                      <strong>Valor:</strong> <code>{flag.flag_value}</code>
-                    </div>
-                    {flag.description && (
-                      <div className={styles.flagDescription}>
-                        <strong>Descripción:</strong> {flag.description}
+                  {editingFlagId === flag.id ? (
+                    // Formulario de edición inline
+                    <div className={styles.flagEditForm}>
+                      <div className={styles.flagHeader}>
+                        <h4 className={styles.flagTitle}>✏️ Editando: {flag.flag_name}</h4>
                       </div>
-                    )}
-                    <div className={styles.flagMeta}>
-                      <span className={styles.flagPoints}>
-                        <strong>Puntos:</strong> {flag.points}
-                      </span>
-                      <span className={styles.flagCreated}>
-                        <strong>Creada:</strong> {formatDateTime(flag.created_at).date}
-                      </span>
-                      <span className={styles.flagStatus}>
-                        <strong>Estado:</strong> {flag.is_active ? '✅ Activa' : '❌ Inactiva'}
-                      </span>
+                      <div className={styles.formGroup}>
+                        <label>Nombre de la Flag:</label>
+                        <input
+                          type="text"
+                          value={flagForm.flagName}
+                          onChange={(e) => setFlagForm({ ...flagForm, flagName: e.target.value })}
+                          placeholder="Ej: Flag de SQL Injection"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Valor de la Flag:</label>
+                        <input
+                          type="text"
+                          value={flagForm.flagValue}
+                          onChange={(e) => setFlagForm({ ...flagForm, flagValue: e.target.value })}
+                          placeholder="Ej: FLAG{sql_injection_found}"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Descripción:</label>
+                        <textarea
+                          value={flagForm.description}
+                          onChange={(e) => setFlagForm({ ...flagForm, description: e.target.value })}
+                          placeholder="Descripción de la flag..."
+                          rows="3"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Puntos:</label>
+                        <input
+                          type="number"
+                          value={flagForm.points}
+                          onChange={(e) => setFlagForm({ ...flagForm, points: parseInt(e.target.value) || 10 })}
+                          min="1"
+                          max="100"
+                        />
+                      </div>
+                      <div className={styles.formActions}>
+                        <button
+                          className={styles.submitButton}
+                          onClick={() => handleEditFlag(flag.id)}
+                        >
+                          💾 Guardar Cambios
+                        </button>
+                        <button
+                          className={styles.cancelButton}
+                          onClick={cancelEdit}
+                        >
+                          ❌ Cancelar
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    // Vista normal de la flag
+                    <>
+                      <div className={styles.flagHeader}>
+                        <h4 className={styles.flagTitle}>{flag.flag_name}</h4>
+                        <div className={styles.flagActions}>
+                          <button
+                            className={styles.editButton}
+                            onClick={() => startEdit(flag)}
+                            title="Editar flag"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDeleteFlag(flag.id, flag.flag_name)}
+                            title="Eliminar flag"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                      <div className={styles.flagDetails}>
+                        <div className={styles.flagValue}>
+                          <strong>Valor:</strong> <code>{flag.flag_value}</code>
+                        </div>
+                        {flag.description && (
+                          <div className={styles.flagDescription}>
+                            <strong>Descripción:</strong> {flag.description}
+                          </div>
+                        )}
+                        <div className={styles.flagMeta}>
+                          <span className={styles.flagPoints}>
+                            <strong>Puntos:</strong> {flag.points}
+                          </span>
+                          <span className={styles.flagCreated}>
+                            <strong>Creada:</strong> {formatDateTime(flag.created_at).date}
+                          </span>
+                          <span className={styles.flagStatus}>
+                            <strong>Estado:</strong> {flag.is_active ? '✅ Activa' : '❌ Inactiva'}
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>

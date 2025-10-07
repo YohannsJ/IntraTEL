@@ -1,7 +1,7 @@
 /* Groups.module.css - Estilos para gestión de grupos */
 
 .container {
-  padding: 2rem;
+  padding: 100px 2rem 2rem; /* Ajustado para navbar fija */
   max-width: 1400px;
   margin: 0 auto;
   background: var(--theme-background);

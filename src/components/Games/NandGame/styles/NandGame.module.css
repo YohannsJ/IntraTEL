@@ -20,7 +20,7 @@
 /* Limitar ancho máximo y centrar en pantallas muy anchas */
 @media (min-width: 1100px) {
   .gameContainer {
-    max-width: 1100px;
+    max-width: 1250px; /* Ajustado a 1250px */
     margin: 0 auto;
   }
   

@@ -72,15 +72,15 @@ export function buildPuzzleAND() {
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_1", 
-      relativeX: 30, // 35% desde la izquierda
-      relativeY: 45 // 40% desde arriba (centrado entre A y B)
+      relativeX: 50, // 35% desde la izquierda
+      relativeY: 20 // 40% desde arriba (centrado entre A y B)
     },
     { 
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_2", 
-      relativeX: 65, // 65% desde la izquierda
-      relativeY: 45 // 40% desde arriba
+      relativeX: 50, // 65% desde la izquierda
+      relativeY: 40 // 40% desde arriba
     },
     { 
       id: uid("OUT"), 
@@ -132,22 +132,22 @@ export function buildPuzzleOR() {
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_1", 
-      relativeX: 30, // 30% desde la izquierda
-      relativeY: 25 // 25% desde arriba (nivel de A)
+      relativeX: 20, // 30% desde la izquierda
+      relativeY: 10 // 25% desde arriba (nivel de A)
     }, // NOT A
     { 
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_2", 
-      relativeX: 30, // 30% desde la izquierda
-      relativeY: 65 // 65% desde arriba (nivel de B)
+      relativeX: 40, // 30% desde la izquierda
+      relativeY: 10 // 65% desde arriba (nivel de B)
     }, // NOT B
     { 
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_3", 
-      relativeX: 65, // 65% desde la izquierda
-      relativeY: 45 // 45% desde arriba (centrado)
+      relativeX: 60, // 65% desde la izquierda
+      relativeY: 10 // 45% desde arriba (centrado)
     }, // NAND(NOT A, NOT B)
     { 
       id: uid("OUT"), 

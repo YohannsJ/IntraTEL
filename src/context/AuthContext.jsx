@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem(config.TOKEN_STORAGE_KEY));
+  const [isNewUser, setIsNewUser] = useState(false);
 
   // Verificar token al cargar la aplicación
   useEffect(() => {
@@ -95,8 +96,9 @@ export const AuthProvider = ({ children }) => {
         setUser(data.data.user);
         setToken(data.data.token);
         localStorage.setItem(config.TOKEN_STORAGE_KEY, data.data.token);
+        setIsNewUser(true); // Marcar como nuevo usuario
         log('Registro exitoso para:', userData.email);
-        return { success: true, user: data.data.user };
+        return { success: true, user: data.data.user, isNewUser: true };
       } else {
         logError('Error en registro:', data.message);
         return { success: false, message: data.message };
@@ -110,6 +112,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    setIsNewUser(false);
     localStorage.removeItem(config.TOKEN_STORAGE_KEY);
     log('Logout exitoso');
   };
@@ -256,6 +259,8 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     loading,
+    isNewUser,
+    setIsNewUser,
     login,
     register,
     logout,

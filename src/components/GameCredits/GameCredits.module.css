@@ -1,0 +1,122 @@
+/* GameCredits.module.css */
+
+.creditsContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  animation: slideIn 0.5s ease-out;
+}
+
+.creditsContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.creditsContent:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 50px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.creditsEmoji {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.creditsText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.creditsLabel {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.creditsLink {
+  color: #60a5fa;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.creditsLink:hover {
+  color: #93c5fd;
+  transform: translateX(3px);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .creditsContainer {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .creditsContent {
+    padding: 0.6rem 1rem;
+  }
+
+  .creditsEmoji {
+    font-size: 1.3rem;
+  }
+
+  .creditsLabel {
+    font-size: 0.7rem;
+  }
+
+  .creditsLink {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .creditsContainer {
+    bottom: 70px;
+  }
+
+  .creditsContent {
+    padding: 0.5rem 0.8rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .creditsEmoji {
+    font-size: 1.2rem;
+  }
+
+  .creditsLabel {
+    font-size: 0.65rem;
+  }
+
+  .creditsLink {
+    font-size: 0.8rem;
+  }
+}

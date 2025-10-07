@@ -1,6 +1,7 @@
 
 import React from "react";
 import NetworkManager from "../components/Games/Gestion/NetworkManager";
+import GameCredits from "../components/GameCredits/GameCredits";
 
 const GestionWorkshop = () => {
   return (
@@ -10,6 +11,13 @@ const GestionWorkshop = () => {
       </h1>
       {/* Welcome paragraph removed per user request */}
       <NetworkManager />
+      
+      {/* Créditos */}
+      <GameCredits 
+        creator={{ name: 'Gabriel García', github: 'gabsgcx' }}
+        emoji="📊"
+        gameName="Gestión de Red"
+      />
     </div>
   );
 };

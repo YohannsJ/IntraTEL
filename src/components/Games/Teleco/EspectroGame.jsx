@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { apiUrl, apiHeaders } from '../../../config/index.js';
 import { useNavigate } from 'react-router-dom';
 import Spectrogram from './Spectrogram.jsx';
+import GameCredits from '../../GameCredits/GameCredits.jsx';
 import styles from './EspectroGame.module.css';
 
 // Componente memoizado del Spectrogram para optimización
@@ -1791,6 +1792,13 @@ const EspectroGame = () => {
           💡 <strong>Tip:</strong> Cada banda tiene características únicas de propagación y está regulada para usos específicos.
         </p>
       </div>
+      
+      {/* Créditos */}
+      <GameCredits 
+        creator={{ name: 'Juan Villalón', github: 'juanvillalon' }}
+        emoji="📡"
+        gameName="Espectro Teleco"
+      />
     </div>
   );
 };

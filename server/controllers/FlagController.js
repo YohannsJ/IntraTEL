@@ -181,6 +181,25 @@ class FlagController {
     }
   }
 
+  // Obtener estadísticas del sistema (público)
+  static async getSystemStats(req, res) {
+    try {
+      const stats = await Flag.getSystemStats();
+
+      res.json({
+        success: true,
+        data: stats
+      });
+
+    } catch (error) {
+      console.error('Error obteniendo estadísticas del sistema:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  }
+
   // ========================
   // MÉTODOS DE ADMINISTRADOR
   // ========================

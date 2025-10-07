@@ -4,6 +4,7 @@ import Topology from './components/Topology.jsx';
 import ConsoleWithTabs from './components/ConsoleWithTabs.jsx';
 import { createInitialTopology } from './lib/topologyState.js';
 import { IOSProvider } from './lib/iosEngine.jsx';
+import GameCredits from '../../GameCredits/GameCredits.jsx';
 
 export default function Network(){
   const [topo, setTopo] = useState(createInitialTopology());
@@ -81,6 +82,13 @@ export default function Network(){
           </div>
         </section>
       </main>
+      
+      {/* Créditos */}
+      <GameCredits 
+        creator={{ name: 'Tejos MV', github: 'tejosmv' }}
+        emoji="🌐"
+        gameName="Network Challenge"
+      />
     </IOSProvider>
   );
 }

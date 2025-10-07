@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer/Footer';
 import styles from './LandingPage.module.css';
 
 const LandingPage = () => {
@@ -73,7 +74,7 @@ const LandingPage = () => {
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate('/ranking');
+      navigate('/');
     } else {
       navigate('/auth');
     }
@@ -216,6 +217,7 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

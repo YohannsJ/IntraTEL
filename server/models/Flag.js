@@ -233,6 +233,35 @@ class Flag {
     }
   }
 
+  static async getSystemStats() {
+    try {
+      const totalFlags = await database.get(
+        'SELECT COUNT(*) as count FROM available_flags WHERE is_active = 1'
+      );
+      
+      const maxPoints = await database.get(
+        'SELECT SUM(points) as total FROM available_flags WHERE is_active = 1'
+      );
+      
+      const totalUsers = await database.get(
+        'SELECT COUNT(*) as count FROM users WHERE is_active = 1'
+      );
+      
+      const totalSubmissions = await database.get(
+        'SELECT COUNT(*) as count FROM user_flags'
+      );
+
+      return {
+        totalFlags: totalFlags.count || 0,
+        maxPoints: maxPoints.total || 0,
+        totalUsers: totalUsers.count || 0,
+        totalSubmissions: totalSubmissions.count || 0
+      };
+    } catch (error) {
+      throw new Error(`Error al obtener estadísticas del sistema: ${error.message}`);
+    }
+  }
+
   static async updateFlag(flagId, flagData) {
     try {
       const { flagName, flagValue, description, points } = flagData;

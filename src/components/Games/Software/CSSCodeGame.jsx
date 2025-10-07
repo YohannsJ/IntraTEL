@@ -6,6 +6,7 @@ import { GameHeader } from './components/GameHeader.jsx';
 import { ProgressTracker } from './components/ProgressTracker.jsx';
 import { generateCSS, validateLevel } from './utils/cssGenerator.js';
 import { LEVELS } from './config/levelData.js';
+import GameCredits from '../../GameCredits/GameCredits.jsx';
 import styles from './CSSCodeGame.module.css';
 
 const GAME_STATE_KEY = 'cssCodeGame_state';
@@ -227,6 +228,13 @@ export default function CSSCodeGame() {
           />
         </div>
       </div>
+      
+      {/* Créditos */}
+      <GameCredits 
+        creator={{ name: 'Guarén Semilla', github: 'guarenSemilla' }}
+        emoji="💻"
+        gameName="CSS Code Game"
+      />
     </div>
   );
 }

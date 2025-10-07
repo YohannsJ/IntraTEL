@@ -4,6 +4,9 @@ import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Rutas públicas (sin autenticación)
+router.get('/stats', FlagController.getSystemStats);
+
 // Todas las rutas requieren autenticación
 router.use(authenticateToken);
 

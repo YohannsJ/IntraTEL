@@ -27,19 +27,64 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import UserProfile from './components/Profile/UserProfile.jsx';
 import AdminPanel from './components/Admin/AdminPanel.jsx';
 import GestionWorkshop from './layouts/GestionWorkshop.jsx';
+import WelcomePage from './layouts/WelcomePage.jsx';
+import HomePage from './layouts/HomePage.jsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
-      { index: true, element: <LandingPage /> },
+      { index: true, element: <HomePage /> },
       { path: 'auth', element: <AuthPage /> },
-      { path: 'NandGame', element: <NandGame /> },
-      { path: 'Espectro', element: <EspectroGame /> },
-      { path: 'Datos', element: <GestionWorkshop /> },
-      { path: 'Software', element: <CSSCodeGame /> },
-      { path: 'Redes', element: <Network /> },
+      { 
+        path: 'bienvenida', 
+        element: (
+          <ProtectedRoute>
+            <WelcomePage />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'NandGame', 
+        element: (
+          <ProtectedRoute>
+            <NandGame />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'Espectro', 
+        element: (
+          <ProtectedRoute>
+            <EspectroGame />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'Datos', 
+        element: (
+          <ProtectedRoute>
+            <GestionWorkshop />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'Software', 
+        element: (
+          <ProtectedRoute>
+            <CSSCodeGame />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'Redes', 
+        element: (
+          <ProtectedRoute>
+            <Network />
+          </ProtectedRoute>
+        ) 
+      },
       // SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
       // { 
       //   path: 'grupos', 

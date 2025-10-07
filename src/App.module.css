@@ -30,6 +30,15 @@
   z-index: 1000;
   height: 60px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.navbarHidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .navBrand {
@@ -96,6 +105,36 @@
 .userDropdown {
   position: relative;
   display: inline-block;
+}
+
+/* Dropdown de usuario alineado a la derecha en desktop */
+.userDropdownMenu {
+  right: 0;
+  left: auto;
+}
+
+/* Divisor en el dropdown */
+.dropdownDivider {
+  height: 1px;
+  background: var(--theme-border);
+  margin: 0.25rem 0;
+}
+
+/* Botón de logout dentro del dropdown */
+.logoutDropdownButton {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--theme-error);
+  font-weight: 600;
+}
+
+.logoutDropdownButton:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--theme-error);
 }
 
 .dropdownToggle {

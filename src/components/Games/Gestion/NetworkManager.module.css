@@ -5,35 +5,116 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.header {
-  margin-bottom: 20px;
+/* Start panel (rounds selection) */
+.startPanel {
+  background: linear-gradient(180deg, #0f1720, #071018);
+  padding: 16px 18px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+  box-shadow: 0 8px 24px rgba(2,6,10,0.6);
+}
+.startTitle { color: #d6dbe0; font-size: 0.95rem; }
+.roundPills { display: flex; gap: 8px; }
+.roundPill {
+  background: rgba(255,255,255,0.04);
+  color: #eef2f7;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  min-width: 56px;
+  text-align: center;
+  font-weight: 600;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.roundPill:hover { background: rgba(255,255,255,0.08); transform: translateY(-3px); }
+.selectedPill {
+  background: linear-gradient(90deg,#1976d2,#1565c0);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 18px rgba(21,101,192,0.18);
+}
+.startControls { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+.alwaysUseLabel { display: flex; align-items: center; gap: 8px; margin-left: 8px; }
+.alwaysUseLabel input { width: 14px; height: 14px; }
+.alwaysUseLabel span { color: #d6dbe0; font-size: 0.9rem; }
+
+.smallPrimaryButton {
+  /* make the button visually shorter (less vertical space) */
+  padding: 4px 10px; /* reduce vertical padding */
+  font-size: 0.82rem;
+  border-radius: 6px;
+  height: 28px; /* explicit compact height */
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.statsContainer {
-  background-color: var(--background-secondary);
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.stabilityBar {
-  height: 20px;
-  background-color: var(--background-tertiary);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 10px;
+/* Responsive: stack on small screens */
+@media (max-width: 640px) {
+  .startPanel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .startControls { margin-left: 0; justify-content: flex-end; }
+  .roundPills { justify-content: center; flex-wrap: wrap; gap: 10px; }
 }
 
 .stabilityFill {
   height: 100%;
-  transition: width 0.3s ease, background-color 0.3s ease;
+  background: linear-gradient(90deg,#1976d2,#1565c0);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 18px rgba(21,101,192,0.18);
 }
 
 .stats {
   display: flex;
-  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
   color: var(--text-primary);
+  flex-wrap: wrap;
 }
+.stats span {
+  display: inline-flex;
+  gap: 8px;
+  padding: 4px 6px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* layout for left/center/right stat placement */
+.statLeft { flex: 1; display: flex; align-items: center; }
+.statCenter { flex: 1; display: flex; justify-content: center; align-items: center; }
+.statRight { flex: 1; display: flex; justify-content: flex-end; align-items: center; }
+
+/* stability bar container and fill */
+.stabilityBar {
+  width: 100%;
+  max-width: 3000px;
+  height: 14px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 12px;
+  margin-bottom: 30px;
+  margin-top: -10px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
+}
+.stabilityFill {
+  height: 100%;
+  transition: width 0.35s ease, background-color 0.35s ease;
+}
+
+.stabilityFill.low { background: #F44336; }
+.stabilityFill.medium { background: #FFA726; }
+.stabilityFill.high { background: #4CAF50; }
 
 .mainContent {
   background-color: var(--background-secondary);
@@ -45,23 +126,57 @@
   align-items: center;
 }
 
+/* Responsive: stack on small screens */
+@media (max-width: 640px) {
+  .startPanel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .startControls { margin-left: 0; justify-content: flex-end; }
+  .roundPills { justify-content: center; flex-wrap: wrap; gap: 10px; }
+}
+
 .problem {
   width: 100%;
   max-width: 600px;
 }
 
 .alert {
-  background-color: var(--background-tertiary);
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  border-left: 5px solid #FFA726;
+  /* stronger, more visible alert card */
+  background: linear-gradient(180deg, rgba(255,183,77,0.03), rgba(0,0,0,0.06));
+  padding: 18px 20px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  border-left: 8px solid #FFB74D; /* thicker accent */
+  box-shadow: 0 12px 30px rgba(255,167,38,0.08), inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
 .alert h3 {
-  color: #FFA726;
-  margin: 0 0 10px 0;
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: none;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.45);
 }
+
+.alert h3::before {
+  content: '⚠️';
+  display: inline-block;
+  margin-right: 8px;
+  transform: translateY(-1px);
+}
+
+.alert p {
+  color: #fff;
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.alert { animation: none; }
 
 .options {
   display: flex;
@@ -70,20 +185,138 @@
 }
 
 .optionButton {
-  padding: 15px;
-  border: none;
+  padding: 14px 16px;
   border-radius: 8px;
-  background-color: var(--background-tertiary);
+  /* slightly lighter surface so border is visible on dark background */
+  background-color: rgba(255,255,255,0.02);
   color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
   text-align: left;
   font-size: 1rem;
+  border: 1.25px solid rgba(255,255,255,0.08); /* more noticeable by default */
+  box-shadow: 0 10px 22px rgba(2,6,23,0.06);
 }
 
 .optionButton:hover {
   background-color: var(--background-hover);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.10);
+  border-color: rgba(33,150,243,0.18);
+}
+
+.optionButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(33,150,243,0.08);
+}
+
+.optionButton.selected {
+  outline: 2px solid #2196F3;
+}
+
+.optionButton.correct {
+  border: 1.5px solid rgba(46,125,50,0.7);
+  background-color: #C8E6C9;
+  color: #1B5E20;
+  box-shadow: 0 12px 28px rgba(76,175,80,0.12);
+}
+
+/* make option layout support right-side icon */
+.optionButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.optionIcon {
+  margin-left: 12px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1;
+  min-width: 20px;
+  text-align: right;
+}
+
+/* stability critical pulse animation */
+@keyframes stabilityPulse {
+  0% { box-shadow: 0 12px 30px rgba(255,87,34,0.08), inset 0 1px 0 rgba(255,255,255,0.02); }
+  50% { box-shadow: 0 20px 46px rgba(255,87,34,0.18), inset 0 1px 0 rgba(255,255,255,0.02); transform: translateY(-1px); }
+  100% { box-shadow: 0 12px 30px rgba(255,87,34,0.08), inset 0 1px 0 rgba(255,255,255,0.02); }
+}
+
+.critical {
+  animation: stabilityPulse 1s ease-in-out infinite;
+  border-color: rgba(255,87,34,0.9) !important;
+}
+
+.optionButton.incorrect {
+  border: 1.5px solid rgba(211,47,47,0.7);
+  background-color: #FFCDD2;
+  color: #B71C1C;
+  box-shadow: 0 12px 28px rgba(244,67,54,0.12);
+}
+
+.hintButton {
+  margin-top: 8px;
+  /* reduce vertical padding and set an explicit height so the button is visually shorter */
+  padding: 2px 6px; /* even less vertical space */
+  height: 24px; /* shorter */
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 4px;
+  /* subtle / less attention-grabbing appearance while remaining visible */
+  background: rgba(25,118,210,0.06);
+  color: #1565C0; /* muted blue for text */
+  border: 1px solid rgba(21,101,192,0.14);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.hintButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.hintButton:hover {
+  background: rgba(25,118,210,0.10);
+}
+
+/* Modal / overlay */
+.modalBackdrop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8); /* darker overlay so modal stands out */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: #111217; /* dark modal background */
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  z-index: 10000;
+  color: #eef2f7; /* light text */
+}
+
+.modal h4 {
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.modal p {
+  margin: 0 0 12px 0;
+  color: #d6dbe0;
 }
 
 .gameOver {
@@ -103,6 +336,57 @@
 
 .resetButton:hover {
   background-color: #45a049;
+}
+
+.roundControl {
+  padding: 4px 6px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: white;
+  color: #111; /* texto oscuro para que sea legible sobre fondo blanco */
+}
+
+.roundControl option {
+  background: #fff;
+  color: #111;
+}
+
+.roundControl:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(33,150,243,0.12);
+}
+
+/* Primary button for important actions (start, tutorial) */
+.primaryButton {
+  padding: 10px 14px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.primaryButton:hover { background: #1565c0; }
+
+
+/* Ensure smallPrimaryButton overrides primaryButton's vertical padding when both classes are present */
+.primaryButton.smallPrimaryButton {
+  /* stronger compact override to ensure visual reduction */
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  height: 24px !important;
+  line-height: 1 !important;
+  font-size: 0.78rem !important;
+  border-radius: 4px !important;
+}
+
+
+/* Slightly wider modal for settings */
+.modal {
+  max-width: 520px;
 }
 
 .loading {
@@ -126,3 +410,434 @@
 .alert {
   animation: pulse 2s infinite;
 }
+
+.noPulse {
+  animation: none !important;
+}
+
+/* Loss animation for popup and modal: shake + red inset flash */
+@keyframes lossShake {
+  0% { transform: translateX(0); box-shadow: 0 12px 36px rgba(0,0,0,0.35); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+  100% { transform: translateX(0); }
+}
+
+.lostPopup {
+  animation: lossShake 0.9s ease-in-out;
+  position: relative;
+  box-shadow: inset 0 0 0 4px rgba(255,0,0,0.12), 0 12px 36px rgba(0,0,0,0.35);
+}
+
+.lostModal {
+  animation: lossShake 0.9s ease-in-out;
+  box-shadow: inset 0 0 0 6px rgba(255,0,0,0.12), 0 12px 36px rgba(0,0,0,0.5);
+}
+
+/* Malicious popup (mini-event) */
+.malwareContainer {
+  position: fixed;
+  left: 50%;
+  top: 25%;
+  transform: translateX(-50%);
+  z-index: 11000;
+  pointer-events: none; /* evitar interacción en background */
+}
+
+.malwareBackdrop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(4px) brightness(0.6);
+  z-index: 11000;
+}
+
+.malwarePopup {
+  width: 360px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  padding: 0;
+  pointer-events: auto; /* permitir click en popup */
+  overflow: hidden;
+}
+
+.popupMascotBubble {
+  position: absolute;
+  /* más ancho para permitir explicaciones más largas, pero responsivo */
+  max-width: 420px;
+  width: min(420px, 92vw);
+  background: #111217; /* oscuro, distinto del modal principal */
+  color: #eef2f7;
+  padding: 12px 14px;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  font-size: 0.95rem;
+  z-index: 12000;
+  pointer-events: auto;
+}
+/* evitar que la burbuja crezca indefinidamente: limitar alto y permitir scroll interno */
+.popupMascotBubble {
+  max-height: 240px;
+  overflow: auto;
+}
+
+.belowPopup {
+  /* cuando se renderiza dentro del contenedor del popup, lo colocamos justo debajo, centrado */
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 420px;
+  width: min(420px, 92vw);
+}
+
+.popupMascotBubble.left {
+  right: calc(100% + 12px);
+}
+
+.popupMascotBubble.right {
+  left: calc(100% + 12px);
+}
+
+.popupMascotBubble .bubbleHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.popupMascotBubble .bubbleClose {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #d6dbe0;
+  cursor: pointer;
+}
+
+.bubbleHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.bubbleClose {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #d6dbe0;
+  cursor: pointer;
+}
+
+
+.mascotGreeting {
+  position: fixed;
+  bottom: 90px;
+}
+
+/* Accent buttons for ranking/achievements to increase contrast */
+.accentButton {
+  padding: 8px 12px;
+  background: #ffeb3b;
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.accentButton:hover { background: #ffe54d; }
+
+
+/* Consejo inline dentro de la mascota */
+.mascotTipInline {
+  max-width: 220px;
+  max-height: 120px;
+  overflow: auto;
+  font-size: 0.9rem;
+  color: #111; /* texto oscuro para mejor legibilidad sobre fondo claro */
+  background: rgba(255,255,255,0.95);
+  padding: 6px 8px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.mascotTipBubble {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  max-width: 300px;
+}
+
+
+.malwareHeader {
+  background: linear-gradient(180deg, #2b2b2b, #1f1f1f);
+  color: #fff;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.malwareTitle {
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.malwareBody {
+  color: #111;
+  padding: 12px;
+  background: #fafafa;
+  font-size: 0.95rem;
+}
+
+.malwareOptions {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: #fff;
+  justify-content: space-between;
+}
+
+.malwareButton {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #111;
+  text-align: center;
+}
+
+.malwareButton:hover {
+  background: #f1f1f1;
+}
+
+/* pequeña animación de error */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 350ms ease-in-out;
+}
+
+/* Mascota */
+.mascotContainer {
+  position: fixed;
+  right: 18px;
+  bottom: 18px; /* moved to bottom so no longer covers top buttons */
+  z-index: 10500; /* slightly lower than overlays but above main content */
+  pointer-events: auto;
+}
+
+.mascot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(180deg,#ffffff,#f1f8ff);
+  padding: 8px 10px;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+.mascot { cursor: pointer; }
+
+@media (max-width: 520px) {
+  .mascotContainer {
+    right: 10px;
+    bottom: 10px;
+  }
+  .mascotText { display: none; } /* hide text on very small screens to save space */
+}
+
+.mascotFace {
+  font-size: 1.6rem;
+}
+
+.mascotText {
+  font-weight: 600;
+  color: #222;
+}
+
+.tutorialList {
+  margin: 8px 0 0 0;
+  padding-left: 18px;
+  color: #d6dbe0;
+}
+
+/* Make the tutorial 'Comenzar' button blue while keeping its current size */
+.tutorialPanel .primaryButton {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+}
+.tutorialPanel .primaryButton:hover {
+  background: #1565c0;
+}
+
+/* Make the resetButton inside the tutorial panel look like a blue primary action, without changing its size */
+.tutorialPanel .resetButton {
+  background: #1976d2 !important;
+  color: #fff !important;
+  border: none !important;
+}
+.tutorialPanel .resetButton:hover {
+  background: #1565c0 !important;
+}
+
+/* Make the start panel's resetButton blue and keep compact size (matches tutorial button) */
+.startPanel .resetButton {
+  background: #1976d2 !important;
+  color: #fff !important;
+  border: none !important;
+}
+.startPanel .resetButton:hover {
+  background: #1565c0 !important;
+}
+
+/* green action button variant */
+.greenButton {
+  background: #4CAF50;
+  color: #fff;
+  border: none;
+}
+.greenButton:hover {
+  background: #45a049;
+}
+
+/* ensure in startPanel the green button is preserved over resetButton blue */
+.startPanel .greenButton {
+  background: #4CAF50 !important;
+}
+
+/* Inline tutorial panel shown on page load */
+.tutorialPanel {
+  background: linear-gradient(180deg,#0b1220,#081018);
+  color: #e6eef8;
+  padding: 18px 20px;
+  border-radius: 10px;
+  margin: 10px 0 0 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  text-align: left;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mascot.happy { border: 2px solid #4caf50; }
+.mascot.sad { border: 2px solid #f44336; }
+.mascot.cheer { border: 2px solid #ff9800; }
+.mascot.thinking { border: 2px dashed #2196f3; }
+
+/* Confetti */
+.confettiContainer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 13000;
+}
+
+.confettiPiece {
+  position: absolute;
+  top: -10px;
+  width: 10px;
+  height: 18px;
+  opacity: 0.95;
+  border-radius: 2px;
+  animation: confettiFall 3s linear forwards;
+}
+
+/* (removed duplicate loss animation: handled by .lostPopup and .lostModal) */
+
+@keyframes confettiFall {
+  to { transform: translateY(120vh) rotate(540deg); opacity: 0.9; }
+}
+
+/* Achievements toast */
+.achievementToast {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  transform: none;
+  background: #fff; /* fondo claro */
+  color: #111; /* texto oscuro */
+  padding: 10px 14px;
+  border-radius: 8px;
+  z-index: 16000; /* por encima de confetti */
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  display: inline-flex;
+  align-items: center;
+}
+
+.modal ol, .modal ul {
+  max-height: 220px;
+  overflow: auto;
+  padding-left: 18px;
+}
+
+.smallBadge {
+  font-size: 0.85rem;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.06);
+}
+
+/* Inline start panel (less intrusive than modal) */
+.startPanel {
+  background: linear-gradient(180deg, #0f1720, #0b0d10);
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px; /* sitúa el panel más abajo */
+}
+.startTitle { color: #d6dbe0; font-size: 0.95rem; }
+.roundPills { display: flex; gap: 8px; }
+.roundPill {
+  background: rgba(255,255,255,0.06);
+  color: #eef2f7;
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 6px 10px;
+  border-radius: 18px;
+  cursor: pointer;
+  min-width: 44px;
+  text-align: center;
+}
+.roundPill:hover { background: rgba(255,255,255,0.10); }
+.selectedPill {
+  background: linear-gradient(90deg,#1976d2,#1565c0);
+  color: white;
+  border: none;
+}
+.startControls { margin-left: auto; display: flex; gap: 8px; }
+.alwaysUseLabel input { width: 14px; height: 14px; }
+.alwaysUseLabel span { color: #d6dbe0; }
+.smallPrimaryButton {
+  /* make the button visually shorter (less vertical space) */
+  padding: 4px 10px; /* reduce vertical padding */
+  font-size: 0.82rem;
+  border-radius: 6px;
+  height: 28px; /* explicit compact height */
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+

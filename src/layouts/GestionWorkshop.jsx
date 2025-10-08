@@ -5,9 +5,7 @@ import NetworkManager from "../components/Games/Gestion/NetworkManager";
 const GestionWorkshop = () => {
   return (
     <div style={{ padding: '20px' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>
-        Administrador de Red Escolar
-      </h1>
+      {/* Page header removed: title will be handled by the game's welcome hero to avoid duplicate headings */}
       {/* Welcome paragraph removed per user request */}
       <NetworkManager />
     </div>

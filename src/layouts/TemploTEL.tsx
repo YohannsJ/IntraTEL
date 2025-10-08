@@ -22,15 +22,20 @@ const PILLAR_REQUIREMENTS = {
     "D1ft3l{S3c0nd-2do&3er_L4y3r}",                   // Configuración
     // "D1ft3l{F1n4l_St4g3.N3tw0rk-4Dm1n}"              // Ping
   ],
-  DATOS: [], // Sin requisitos por ahora
+  DATOS: ["D1FT3L{G3ST10N_3XP3RT0_3N_R3D_PL4T4}",
+    "D1FT3L{G3ST10N_4N4L1ST4_D3_R3D_BR0NC3}",
+    "D1FT3L{G3ST10N_M43STR0_D3_R3D_0R0}"
+  ], 
   HARDWARE: [
     "D1FT3L{N0T_G4T3_4M4T3UR}",                      // Nivel 1 NOT
-    // "D1FT3L{4ND_L0G1C_W1Z4RD}",                       // Nivel 2 AND
-    "D1FT3L{0R_G4T3_CH4MP10N}",                       // Nivel 3 OR
+    "D1FT3L{4ND_L0G1C_W1Z4RD}",                       // Nivel 2 AND
+    // "D1FT3L{0R_G4T3_CH4MP10N}",                       // Nivel 3 OR
     // "D1FT3L{X0R_M4ST3R_H4CK3R}",                      // Nivel XOR
     // "D1FT3L{NAND_TOTAL_MASTER_4_DE_4}"                // Completado
   ],
-  SOFTWARE: [] // Sin requisitos por ahora
+  SOFTWARE: ["D1FT3L{CSS_LEVEL_1_COMPLETE}",
+    "D1FT3L{LAYOUT_CENTERING_PRO}"
+  ]
 };
 
 export default function HomeHero() {
@@ -89,10 +94,16 @@ export default function HomeHero() {
       return requirements.every(req => userFlags.includes(req));
     };
 
+    // Función especial para DATOS: se desbloquea con al menos 1 flag
+    const checkUnlockedDatos = (requirements: string[]) => {
+      if (requirements.length === 0) return true;
+      return requirements.some(req => userFlags.includes(req));
+    };
+
     const newUnlockedState = {
       TELECO: checkUnlocked(PILLAR_REQUIREMENTS.TELECO),
       REDES: checkUnlocked(PILLAR_REQUIREMENTS.REDES),
-      DATOS: checkUnlocked(PILLAR_REQUIREMENTS.DATOS),
+      DATOS: checkUnlockedDatos(PILLAR_REQUIREMENTS.DATOS),
       HARDWARE: checkUnlocked(PILLAR_REQUIREMENTS.HARDWARE),
       SOFTWARE: checkUnlocked(PILLAR_REQUIREMENTS.SOFTWARE)
     };
@@ -124,7 +135,9 @@ export default function HomeHero() {
           display: "flex", 
           flexDirection: "row", 
           height: "100vh",
-          width: "100%"
+          width: "100%",
+          marginTop: "40px",
+          // marginBottom: "20px"
         }}>
           
           {/* Columna Izquierda - Web Preview */}
@@ -150,14 +163,16 @@ export default function HomeHero() {
               className="temple-container w-full flex items-center justify-center"
               style={{ 
                 maxWidth: "100vw",
-                overflow: "hidden"
+                overflow: "hidden",
+                // marginBottom: "10px"
               }}
             >
               <div
                 style={{
                   transform: "scale(var(--temple-scale, 1))",
                   transformOrigin: "center center",
-                  transition: "transform 0.3s ease"
+                  transition: "transform 0.3s ease",
+                  marginBottom: "20px"
                 }}
               >
                 <TemploTelematica
@@ -172,7 +187,7 @@ export default function HomeHero() {
             <div className="mt-4 md:mt-8 text-center text-white max-w-2xl px-4">
               <h2 className="text-lg md:text-2xl font-bold mb-2 md:mb-4">🏛️ Templo de Telemática Destruido</h2>
               <p className="text-gray-400 text-sm md:text-lg mb-2">
-                Los pilares del conocimiento han caído en la oscuridad...
+                Los pila-res del conocimiento han caído en la oscuridad...
               </p>
               <p className="text-gray-500 text-xs md:text-base">
                 Inicia sesión y completa los desafíos para restaurar cada pilar y reconstruir el templo
@@ -300,7 +315,7 @@ export default function HomeHero() {
           display: "flex",
           alignItems: "center", 
           justifyContent: "center",
-          background: "linear-gradient(to bottom, #0a0f14, #151a24)",
+          // background: "linear-gradient(to bottom, #0a0f14, #151a24)",
           borderRight: "1px solid #374151",
           minHeight: "0",
           overflow: "hidden"
@@ -317,7 +332,8 @@ export default function HomeHero() {
             className="temple-container w-full flex items-center justify-center"
             style={{ 
               maxWidth: "100vw",
-              overflow: "hidden"
+              overflow: "hidden",
+              marginTop: "40px",
             }}
           >
             <div
@@ -342,8 +358,8 @@ export default function HomeHero() {
                 display: "flex", 
                 gap: "53px", 
                 alignItems: "flex-start",
-                marginTop: "-36px",
-                marginLeft: "98px"
+                marginTop: "-35px",
+                marginLeft: "100px"
               }}
             >
               {labels.map((label, i) => {
@@ -364,6 +380,7 @@ export default function HomeHero() {
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "flex-start",
+                      marginBottom: "80px",
                     }}
                   >
                     {showProgress && (
@@ -393,7 +410,7 @@ export default function HomeHero() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(to bottom, #0a0f14, #151a24)",
+          // background: "linear-gradient(to bottom, #0a0f14, #151a24)",
           borderLeft: "1px solid #374151",
           minHeight: "0",
           overflow: "hidden"

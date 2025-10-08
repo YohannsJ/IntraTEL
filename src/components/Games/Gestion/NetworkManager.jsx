@@ -137,14 +137,14 @@ const NetworkManager = () => {
   },
     {
       id: 12,
-      description: "En la escala del 1 al 10, que tanto odias a Israel, y porqué 10?",
-      options: [
-        { text: "Porque no puedo más :c", correct: true, explanation: "" },
-        { text: "Mataron a Yisus", correct: true },
-        { text: "Controlan el mundo", correct: true, explanation: "" }
-      ],
-      explanation: "Los buffers dinámicos y reenvío adaptativo manejan eficientemente la congestión temporal."
-    },
+      description: "Estás jugando en línea y un desconocido te ofrece 'monedas gratis' si le das tu usuario y contraseña. ¿Qué deberías hacer?",
+  options: [
+    { text: "Confiar y darle los datos rápido antes de que se acabe la oferta", correct: false, explanation: "Es una estafa común para robar cuentas o información personal." },
+    { text: "No compartir tus datos y reportar la cuenta sospechosa", correct: true },
+    { text: "Compartir la contraseña solo si promete más monedas después", correct: false, explanation: "Ningún juego legítimo pedirá tus credenciales fuera de su sistema oficial." }
+  ],
+  explanation: "Las estafas dentro de juegos son comunes. Nunca compartas tu contraseña ni datos personales, ni siquiera por recompensas."
+},
     {
       id: 13,
       description: "Si una aplicación comienza a pedir acceso a datos que no necesita, ¿qué deberías hacer?",

@@ -33,7 +33,7 @@ const PILLAR_REQUIREMENTS = {
     // "D1FT3L{X0R_M4ST3R_H4CK3R}",                      // Nivel XOR
     // "D1FT3L{NAND_TOTAL_MASTER_4_DE_4}"                // Completado
   ],
-  SOFTWARE: ["D1FT3L{CSS_LEVEL_1_COMPLETE}",
+  SOFTWARE: ["D1FT3L{CSS_BASICS_MASTERED}",
     "D1FT3L{LAYOUT_CENTERING_PRO}"
   ]
 };

@@ -133,7 +133,6 @@ export const LEVELS = [
         align-items: center;
         justify-content: center;
         text-align: center;
-        margin: 20px auto;
         box-sizing: border-box;
       }
     `,
@@ -143,9 +142,11 @@ export const LEVELS = [
       'width',
       'height',
       'margin',
+      'padding',
       'display',
       'align-items',
-      'justify-content'
+      'justify-content',
+      'text-align'
     ],
     expectedResult: {
       css: `
@@ -167,16 +168,18 @@ export const LEVELS = [
       description: "Convierte el cuadrado en un círculo con borde grueso"
     },
     validation: {
-      requiredProperties: ['border', 'border-radius'],
+      requiredProperties: ['border', 'border-radius', 'margin'],
       acceptableValues: {
         'border': ['3px solid #333', '2px solid #000', '3px solid #000', '2px solid #333'],
-        'border-radius': ['50%', '60px']
+        'border-radius': ['50%', '60px'],
+        'margin': ['20px auto', '65px auto', '16px auto']
       }
     },
     hints: [
       "Usa 'border-radius: 50%' para hacer un círculo perfecto",
       "Agrega un borde grueso con 'border'",
-      "Mantén width y height iguales para un círculo perfecto"
+      "Mantén width y height iguales para un círculo perfecto",
+      "Usa 'margin: 20px auto' para centrar el elemento horizontalmente"
     ]
   },
 

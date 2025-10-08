@@ -147,7 +147,7 @@ export const CSS_PROPERTIES = {
         { name: 'Centrar horizontal', value: 'auto', description: 'Centra horizontalmente' },
         { name: 'Centrar 16px', value: '16px auto', description: 'Margen vertical 16px, centrado horizontal' },
         { name: 'Centrar 20px', value: '20px auto', description: 'Margen vertical 20px, centrado horizontal' },
-        { name: 'Centrar 24px', value: '24px auto', description: 'Margen vertical 24px, centrado horizontal' }
+        { name: 'Centrar 65px', value: '65px auto', description: 'Margen vertical 65px, centrado horizontal' }
       ],
       example: '16px'
     },

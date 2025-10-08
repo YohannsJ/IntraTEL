@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './NetworkManager.module.css';
 import telixImage from '../../../assets/telix.png';
+import { getApiUrl, getAuthHeaders } from '../../../config/environment';
 
 const NetworkManager = () => {
   const [stability, setStability] = useState(100);
@@ -15,6 +16,10 @@ const NetworkManager = () => {
   // Las pistas ofrecen un consejo específico por pregunta y NO penalizan estabilidad.
   const [hintCount, setHintCount] = useState(1);
   const [explanationIsHint, setExplanationIsHint] = useState(false);
+  
+  // Estado para verificar si el usuario ya tiene una bandera del juego de gestión
+  const [hasGestionFlag, setHasGestionFlag] = useState(false);
+  const [checkingFlags, setCheckingFlags] = useState(true);
 
   // Problemas del juego definidos localmente
   const gameProblems = [
@@ -406,6 +411,45 @@ const NetworkManager = () => {
     return undefined;
   }, [showWelcome]);
 
+  // Verificar si el usuario ya tiene una bandera del juego de gestión
+  useEffect(() => {
+    const checkUserFlags = async () => {
+      try {
+        const response = await fetch(getApiUrl('/flags/user'), {
+          headers: getAuthHeaders()
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const userFlags = data.data || [];
+          
+          // Códigos de las 3 banderas del juego de gestión
+          const gestionFlagCodes = [
+            'D1FT3L{G3ST10N_M43STR0_D3_R3D_0R0}',       // Oro
+            'D1FT3L{G3ST10N_3XP3RT0_3N_R3D_PL4T4}',     // Plata
+            'D1FT3L{G3ST10N_4N4L1ST4_D3_R3D_BR0NC3}'    // Bronce
+          ];
+          
+          // Verificar si el usuario tiene alguna de estas banderas
+          const hasAnyGestionFlag = userFlags.some(flag => 
+            gestionFlagCodes.includes(flag.code)
+          );
+          
+          if (hasAnyGestionFlag) {
+            setHasGestionFlag(true);
+            setHintCount(0); // Bloquear pistas
+          }
+        }
+      } catch (error) {
+        console.error('Error verificando flags del usuario:', error);
+      } finally {
+        setCheckingFlags(false);
+      }
+    };
+
+    checkUserFlags();
+  }, []);
+
   // disable page scroll while tutorial panel is visible and show a tutorial-specific mascot tip
   useEffect(() => {
     if (showTutorial) {
@@ -757,6 +801,24 @@ const NetworkManager = () => {
   };
 
   const useHint = () => {
+    // Si ya tiene una bandera del juego de gestión, no permitir usar pistas
+    if (hasGestionFlag) {
+      setMascotTip({ 
+        visible: true, 
+        text: '¡Ya completaste este juego antes y obtuviste una bandera! Las pistas están bloqueadas para quienes ya ganaron.' 
+      });
+      setMascotMood('thinking');
+      if (mascotTipRef.current) {
+        clearTimeout(mascotTipRef.current);
+      }
+      mascotTipRef.current = setTimeout(() => {
+        setMascotTip({ visible: false, text: '' });
+        setMascotMood('idle');
+        mascotTipRef.current = null;
+      }, 5000);
+      return;
+    }
+    
     if (!currentProblem || hintUsed || hintCount <= 0) return;
     // consumir pista
     setHintCount(h => Math.max(0, h - 1));
@@ -994,6 +1056,42 @@ const NetworkManager = () => {
                     <span>¡Aprende jugando!</span>
                   </div>
                 </div>
+                
+                {/* Mensaje si ya tiene una bandera del juego */}
+                {hasGestionFlag && !checkingFlags && (
+                  <div style={{ 
+                    marginTop: 16, 
+                    padding: '12px 16px', 
+                    backgroundColor: 'rgba(251, 191, 36, 0.15)', 
+                    border: '2px solid rgba(251, 191, 36, 0.5)',
+                    borderRadius: '8px',
+                    maxWidth: '500px',
+                    margin: '16px auto 0 auto'
+                  }}>
+                    <p style={{ 
+                      margin: 0, 
+                      color: '#fbbf24', 
+                      fontSize: '0.95rem', 
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      justifyContent: 'center'
+                    }}>
+                      <span>🏆</span>
+                      <span>¡Ya completaste este juego!</span>
+                    </p>
+                    <p style={{ 
+                      margin: '8px 0 0 0', 
+                      color: 'rgba(255,255,255,0.9)', 
+                      fontSize: '0.85rem',
+                      lineHeight: 1.4
+                    }}>
+                      Puedes volver a jugar, pero las pistas estarán bloqueadas. ¡Demuestra tu habilidad sin ayuda!
+                    </p>
+                  </div>
+                )}
+                
                 <div style={{ marginTop: 24, display: 'flex', gap: '12px', justifyContent: 'center' }}>
                   <button className={`${styles.welcomeButton} ${styles.primaryButton}`} onClick={() => {
                     const shouldShowTutorial = !localStorage.getItem('nm_dontShowTutorial');
@@ -1067,10 +1165,17 @@ const NetworkManager = () => {
                 <button
                   className={styles.hintButton}
                   onClick={useHint}
-                  disabled={!currentProblem || hintUsed || hintCount <= 0}
-                  title={hintCount > 0 ? `Pistas disponibles: ${hintCount}` : 'No hay pistas disponibles'}
+                  disabled={!currentProblem || hintUsed || hintCount <= 0 || hasGestionFlag}
+                  title={
+                    hasGestionFlag 
+                      ? '🔒 Pistas bloqueadas - Ya obtuviste una bandera de este juego' 
+                      : hintCount > 0 
+                        ? `Pistas disponibles: ${hintCount}` 
+                        : 'No hay pistas disponibles'
+                  }
+                  style={hasGestionFlag ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                 >
-                  {hintCount > 0 ? `Pista (${hintCount})` : 'Sin pistas'}
+                  {hasGestionFlag ? '🔒 Pistas bloqueadas' : hintCount > 0 ? `Pista (${hintCount})` : 'Sin pistas'}
                 </button>
               </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

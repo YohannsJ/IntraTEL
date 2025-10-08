@@ -118,20 +118,34 @@ export default function HomeHero() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#0a0f14] overflow-x-hidden">
-        {/* Layout de 3 columnas en desktop */}
-        <div className="flex-1 flex flex-col lg:flex-row items-stretch overflow-x-hidden">
+      <div style={{ minHeight: "100vh", backgroundColor: "#0a0f14", overflowX: "hidden" }}>
+        {/* Layout de 3 columnas horizontal - Forzado con Flexbox */}
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "row", 
+          height: "100vh",
+          width: "100%"
+        }}>
           
-          {/* Columna Izquierda - Web Preview (17%) */}
-          <div className="hidden lg:flex lg:w-[17%] items-center justify-center bg-gradient-to-b from-[#0a0f14] to-[#151a24] border-r border-gray-800">
+          {/* Columna Izquierda - Web Preview */}
+          <div style={{
+            width: "20%",
+            display: "flex",
+            alignItems: "center", 
+            justifyContent: "center",
+            background: "linear-gradient(to bottom, #0a0f14, #151a24)",
+            borderRight: "1px solid #374151",
+            minHeight: "0",
+            overflow: "hidden"
+          }}>
             <WebPreview 
               url="https://telematica.usm.cl/" 
               title="Telemática USM"
             />
           </div>
 
-          {/* Columna Central - Templo (66%) */}
-          <div className="flex-1 lg:w-[66%] flex flex-col items-center justify-center p-2 md:p-8 overflow-x-hidden">
+          {/* Columna Central - Templo */}
+          <div className="flex flex-col items-center justify-center p-2 md:p-8 min-h-0 overflow-hidden" style={{ width: "60%" }}>
             <div 
               className="temple-container w-full flex items-center justify-center"
               style={{ 
@@ -166,11 +180,47 @@ export default function HomeHero() {
             </div>
           </div>
 
-          {/* Columna Derecha - Instagram Preview (17%) */}
-          <div className="hidden lg:flex lg:w-[17%] items-center justify-center bg-gradient-to-b from-[#0a0f14] to-[#151a24] border-l border-gray-800">
+          {/* Columna Derecha - Instagram Preview */}
+          <div style={{
+            width: "20%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "linear-gradient(to bottom, #0a0f14, #151a24)",
+            borderLeft: "1px solid #374151",
+            minHeight: "0",
+            overflow: "hidden"
+          }}>
             <InstagramPreview username="telematicausm" />
           </div>
         </div>
+
+        {/* Redes sociales y web móvil - Footer para usuarios no autenticados */}
+        <footer className="md:hidden border-t border-gray-800 bg-gray-900 bg-opacity-50 backdrop-blur-sm p-6">
+          <div className="max-w-md mx-auto">
+            <h3 className="text-white font-bold text-center mb-4">Visita Telemática USM</h3>
+            <div className="flex flex-col gap-4 mb-6">
+              <a 
+                href="https://telematica.usm.cl/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg"
+              >
+                <span className="text-xl">🌐</span>
+                <span className="font-semibold">Página Web Telemática</span>
+              </a>
+              <a 
+                href="https://www.instagram.com/telematicausm/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-pink-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
+              >
+                <span className="text-xl">📱</span>
+                <span className="font-semibold">Instagram @telematicausm</span>
+              </a>
+            </div>
+          </div>
+        </footer>
 
         {/* CSS para responsive scaling */}
         <style>{`
@@ -181,19 +231,24 @@ export default function HomeHero() {
             justify-content: center;
           }
           
-          @media (max-width: 1536px) {
+          @media (min-width: 768px) {
+            .temple-container {
+              --temple-scale: 0.8;
+            }
+          }
+          @media (min-width: 1024px) {
             .temple-container {
               --temple-scale: 0.9;
             }
           }
-          @media (max-width: 1280px) {
+          @media (min-width: 1280px) {
             .temple-container {
-              --temple-scale: 0.75;
+              --temple-scale: 1.0;
             }
           }
-          @media (max-width: 1024px) {
+          @media (min-width: 1536px) {
             .temple-container {
-              --temple-scale: 0.6;
+              --temple-scale: 1.1;
             }
           }
           @media (max-width: 768px) {
@@ -230,20 +285,34 @@ export default function HomeHero() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a0f14] overflow-x-hidden">
-      {/* Layout de 3 columnas en desktop */}
-      <div className="flex-1 flex flex-col lg:flex-row items-stretch overflow-x-hidden">
+    <div style={{ minHeight: "100vh", backgroundColor: "#0a0f14", overflowX: "hidden" }}>
+      {/* Layout de 3 columnas horizontal - Forzado con Flexbox */}
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "row", 
+        height: "100vh",
+        width: "100%"
+      }}>
         
-        {/* Columna Izquierda - Web Preview (17%) */}
-        <div className="hidden lg:flex lg:w-[17%] items-center justify-center bg-gradient-to-b from-[#0a0f14] to-[#151a24] border-r border-gray-800">
+        {/* Columna Izquierda - Web Preview */}
+        <div style={{
+          width: "20%",
+          display: "flex",
+          alignItems: "center", 
+          justifyContent: "center",
+          background: "linear-gradient(to bottom, #0a0f14, #151a24)",
+          borderRight: "1px solid #374151",
+          minHeight: "0",
+          overflow: "hidden"
+        }}>
           <WebPreview 
             url="https://telematica.usm.cl/" 
             title="Telemática USM"
           />
         </div>
 
-        {/* Columna Central - Templo (66%) */}
-        <div className="flex-1 lg:w-[66%] flex flex-col items-center justify-center p-2 md:p-4 lg:p-8 overflow-x-hidden">
+        {/* Columna Central - Templo */}
+        <div className="flex flex-col items-center justify-center p-2 md:p-4 lg:p-8 min-h-0 overflow-hidden" style={{ width: "60%" }}>
           <div 
             className="temple-container w-full flex items-center justify-center"
             style={{ 
@@ -318,14 +387,23 @@ export default function HomeHero() {
           </div>
         </div>
 
-        {/* Columna Derecha - Instagram Preview (17%) */}
-        <div className="hidden lg:flex lg:w-[17%] items-center justify-center bg-gradient-to-b from-[#0a0f14] to-[#151a24] border-l border-gray-800">
+        {/* Columna Derecha - Instagram Preview */}
+        <div style={{
+          width: "20%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "linear-gradient(to bottom, #0a0f14, #151a24)",
+          borderLeft: "1px solid #374151",
+          minHeight: "0",
+          overflow: "hidden"
+        }}>
           <InstagramPreview username="telematicausm" />
         </div>
       </div>
 
       {/* Redes sociales y web móvil - Footer */}
-      <footer className="lg:hidden border-t border-gray-800 bg-gray-900 bg-opacity-50 backdrop-blur-sm p-6">
+      <footer className="md:hidden border-t border-gray-800 bg-gray-900 bg-opacity-50 backdrop-blur-sm p-6">
         <div className="max-w-md mx-auto">
           <h3 className="text-white font-bold text-center mb-4">Visita Telemática USM</h3>
           <div className="flex flex-col gap-4 mb-6">
@@ -360,19 +438,24 @@ export default function HomeHero() {
           justify-content: center;
         }
         
-        @media (max-width: 1536px) {
+        @media (min-width: 768px) {
+          .temple-container {
+            --temple-scale: 0.8;
+          }
+        }
+        @media (min-width: 1024px) {
           .temple-container {
             --temple-scale: 0.9;
           }
         }
-        @media (max-width: 1280px) {
+        @media (min-width: 1280px) {
           .temple-container {
-            --temple-scale: 0.75;
+            --temple-scale: 1.0;
           }
         }
-        @media (max-width: 1024px) {
+        @media (min-width: 1536px) {
           .temple-container {
-            --temple-scale: 0.6;
+            --temple-scale: 1.1;
           }
         }
         @media (max-width: 768px) {

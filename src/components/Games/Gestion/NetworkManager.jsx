@@ -507,17 +507,12 @@ const NetworkManager = () => {
     return next;
   });
 
-  setRound(prev => prev + 1);
-
-    // Mantener la selección visible por un momento para mostrar el icono ✓/✖
-    const delay = correct ? 600 : 300;
-    setTimeout(() => {
-      setCurrentProblem(null);
-      setIsAnswering(false);
-      setSelectedIndex(null);
-      setHintUsed(false);
-    }, delay);
-  };
+  // Mantener la selección visible por un momento para mostrar el icono ✓/✖
+  const delay = correct ? 600 : 300;
+  setTimeout(() => {
+    advanceToNextProblem();
+  }, delay);
+};
 
   // Problemas tipo 'popup malicioso' para hacer el juego más entretenido
   const malwareProblems = [
@@ -718,6 +713,24 @@ const NetworkManager = () => {
     // Si la explicación vino del juego normal (advance=true) avanzamos la ronda.
     if (!advance) return; // por ejemplo: explicaciones de popups no avanzan la ronda
 
+    // Verificamos si estamos en la última ronda (15)
+    if (round === totalRounds) {
+      setGameOver(true);
+      setGameWon(stability > 75); // Victoria solo si la estabilidad es mayor a 75%
+      setIsAnswering(false);
+      return;
+    }
+
+    // Si no es la última ronda, avanzamos a la siguiente
+    setRound(prev => prev + 1);
+    // Avanzar a la siguiente pregunta
+    setCurrentProblem(null);
+    setIsAnswering(false);
+    setSelectedIndex(null);
+    setHintUsed(false);
+  };
+
+  const advanceToNextProblem = () => {
     // Verificamos si estamos en la última ronda (15)
     if (round === totalRounds) {
       setGameOver(true);
@@ -1078,79 +1091,79 @@ const NetworkManager = () => {
 
 
           {gameOver ? (
-          <div className={styles.modalBackdrop} onClick={() => {}}>
-            <div className={`${styles.modal} ${!gameWon ? styles.lostModal : ''}`} onClick={e => e.stopPropagation()}>
-              <h2 style={{ marginTop: 0 }}>{gameWon ? '¡Lo lograste! 🎉' : '¡Oh no!'}</h2>
-              {gameWon ? (
-                <>
-                  <p>¡La red está estable gracias a ti! ¡Buen trabajo, detective de la red!</p>
-                  <div style={{ 
-                    marginTop: 16, 
-                    padding: '12px', 
-                    backgroundColor: '#1e3a8a', 
-                    borderRadius: '8px', 
-                    border: '2px solid #3b82f6',
-                    fontFamily: 'monospace',
-                    fontSize: '14px',
-                    color: '#60a5fa',
-                    textAlign: 'center'
-                  }}>
-                    <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#93c5fd' }}>🚩 FLAG CAPTURADA</p>
-                    <p style={{ margin: 0, wordBreak: 'break-all' }}>D1FT3L{`{N3tw0rk_M4st3r_${score}_${stability}}`}</p>
-                  </div>
-                </>
-              ) : (
-                <p>Ups, la red necesita ayuda. ¡Inténtalo otra vez y verás mejora!</p>
-              )}
-              <div style={{ marginTop: 12 }}>
-                <p><strong>Estabilidad final:</strong> {stability}%</p>
-                <p><strong>Puntuación final:</strong> {score}</p>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-                <button className={styles.resetButton} onClick={() => { resetGame(); }}>
-                  Reiniciar partida
+            <div className={styles.gameEndScreen}>
+              <div className={styles.gameEndContent}>
+                <h2 style={{ marginTop: 0 }}>{gameWon ? '¡Lo lograste! 🎉' : '¡Oh no!'}</h2>
+                {gameWon ? (
+                  <>
+                    <p>¡La red está estable gracias a ti! ¡Buen trabajo, detective de la red!</p>
+                    <div style={{ 
+                      marginTop: 16, 
+                      padding: '12px', 
+                      backgroundColor: '#1e3a8a', 
+                      borderRadius: '8px', 
+                      border: '2px solid #3b82f6',
+                      fontFamily: 'monospace',
+                      fontSize: '14px',
+                      color: '#60a5fa',
+                      textAlign: 'center',
+                      maxWidth: '90%',
+                      margin: '0 auto'
+                    }}>
+                      <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#93c5fd' }}>🚩 FLAG CAPTURADA</p>
+                      <p style={{ margin: 0, wordBreak: 'break-all' }}>D1FT3L{`{N3tw0rk_M4st3r_${score}_${stability}}`}</p>
+                    </div>
+                  </>
+                ) : (
+                  <p>Ups, la red necesita ayuda. ¡Inténtalo otra vez y verás mejora!</p>
+                )}
+                <div className={styles.finalStats}>
+                  <p><strong>Estabilidad final:</strong> {stability}%</p>
+                  <p><strong>Puntuación final:</strong> {score}</p>
+                </div>
+                <button onClick={resetGame} className={styles.resetButton}>
+                  Jugar de nuevo
                 </button>
               </div>
             </div>
-          </div>
-        ) : currentProblem ? (
-          <div className={styles.problem}>
-            <div className={`${styles.alert} ${alertsStatic ? styles.noPulse : ''}`}>
-              <h3>¡Alerta en la red!</h3>
-              <p>{currentProblem.description}</p>
+          ) : currentProblem ? (
+            <div className={styles.problem}>
+              <div className={`${styles.alert} ${alertsStatic ? styles.noPulse : ''}`}>
+                <h3>¡Alerta en la red!</h3>
+                <p>{currentProblem.description}</p>
+              </div>
+              <div className={styles.options}>
+                {currentProblem.options.map((option, index) => {
+                  const classes = [styles.optionButton];
+                  if (selectedIndex === index) classes.push(styles.selected);
+                  if (selectedIndex !== null && index === selectedIndex) {
+                    if (option.correct) classes.push(styles.correct);
+                    else classes.push(styles.incorrect);
+                  }
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswer(option.correct, index)}
+                      className={classes.join(' ')}
+                      disabled={malwareActive} // Deshabilitar el botón cuando hay popup malicioso (sin cambio visual)
+                    >
+                      <span>{option.text}</span>
+                      <span className={styles.optionIcon} aria-hidden>
+                        {selectedIndex === index ? (option.correct ? '✓' : '✖') : ''}
+                      </span>
+                    </button>
+                  );
+                })}
+  
+                {/* hint button removed from here; use the hint control next to Reboot in the top controls */}
+              </div>
             </div>
-            <div className={styles.options}>
-              {currentProblem.options.map((option, index) => {
-                const classes = [styles.optionButton];
-                if (selectedIndex === index) classes.push(styles.selected);
-                if (selectedIndex !== null && index === selectedIndex) {
-                  if (option.correct) classes.push(styles.correct);
-                  else classes.push(styles.incorrect);
-                }
-                
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleAnswer(option.correct, index)}
-                    className={classes.join(' ')}
-                    disabled={malwareActive} // Deshabilitar el botón cuando hay popup malicioso (sin cambio visual)
-                  >
-                    <span>{option.text}</span>
-                    <span className={styles.optionIcon} aria-hidden>
-                      {selectedIndex === index ? (option.correct ? '✓' : '✖') : ''}
-                    </span>
-                  </button>
-                );
-              })}
-
-              {/* hint button removed from here; use the hint control next to Reboot in the top controls */}
+          ) : (
+            <div className={styles.loading}>
+              {/* Empty state when there is no current problem and game hasn't started; kept intentionally blank */}
             </div>
-          </div>
-        ) : (
-          <div className={styles.loading}>
-            {/* Empty state when there is no current problem and game hasn't started; kept intentionally blank */}
-          </div>
-        )}
+          )}
       </div>
     </div>
 

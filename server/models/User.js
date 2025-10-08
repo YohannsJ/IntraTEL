@@ -152,6 +152,18 @@ class User {
     }
   }
 
+  static async updateLastLogin(id) {
+    try {
+      await database.run(
+        'UPDATE users SET last_login = ? WHERE id = ?',
+        [new Date().toISOString(), id]
+      );
+      return true;
+    } catch (error) {
+      throw new Error(`Error al actualizar last_login: ${error.message}`);
+    }
+  }
+
   static async joinGroup(userId, groupCode) {
     try {
       // Buscar el grupo por código

@@ -225,7 +225,8 @@ const RegisterForm = ({ onSubmit, onSwitchToLogin, isLoading }) => {
           </div>
         </div>
 
-        <div className={styles.groupCodeSection}>
+        {/* SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente */}
+        {/* <div className={styles.groupCodeSection}>
           <h3 className={styles.groupOptionsTitle}>Opciones de Grupo</h3>
           
           <div className={styles.groupOptionsGrid}>
@@ -337,7 +338,7 @@ const RegisterForm = ({ onSubmit, onSwitchToLogin, isLoading }) => {
               </small>
             </div>
           )}
-        </div>
+        </div> */}
 
         <button
           type="submit"

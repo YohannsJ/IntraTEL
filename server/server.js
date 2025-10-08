@@ -5,7 +5,8 @@ import { dirname, join } from 'path';
 
 // Importar rutas
 import authRoutes from './routes/auth.js';
-import groupRoutes from './routes/groups.js';
+// SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+// import groupRoutes from './routes/groups.js';
 import gameRoutes from './routes/games.js';
 import flagRoutes from './routes/flags.js';
 
@@ -43,7 +44,8 @@ app.use((req, res, next) => {
 
 // Rutas de la API
 app.use('/api/auth', authRoutes);
-app.use('/api/groups', groupRoutes);
+// SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+// app.use('/api/groups', groupRoutes);
 app.use('/api/games', gameRoutes);
 app.use('/api/flags', flagRoutes);
 
@@ -64,17 +66,17 @@ app.get('/api/info', (req, res) => {
     data: {
       name: 'IntraTEL Backend',
       version: '1.0.0',
-      description: 'Sistema de gestión de grupos y progreso para IntraTEL',
+      description: 'Sistema de gestión de progreso para IntraTEL',
       features: [
         'Autenticación JWT',
-        'Gestión de usuarios y grupos',
+        'Gestión de usuarios',
         'Seguimiento de progreso en juegos',
-        'Administración de grupos',
+        // 'Administración de grupos',
         'Estadísticas y tablas de líderes'
       ],
       endpoints: {
         auth: '/api/auth',
-        groups: '/api/groups',
+        // groups: '/api/groups',
         games: '/api/games',
         health: '/api/health'
       }
@@ -89,7 +91,7 @@ app.use('*', (req, res) => {
     message: 'Endpoint no encontrado',
     availableEndpoints: [
       '/api/auth',
-      '/api/groups', 
+      // '/api/groups', 
       '/api/games',
       '/api/health',
       '/api/info'
@@ -159,7 +161,6 @@ async function startServer() {
 ║                                                               ║
 ║  Endpoints disponibles:                                       ║
 ║  • http://localhost:${PORT}/api/auth                            ║
-║  • http://localhost:${PORT}/api/groups                          ║
 ║  • http://localhost:${PORT}/api/games                           ║
 ║  • http://localhost:${PORT}/api/health                          ║
 ║  • http://localhost:${PORT}/api/info                            ║

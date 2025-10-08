@@ -6,10 +6,11 @@ import './index.css'
 import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LandingPage from './layouts/LandingPage.jsx';
-import NandGame from './components/Games/G1/NAND_Layouts.jsx';
+import NandGame from './components/Games/NandGame/NAND_Layouts.jsx';
 import EspectroGame from './components/Games/Teleco/EspectroGame.jsx';
 import CSSCodeGame from './components/Games/Software/CSSCodeGame.jsx';
 import NotFoundPage from './layouts/404.jsx';
+import Network from './components/Games/Network/Network.jsx';
 import Auth from './layouts/Auth.jsx';
 import { DataProvider } from './context/DataContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
@@ -17,42 +18,90 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { TemploTelematica } from './components/Pilar/PilarTelematica.js';
 import HomeHero from './layouts/TemploTEL.js';
 import AuthPage from './components/Auth/AuthPage.jsx';
-import GroupDashboard from './components/Groups/GroupDashboard.jsx';
-import GroupLeaderboard from './components/Groups/GroupLeaderboard.jsx';
+// SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+// import GroupDashboard from './components/Groups/GroupDashboard.jsx';
+// import GroupLeaderboard from './components/Groups/GroupLeaderboard.jsx';
 import UserFlagsList from './components/Flags/UserFlagsList.jsx';
 import AdminFlagsPanel from './components/Admin/AdminFlagsPanel.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import UserProfile from './components/Profile/UserProfile.jsx';
 import AdminPanel from './components/Admin/AdminPanel.jsx';
 import GestionWorkshop from './layouts/GestionWorkshop.jsx';
+import WelcomePage from './layouts/WelcomePage.jsx';
+import HomePage from './layouts/HomePage.jsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
-      { index: true, element: <LandingPage /> },
+      { index: true, element: <HomePage /> },
       { path: 'auth', element: <AuthPage /> },
-      { path: 'NandGame', element: <NandGame /> },
-      { path: 'Espectro', element: <EspectroGame /> },
-      { path: 'Datos', element: <GestionWorkshop /> },
-      { path: 'Software', element: <CSSCodeGame /> },
       { 
-        path: 'grupos', 
+        path: 'bienvenida', 
         element: (
           <ProtectedRoute>
-            <GroupDashboard />
+            <WelcomePage />
           </ProtectedRoute>
         ) 
       },
       { 
-        path: 'ranking', 
+        path: 'NandGame', 
         element: (
           <ProtectedRoute>
-            <GroupLeaderboard />
+            <NandGame />
           </ProtectedRoute>
         ) 
       },
+      { 
+        path: 'Espectro', 
+        element: (
+          <ProtectedRoute>
+            <EspectroGame />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'Datos', 
+        element: (
+          <ProtectedRoute>
+            <GestionWorkshop />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'Software', 
+        element: (
+          <ProtectedRoute>
+            <CSSCodeGame />
+          </ProtectedRoute>
+        ) 
+      },
+      { 
+        path: 'Redes', 
+        element: (
+          <ProtectedRoute>
+            <Network />
+          </ProtectedRoute>
+        ) 
+      },
+      // SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
+      // { 
+      //   path: 'grupos', 
+      //   element: (
+      //     <ProtectedRoute>
+      //       <GroupDashboard />
+      //     </ProtectedRoute>
+      //   ) 
+      // },
+      // { 
+      //   path: 'ranking', 
+      //   element: (
+      //     <ProtectedRoute>
+      //       <GroupLeaderboard />
+      //     </ProtectedRoute>
+      //   ) 
+      // },
       { 
         path: 'mis-flags', 
         element: (

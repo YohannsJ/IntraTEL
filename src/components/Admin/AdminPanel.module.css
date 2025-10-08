@@ -1,7 +1,7 @@
 .adminPanel {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 100px 2rem 2rem;
 }
 
 .header {
@@ -716,7 +716,7 @@
 }
 
 .points {
-  color: var(--success-color);
+  /* color: var(--success-color); */
   font-weight: 600;
   text-align: center;
 }

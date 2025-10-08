@@ -6,6 +6,7 @@ import { GameHeader } from './components/GameHeader.jsx';
 import { ProgressTracker } from './components/ProgressTracker.jsx';
 import { generateCSS, validateLevel } from './utils/cssGenerator.js';
 import { LEVELS } from './config/levelData.js';
+import Footer from '../../Footer/Footer.jsx';
 import styles from './CSSCodeGame.module.css';
 
 const GAME_STATE_KEY = 'cssCodeGame_state';
@@ -127,9 +128,9 @@ export default function CSSCodeGame() {
       
       // Mostrar flag si es el último nivel
       if (currentLevel === LEVELS.length - 1) {
-        showNotification('🎉 ¡Felicitaciones! Has completado todos los niveles. FLAG{CSS_MASTER_COMPLETE}', 'flag', 10000);
+        showNotification('🎉 ¡Felicitaciones! Has completado todos los niveles. D1FT3L{CSS_MASTER_COMPLETE}', 'flag', 10000);
       } else {
-        showNotification(`¡Nivel completado! FLAG{CSS_LEVEL_${currentLevel + 1}_COMPLETE}`, 'success', 5000);
+        showNotification(`¡Nivel completado! D1FT3L{CSS_LEVEL_${currentLevel + 1}_COMPLETE}`, 'success', 5000);
       }
       
       // Auto-avanzar al siguiente nivel después de 2 segundos
@@ -227,6 +228,9 @@ export default function CSSCodeGame() {
           />
         </div>
       </div>
+      
+      {/* Footer con créditos de todos los creadores */}
+      <Footer />
     </div>
   );
 }

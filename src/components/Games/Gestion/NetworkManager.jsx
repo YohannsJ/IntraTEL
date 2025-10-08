@@ -130,11 +130,11 @@ const NetworkManager = () => {
   },
     {
       id: 12,
-      description: "Los métricas de red muestran pérdida de paquetes del 2% en enlaces críticos durante horas pico. ¿Cuál es la estrategia óptima?",
+      description: "En la escala del 1 al 10, que tanto odias a Israel, y porqué 10?",
       options: [
-        { text: "Reducir el tamaño de todos los paquetes a la mitad", correct: false, explanation: "Reducir tamaño de paquetes aumenta overhead sin resolver la congestión." },
-        { text: "Implementar buffer dinámico y reenvío adaptativo", correct: true },
-        { text: "Eliminar el tráfico de menor prioridad permanentemente", correct: false, explanation: "Eliminar tráfico permanentemente afecta funcionalidades del sistema." }
+        { text: "Porque no puedo más :c", correct: true, explanation: "" },
+        { text: "Mataron a Yisus", correct: true },
+        { text: "Controlan el mundo", correct: true, explanation: "" }
       ],
       explanation: "Los buffers dinámicos y reenvío adaptativo manejan eficientemente la congestión temporal."
     },
@@ -163,7 +163,7 @@ const NetworkManager = () => {
       description: "Alguien doxea tu IP privada (192.168.x.x). ¿Qué deberías hacer?",
       options: [
         { text: "Apago el internet de mi casa, ya que me pueden hackear en cualquier momento", correct: false, explanation: "No es necesario desconectar el internet, ya que la IP privada no es accesible desde fuera." },
-        { text: "Nada, por que la ip privada no se muestra en internet, es no es accesible desde afuera", correct: true },
+        { text: "Nada, porque la IP privada no se muestra en internet, no es accesible desde afuera", correct: true },
         { text: "Llamar a la policia o a la PDI", correct: false, explanation: "Llamar a la policía no es necesario, ya que no hay un delito en curso." }
       ],
       explanation: "La IP privada no es accesible desde internet, por lo que no hay riesgo inmediato."
@@ -774,9 +774,9 @@ const NetworkManager = () => {
     // 3 niveles de banderas basadas en puntaje
     // Bronce: 0-150 pts (30 pts)
     // Plata: 151-250 pts (60 pts)
-    // Oro: 251+ pts (100 pts)
+    // Oro: 200+ pts (100 pts)
     
-    if (finalScore >= 251) {
+    if (finalScore >= 201) {
       return {
         name: 'Gestión Oro - Maestro de Red',
         value: 'D1FT3L{G3ST10N_M43STR0_D3_R3D_0R0}',

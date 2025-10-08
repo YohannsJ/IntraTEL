@@ -1793,6 +1793,49 @@ const EspectroGame = () => {
         </p>
       </div>
       
+      {/* Botones de navegación entre juegos */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        padding: '16px 24px', 
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        borderTop: '1px solid rgba(0,0,0,0.1)',
+        marginTop: '20px'
+      }}>
+        <button 
+          onClick={() => navigate('/Redes')}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#2196F3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            fontWeight: '600'
+          }}
+          title="Ir al juego anterior: Consola (Redes)"
+        >
+          ← Juego anterior
+        </button>
+        <button 
+          onClick={() => navigate('/NandGame')}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            fontWeight: '600'
+          }}
+          title="Ir al siguiente juego: NandGame (Hardware)"
+        >
+          Siguiente juego →
+        </button>
+      </div>
+      
       {/* Footer con créditos de todos los creadores */}
       <Footer />
     </div>

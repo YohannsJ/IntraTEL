@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { getAllPuzzles } from './utils/puzzleConfig.js';
 import { uid, combinations, NODE_TYPES, relativeToPixels } from './utils/gameUtils.js';
 import { evaluateCircuit } from './utils/circuitEvaluator.js';
@@ -52,6 +53,7 @@ const createInitialState = (puzzles) => ({
 });
 
 export default function NandGame() {
+  const navigate = useNavigate();
   const puzzles = useMemo(() => getAllPuzzles(), []);
   
   // Cargar estado guardado o crear inicial
@@ -901,6 +903,49 @@ export default function NandGame() {
       />
       </div> {/* Fin workspaceWrapper */}
     </div> {/* Fin gameContainer */}
+      
+    {/* Botones de navegación entre juegos */}
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      padding: '16px 24px', 
+      backgroundColor: 'rgba(0,0,0,0.05)',
+      borderTop: '1px solid rgba(0,0,0,0.1)',
+      marginTop: '20px'
+    }}>
+      <button 
+        onClick={() => navigate('/Espectro')}
+        style={{
+          padding: '10px 20px',
+          backgroundColor: '#2196F3',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          fontSize: '0.9rem',
+          fontWeight: '600'
+        }}
+        title="Ir al juego anterior: Espectro (Teleco)"
+      >
+        ← Juego anterior
+      </button>
+      <button 
+        onClick={() => navigate('/templo')}
+        style={{
+          padding: '10px 20px',
+          backgroundColor: '#9C27B0',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          fontSize: '0.9rem',
+          fontWeight: '600'
+        }}
+        title="Ir al Templo TEL"
+      >
+        🏛️ Ir al Templo
+      </button>
+    </div>
       
     {/* Footer con créditos de todos los creadores - fuera del contenedor del juego */}
     <Footer />

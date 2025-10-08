@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './NetworkManager.module.css';
 import telixImage from '../../../assets/telix.png';
 import { getApiUrl, getAuthHeaders } from '../../../config/environment';
 
 const NetworkManager = () => {
+  const navigate = useNavigate();
   const [stability, setStability] = useState(100);
   const [score, setScore] = useState(0);
   const [currentProblem, setCurrentProblem] = useState(null);
@@ -1181,6 +1183,14 @@ const NetworkManager = () => {
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <button className={styles.hintButton} onClick={resetGame}>Reiniciar partida</button>
                 <button className={styles.hintButton} style={{ padding: '6px 8px', fontSize: '0.85rem' }} onClick={() => setShowTutorial(true)}>Ver tutorial</button>
+                <button 
+                  className={styles.hintButton} 
+                  style={{ padding: '6px 12px', fontSize: '0.85rem', backgroundColor: '#2196F3', color: 'white' }} 
+                  onClick={() => navigate('/Software')}
+                  title="Ir al siguiente juego: Código (Software)"
+                >
+                  Siguiente juego →
+                </button>
               </div>
             </div>
           )}

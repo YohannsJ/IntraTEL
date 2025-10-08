@@ -139,8 +139,11 @@ const AppLayout = () => {
               🎮 Juegos {gamesDropdownOpen ? '▲' : '▼'}
             </button>
             <div className={`${styles.dropdownMenu} ${gamesDropdownOpen ? styles.dropdownOpen : ''}`}>
-              <Link to="/NandGame" className={styles.dropdownItem} onClick={handleGameSelection}>
-                📟 NandGame (Hardware)
+              <Link to="/Datos" className={styles.dropdownItem} onClick={handleGameSelection}>
+                📊 Análisis (Datos)
+              </Link>
+              <Link to="/Software" className={styles.dropdownItem} onClick={handleGameSelection}>
+                💻 Código (Software)
               </Link>
               <Link to="/Redes" className={styles.dropdownItem} onClick={handleGameSelection}>
                 🌐 Consola (Redes)
@@ -148,11 +151,8 @@ const AppLayout = () => {
               <Link to="/Espectro" className={styles.dropdownItem} onClick={handleGameSelection}>
                 📡 Espectro (Teleco)
               </Link>
-              <Link to="/Software" className={styles.dropdownItem} onClick={handleGameSelection}>
-                💻 Código (Software)
-              </Link>
-              <Link to="/Datos" className={styles.dropdownItem} onClick={handleGameSelection}>
-                📊 Análisis (Datos)
+              <Link to="/NandGame" className={styles.dropdownItem} onClick={handleGameSelection}>
+                📟 NandGame (Hardware)
               </Link>
             </div>
           </div>

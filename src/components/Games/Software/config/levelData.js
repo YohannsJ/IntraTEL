@@ -91,7 +91,7 @@ export const LEVELS = [
           height: 60px;
           background: #3b82f6;
           color: white;
-          margin: 24px auto;
+          margin: 65px auto;
           padding: 16px;
           text-align: center;
           display: block;
@@ -102,7 +102,7 @@ export const LEVELS = [
     validation: {
       requiredProperties: ['margin', 'text-align'],
       acceptableValues: {
-        'margin': ['24px auto', '16px auto', 'auto'],
+        'margin': ['65px auto', '16px auto', 'auto'],
         'text-align': ['center']
       }
     },

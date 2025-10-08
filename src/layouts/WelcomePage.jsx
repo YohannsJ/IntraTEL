@@ -106,33 +106,6 @@ const WelcomePage = () => {
           )}
         </section>
 
-        {/* Información sobre los juegos */}
-        <section className={styles.gamesSection}>
-          <h2 className={styles.sectionTitle}>🎮 Explora Nuestros Juegos</h2>
-          <p className={styles.sectionDescription}>
-            Cada juego está diseñado para desarrollar competencias específicas de la Ingeniería Civil Telemática.
-            Completa desafíos, encuentra flags ocultas y acumula puntos mientras aprendes.
-          </p>
-          <div className={styles.gamesGrid}>
-            {games.map((game, index) => (
-              <div key={index} className={styles.gameCard}>
-                <h3 className={styles.gameTitle}>{game.title}</h3>
-                <p className={styles.gameDescription}>{game.description}</p>
-                <div className={styles.skillsList}>
-                  <strong>Aprenderás:</strong>
-                  <ul>
-                    {game.skills.map((skill, idx) => (
-                      <li key={idx}>{skill}</li>
-                    ))}
-                  </ul>
-                </div>
-                <Link to={game.path} className={styles.gameButton}>
-                  Jugar Ahora →
-                </Link>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* Información sobre el sistema de flags */}
         <section className={styles.flagsSection}>
@@ -165,6 +138,33 @@ const WelcomePage = () => {
           </div>
         </section>
 
+        {/* Información sobre los juegos */}
+        <section className={styles.gamesSection}>
+          <h2 className={styles.sectionTitle}>🎮 Explora Nuestros Juegos</h2>
+          <p className={styles.sectionDescription}>
+            Cada juego está diseñado para desarrollar competencias específicas de la Ingeniería Civil Telemática.
+            Completa desafíos, encuentra flags ocultas y acumula puntos mientras aprendes.
+          </p>
+          <div className={styles.gamesGrid}>
+            {games.map((game, index) => (
+              <div key={index} className={styles.gameCard}>
+                <h3 className={styles.gameTitle}>{game.title}</h3>
+                <p className={styles.gameDescription}>{game.description}</p>
+                <div className={styles.skillsList}>
+                  <strong>Aprenderás:</strong>
+                  <ul>
+                    {game.skills.map((skill, idx) => (
+                      <li key={idx}>{skill}</li>
+                    ))}
+                  </ul>
+                </div>
+                <Link to={game.path} className={styles.gameButton}>
+                  Jugar Ahora →
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Call to action */}
         <section className={styles.ctaSection}>

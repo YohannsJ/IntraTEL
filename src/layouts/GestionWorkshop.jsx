@@ -5,10 +5,8 @@ import Footer from "../components/Footer/Footer";
 
 const GestionWorkshop = () => {
   return (
-    <div style={{ padding: '50px 0px 0px' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>
-        Administrador de Red Escolar
-      </h1>
+    <div style={{ padding: '20px' }}>
+      {/* Page header removed: title will be handled by the game's welcome hero to avoid duplicate headings */}
       {/* Welcome paragraph removed per user request */}
       <NetworkManager />
       

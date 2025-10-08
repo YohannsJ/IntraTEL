@@ -8,137 +8,184 @@ const NetworkManager = () => {
   const [gameOver, setGameOver] = useState(false);
   const [round, setRound] = useState(1);
   const [gameWon, setGameWon] = useState(false);
-  // Ahora es configurable desde la UI pequeña (por defecto 12 para más juego)
-  const [totalRounds, setTotalRounds] = useState(12);
-  // Intervalo para popups (más espaciados para menos frecuencia)
-  const POPUP_INTERVAL_MIN = 10000; // 10s
-  const POPUP_INTERVAL_MAX = 18000; // 18s
+  // El juego siempre tiene 15 rondas
+  const [totalRounds] = useState(15);
   // Pistas: cantidad disponible (empieza con 1 para que el jugador tenga una pista inicial)
   // Las pistas ofrecen un consejo específico por pregunta y NO penalizan estabilidad.
   const [hintCount, setHintCount] = useState(1);
   const [explanationIsHint, setExplanationIsHint] = useState(false);
 
-  const problems = [
+  // Problemas del juego definidos localmente
+  const gameProblems = [
     {
       id: 1,
-      description: "¡La conexión de la sala de computación está muy lenta!",
+      description: "El análisis de tráfico de red muestra congestión en el 80% de los enlaces. ¿Cuál es la mejor estrategia de gestión?",
       options: [
-  { text: "Revisar el router y su configuración", correct: true },
-        { text: "Reiniciar todos los computadores", correct: false, explanation: 'Reiniciar a todos interrumpe clases y rara vez arregla el problema de red.' },
-        { text: "Desconectar y conectar cables al azar", correct: false, explanation: 'Mover cables al azar puede romper algo; mejor revisar con calma.' }
+        { text: "Implementar QoS (Quality of Service) y priorizar tráfico crítico", correct: true },
+        { text: "Bloquear todo el tráfico no esencial permanentemente", correct: false, explanation: "Bloquear tráfico puede afectar la productividad y no es sostenible." },
+        { text: "Aumentar el ancho de banda sin analizar el origen", correct: false, explanation: "Sin análisis, el problema podría persistir y generar costos innecesarios." }
       ],
-  explanation: "Antes de reiniciar todo, revisamos el router y los cables para encontrar la causa sin romper nada."
+      explanation: "QoS permite gestionar eficientemente el ancho de banda priorizando aplicaciones críticas."
     },
     {
       id: 2,
-      description: "Un alumno compartió su contraseña con otros compañeros.",
+      description: "Los datos de monitoreo muestran latencia alta en conexiones VPN. ¿Cómo optimizar el rendimiento?",
       options: [
-        { text: "No hacer nada, no es importante", correct: false, explanation: 'Si compartes la contraseña, cualquiera puede entrar y usar tu cuenta.' },
-  { text: "Cambiar la contraseña y explicar sobre seguridad", correct: true },
-        { text: "Castigar al alumno", correct: false, explanation: 'Castigar no enseña la razón; es mejor explicar y ayudar a corregirlo.' }
+        { text: "Analizar rutas de red y implementar túneles optimizados", correct: true },
+        { text: "Eliminar todas las conexiones VPN", correct: false, explanation: "Las VPN son esenciales para trabajo remoto seguro." },
+        { text: "Aumentar la encriptación sin considerar el rendimiento", correct: false, explanation: "Más encriptación puede aumentar la latencia sin análisis adecuado." }
       ],
-  explanation: "No castigamos: lo mejor es cambiar la contraseña y explicar por qué no hay que compartirla."
+      explanation: "La optimización de rutas y configuración de túneles reduce significativamente la latencia."
     },
     {
       id: 3,
-      description: "¡Hay muchos dispositivos desconocidos conectados a la red WiFi!",
+      description: "El dashboard de gestión muestra picos de uso de CPU del 95% en servidores críticos. ¿Cuál es la acción prioritaria?",
       options: [
-        { text: "Ignorar la situación", correct: false, explanation: 'Ignorar deja la red vulnerable a intrusos.' },
-        { text: "Apagar el WiFi completamente", correct: false, explanation: 'Apagar el WiFi afecta a todos; hay soluciones menos drásticas.' },
-  { text: "Cambiar la contraseña del WiFi y limitar el acceso", correct: true }
+        { text: "Implementar balanceado de carga y escalamiento horizontal", correct: true },
+        { text: "Reiniciar todos los servidores simultáneamente", correct: false, explanation: "Reiniciar todos a la vez causaría interrupción total del servicio." },
+        { text: "Reducir la funcionalidad de las aplicaciones", correct: false, explanation: "Reducir funcionalidad afecta la experiencia del usuario." }
       ],
-  explanation: "Cambiamos la contraseña del WiFi y controlamos quién puede entrar, así evitamos equipos desconocidos."
+      explanation: "El balanceado de carga distribuye eficientemente la carga entre múltiples servidores."
     },
     {
       id: 4,
-      description: "Un computador muestra un mensaje pidiendo dinero para recuperar archivos.",
+      description: "Los logs de seguridad revelan intentos de acceso no autorizado desde múltiples IPs. ¿Cuál es la respuesta más efectiva?",
       options: [
-        { text: "Pagar inmediatamente", correct: false, explanation: 'Pagar financia a los atacantes y no garantiza recuperar archivos.' },
-  { text: "Desconectar el equipo de la red y reportar el incidente", correct: true },
-        { text: "Ignorar el mensaje y seguir trabajando", correct: false, explanation: 'Ignorar puede propagar el problema a otros equipos.' }
+        { text: "Implementar análisis de comportamiento y bloqueo dinámico de IPs", correct: true },
+        { text: "Cerrar todos los puertos de red", correct: false, explanation: "Cerrar todos los puertos haría inaccesibles los servicios legítimos." },
+        { text: "Cambiar todas las direcciones IP del sistema", correct: false, explanation: "Cambiar IPs es complejo y no soluciona el problema de seguridad." }
       ],
-  explanation: "No pagamos. Desconectamos el equipo de la red y avisamos a un adulto o técnico para que lo revise."
+      explanation: "El análisis comportamental identifica patrones maliciosos y permite respuesta automatizada."
     },
     {
       id: 5,
-      description: "Los alumnos no pueden imprimir sus trabajos.",
+      description: "El análisis de datos muestra que el 60% del ancho de banda se usa para streaming no relacionado con trabajo. ¿Cómo gestionar esto?",
       options: [
-  { text: "Verificar la conexión y cola de impresión", correct: true },
-        { text: "Comprar una impresora nueva", correct: false, explanation: 'Comprar una impresora nueva es costoso y no resuelve el problema inmediato.' },
-        { text: "Decir que no se puede imprimir hoy", correct: false, explanation: 'Decir que no no ayuda a los alumnos; mejor intentar arreglarlo.' }
+        { text: "Implementar políticas de uso y horarios de limitación de ancho de banda", correct: true },
+        { text: "Bloquear permanentemente todo contenido multimedia", correct: false, explanation: "Bloquear todo multimedia puede afectar contenido educativo legítimo." },
+        { text: "Ignorar el problema hasta que se resuelva solo", correct: false, explanation: "Ignorar el problema puede llevar a degradación continua del servicio." }
       ],
-  explanation: "Revisamos la conexión y la cola de impresión: muchas veces hay trabajos atascados que hay que borrar."
+      explanation: "Las políticas balanceadas permiten uso personal controlado sin afectar el trabajo."
     },
     {
       id: 6,
-      description: "Un profesor reporta que su computador está muy lento y muestra publicidad extraña.",
+      description: "Los métricas de rendimiento indican fragmentación en bases de datos críticas. ¿Cuál es la mejor estrategia?",
       options: [
-  { text: "Ejecutar el antivirus y revisar programas instalados", correct: true },
-        { text: "Ignorar la publicidad", correct: false, explanation: 'Ignorar anuncios no arregla el posible malware que ya está en el equipo.' },
-        { text: "Reinstalar Windows inmediatamente", correct: false, explanation: 'Reinstalar es extremo; primero prueba con un escaneo y limpieza.' }
+        { text: "Programar desfragmentación automática en horarios de baja demanda", correct: true },
+        { text: "Eliminar todas las bases de datos y empezar desde cero", correct: false, explanation: "Eliminar bases de datos causaría pérdida masiva de información." },
+        { text: "Aumentar la memoria RAM sin optimizar las consultas", correct: false, explanation: "Más RAM no resuelve la fragmentación subyacente." }
       ],
-  explanation: "Hacemos un escaneo con el antivirus y quitamos programas raros; no le hacemos caso a la publicidad."
+      explanation: "La desfragmentación programada mantiene el rendimiento óptimo sin interrumpir operaciones."
     },
     {
       id: 7,
-      description: "Se detectó que un estudiante está descargando juegos en su computador.",
+      description: "El análisis de tráfico de red detecta un aumento del 300% en el uso de protocolo HTTPS en horarios específicos. ¿Cómo investigar?",
       options: [
-  { text: "Bloquear las descargas y explicar las políticas de uso", correct: true },
-        { text: "Permitir las descargas", correct: false, explanation: 'Permitir puede traer malware y ocupar la red.' },
-        { text: "Suspender al estudiante", correct: false, explanation: 'Suspender es una medida fuerte; primero es mejor educar y dar advertencias.' }
+        { text: "Implementar DPI (Deep Packet Inspection) y análisis de patrones temporales", correct: true },
+        { text: "Bloquear todo el tráfico HTTPS", correct: false, explanation: "HTTPS es esencial para la seguridad de comunicaciones web." },
+        { text: "Ignorar el aumento por ser tráfico cifrado", correct: false, explanation: "Patrones anómalos requieren investigación incluso si están cifrados." }
       ],
-  explanation: "Bloqueamos las descargas en la red y explicamos por qué no es buena idea bajar juegos en la escuela."
+      explanation: "DPI permite analizar metadatos y patrones sin comprometer la privacidad del contenido."
     },
     {
       id: 8,
-      description: "El servidor de archivos compartidos está casi lleno.",
+      description: "Los reportes de gestión muestran degradación gradual en SLA de servicios críticos. ¿Cuál es la acción más estratégica?",
       options: [
-  { text: "Analizar y limpiar archivos innecesarios", correct: true },
-        { text: "Ignorar el problema", correct: false, explanation: 'Ignorar puede llevar a que el servidor deje de funcionar.' },
-        { text: "Borrar todo sin revisar", correct: false, explanation: 'Borrar sin revisar puede eliminar archivos importantes por error.' }
+        { text: "Implementar monitoreo predictivo con ML para prevenir degradación", correct: true },
+        { text: "Esperar hasta que los SLA fallen completamente", correct: false, explanation: "Esperar hasta el fallo completo resulta en mayor impacto y costos." },
+        { text: "Reducir los requisitos de SLA para evitar penalizaciones", correct: false, explanation: "Reducir SLA disminuye la calidad del servicio para los usuarios." }
       ],
-  explanation: "Buscamos archivos viejos que no se usan y los movemos o borramos para liberar espacio."
+      explanation: "El monitoreo predictivo permite acción proactiva antes de que ocurran fallas críticas."
     },
     {
       id: 9,
-      description: "Se detectó tráfico inusual en la red durante la noche.",
+      description: "El análisis de datos de usuarios muestra patrones inusuales de consumo de recursos en aplicaciones críticas. ¿Cómo proceder?",
       options: [
-  { text: "Investigar el origen y revisar los logs", correct: true },
-        { text: "Esperar a que pase", correct: false, explanation: 'Esperar puede permitir que el problema crezca y cause más daño.' },
-        { text: "Apagar todos los servidores", correct: false, explanation: 'Apagar todo afecta a toda la escuela y es una medida extrema.' }
+        { text: "Implementar alertas basadas en anomalías y análisis de causa raíz", correct: true },
+        { text: "Restringir el acceso a todas las aplicaciones críticas", correct: false, explanation: "Restringir acceso puede impactar la productividad sin resolver el problema." },
+        { text: "Actualizar todas las aplicaciones sin análisis previo", correct: false, explanation: "Actualizaciones sin análisis pueden introducir nuevos problemas." }
       ],
-  explanation: "Revisamos los registros para ver quién usa la red; a veces hay dispositivos que no deberían estar conectados."
+      explanation: "La detección de anomalías permite identificar problemas antes de que se vuelvan críticos."
     },
     {
       id: 10,
-      description: "Un profesor no puede acceder a su cuenta de correo institucional.",
+      description: "Los datos de telemetría revelan latencia inconsistente en comunicaciones entre centros de datos. ¿Cuál es la solución más eficiente?",
       options: [
-  { text: "Verificar credenciales y resetear si es necesario", correct: true },
-        { text: "Decirle que use su correo personal", correct: false, explanation: 'Usar correo personal no es apropiado para temas escolares y puede ser inseguro.' },
-        { text: "Crear una nueva cuenta", correct: false, explanation: 'Crear una nueva cuenta complica la administración; es mejor recuperar la existente.' }
+        { text: "Optimizar rutas de red y implementar cache distribuido", correct: true },
+        { text: "Centralizar todos los datos en un solo centro", correct: false, explanation: "Centralizar crea un punto único de falla y puede aumentar la latencia." },
+        { text: "Duplicar todos los enlaces sin optimización", correct: false, explanation: "Más enlaces sin optimización no garantiza mejor rendimiento." }
       ],
-  explanation: "Verificamos si escribió bien su usuario/contraseña y, si no, ayudamos a resetearla."
+      explanation: "La optimización de rutas y cache distribuido reduce latencia manteniendo redundancia."
     },
     {
       id: 11,
-      description: "Se reporta que el proyector del auditorio no conecta con los laptops.",
+      description: "El análisis de logs muestra intentos repetitivos de acceso a archivos sensibles desde cuentas autorizadas. ¿Cómo evaluar la situación?",
       options: [
-  { text: "Verificar configuración de pantalla y cables", correct: true },
-        { text: "Comprar un proyector nuevo", correct: false, explanation: 'Comprar uno nuevo es costoso y no ayuda si el problema es un cable.' },
-        { text: "Usar solo computadores de escritorio", correct: false, explanation: 'Limitar equipos no es una solución práctica.' }
+        { text: "Implementar análisis de comportamiento de usuarios y auditoría detallada", correct: true },
+        { text: "Desactivar todas las cuentas inmediatamente", correct: false, explanation: "Desactivar todas las cuentas interrumpe operaciones críticas sin investigación." },
+        { text: "Cambiar las ubicaciones de todos los archivos", correct: false, explanation: "Mover archivos no aborda el problema de comportamiento anómalo." }
       ],
-  explanation: "Revisamos los cables y la configuración de pantalla: muchas veces es solo un cable suelto."
+      explanation: "El análisis comportamental distingue entre uso legítimo y potencial amenaza interna."
     },
     {
       id: 12,
-      description: "Un estudiante reporta que perdió su trabajo porque la computadora se apagó.",
+      description: "Los métricas de red muestran pérdida de paquetes del 2% en enlaces críticos durante horas pico. ¿Cuál es la estrategia óptima?",
       options: [
-  { text: "Revisar opciones de recuperación y enseñar autoguardado", correct: true },
-        { text: "Decir que debe hacerlo de nuevo", correct: false, explanation: 'Decir que haga todo de nuevo no ayuda a aprender cómo evitarlo.' },
-        { text: "Culpar al estudiante por no guardar", correct: false, explanation: 'Culpar no enseña buenas prácticas ni ayuda a resolver el problema.' }
+        { text: "Implementar buffer dinámico y reenvío adaptativo", correct: true },
+        { text: "Reducir el tamaño de todos los paquetes a la mitad", correct: false, explanation: "Reducir tamaño de paquetes aumenta overhead sin resolver la congestión." },
+        { text: "Eliminar el tráfico de menor prioridad permanentemente", correct: false, explanation: "Eliminar tráfico permanentemente afecta funcionalidades del sistema." }
       ],
-  explanation: "Revisamos opciones de recuperación y enseñamos a activar el autoguardado para no perder trabajos."
+      explanation: "Los buffers dinámicos y reenvío adaptativo manejan eficientemente la congestión temporal."
+    },
+    {
+      id: 13,
+      description: "El dashboard de gestión indica uso asimétrico de recursos: 90% en servidor A, 20% en servidor B. ¿Cómo optimizar?",
+      options: [
+        { text: "Implementar migración de cargas dinámicas y auto-escalado", correct: true },
+        { text: "Apagar el servidor B para ahorrar energía", correct: false, explanation: "Apagar servidor B elimina redundancia y capacidad de respaldo." },
+        { text: "Forzar todo el tráfico al servidor B", correct: false, explanation: "Forzar tráfico sin análisis puede sobrecargar el servidor menos potente." }
+      ],
+      explanation: "La migración dinámica y auto-escalado optimizan el uso de recursos automáticamente."
+    },
+    {
+      id: 14,
+      description: "Los datos de monitoreo revelan degradación en tiempo de respuesta de API críticas durante actualizaciones. ¿Cómo mejorar el proceso?",
+      options: [
+        { text: "Implementar despliegue blue-green y testing automatizado", correct: true },
+        { text: "Suspender todas las actualizaciones indefinidamente", correct: false, explanation: "Sin actualizaciones, se acumulan vulnerabilidades de seguridad." },
+        { text: "Realizar todas las actualizaciones en horario laboral", correct: false, explanation: "Actualizaciones en horario laboral maximizan el impacto en usuarios." }
+      ],
+      explanation: "Blue-green deployment permite actualizaciones sin tiempo de inactividad."
+    },
+    {
+      id: 15,
+      description: "El análisis predictivo indica probable falla de disco en servidor de base de datos dentro de 72 horas. ¿Cuál es la acción más prudente?",
+      options: [
+        { text: "Ejecutar respaldo completo y preparar migración planificada", correct: true },
+        { text: "Esperar a que falle el disco para actuar", correct: false, explanation: "Esperar la falla puede resultar en pérdida de datos y tiempo de inactividad." },
+        { text: "Reemplazar todos los discos del centro de datos", correct: false, explanation: "Reemplazar todos los discos es costoso e innecesario sin análisis específico." }
+      ],
+      explanation: "La acción preventiva basada en análisis predictivo minimiza riesgos y tiempo de inactividad."
     }
+  ];
+
+  // Tips de mascota para diferentes situaciones
+  const mascotTips = [
+    "¡Recuerda siempre hacer copias de seguridad!",
+    "Mantén la calma y piensa paso a paso.",
+    "La seguridad primero: nunca compartas contraseñas.",
+    "Un reinicio puede resolver muchos problemas.",
+    "Documenta los cambios que hagas.",
+    "Si algo no funciona, vuelve al estado anterior."
+  ];
+
+  // Mensajes amigables para la pantalla de bienvenida
+  const welcomeMessages = [
+    "¡Bienvenido al desafío!",
+    "¡Estoy aquí para ayudarte!",
+    "¿Listo para aprender?",
+    "¡Vamos a mantener la red segura!",
+    "Juntos haremos un gran trabajo."
   ];
 
   // Estado para mantener track de las preguntas ya usadas
@@ -157,27 +204,29 @@ const NetworkManager = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [hintUsed, setHintUsed] = useState(false);
   const [explanationAdvance, setExplanationAdvance] = useState(true);
-  // Malicious popup (mini-event)
+  
+  // Variables para popups maliciosos (ahora manejados localmente)
   const [malwareActive, setMalwareActive] = useState(false);
   const [malwareCurrent, setMalwareCurrent] = useState(null);
-  const malwareIntervalRef = useRef(null);
   const [malwareSide, setMalwareSide] = useState('right');
   const malwareScheduleRef = useRef(null);
+  const malwareStartTimeRef = useRef(null);
+  const malwareRemainingTimeRef = useRef(null);
+  const lastPopupClosedRef = useRef(null);
+  
+  // Constantes para intervalos de popup
+  const POPUP_INTERVAL_MIN = 8000; // 8 segundos
+  const POPUP_INTERVAL_MAX = 13000; // 13 segundos
+  const MIN_TIME_BETWEEN_POPUPS = 7000; // Mínimo 7 segundos entre popups
 
-  // Mascota y logros
+  // Mascota
   const [mascotMood, setMascotMood] = useState('idle'); // idle, happy, sad, cheer, thinking
+  const [mascotHighlight, setMascotHighlight] = useState(false); // para el borde azul al interactuar
   // Nombre fijo de la mascota (no editable)
   const [mascotName] = useState('Teli');
   const [popupSuccessCount, setPopupSuccessCount] = useState(0);
   const [correctStreak, setCorrectStreak] = useState(0);
-  const [achievements, setAchievements] = useState(() => {
-    try {
-      const raw = localStorage.getItem('network_achievements');
-      return raw ? JSON.parse(raw) : { firstWin: false, perfectGame: false, stableHero: false, popupPro: false };
-    } catch (e) { return { firstWin: false, perfectGame: false, stableHero: false, popupPro: false }; }
-  });
-  const [achievementsQueue, setAchievementsQueue] = useState([]);
-  // Animaci f3n aplicada al popup malicioso cuando la p e9rdida ocurre por un popup
+  // Animacion aplicada al popup malicioso cuando la perdida ocurre por un popup
   const [malwareLostAnim, setMalwareLostAnim] = useState(false);
   const [lostByPopup, setLostByPopup] = useState(false);
 
@@ -186,25 +235,13 @@ const NetworkManager = () => {
   const [confettiPieces, setConfettiPieces] = useState([]);
   // Mascota específica para explicar popups maliciosos junto al popup
   const [popupMascotExplain, setPopupMascotExplain] = useState({ visible: false, text: '', side: 'right' });
-  // Saludo breve de la mascota al comenzar
-  const [mascotGreetingVisible, setMascotGreetingVisible] = useState(false);
-  const mascotGreetingRef = useRef(null);
-  // Mascot tips: consejos generales (no dan la respuesta exacta)
-  const mascotTips = [
-    'Consejo: mira bien las opciones antes de decidir y elige la más segura.',
-    'Tip: piensa quién se beneficia con esa acción; si suena raro, desconfía.',
-    'Atención: si te piden instalar algo o abrir un archivo, pide ayuda primero.',
-    'Sugerencia: revisa rápido antes de hacer cambios importantes.',
-    'Recuerda: si dudas, pregunta a un compañero o a un docente.',
-    'Buen hábito: anota lo que hiciste por si hay que revisarlo después.',
-    '¿No estás seguro? Espera y revisa los detalles del remitente.',
-    'Si te prometen recompensas por instalar algo, desconfía y verifica primero.',
-    'Moverse rápido está bien, pero verificar dos segundos puede evitar un problema.',
-    'Truco: URLs raras y errores de ortografía suelen indicar phishing.',
-    'Consejo práctico: cuando veas una descarga inesperada, no la aceptes de inmediato.'
-  ];
+  // We'll show the welcome greeting using the inline mascot tip
+  const greetingTimeoutRef = useRef(null);
+  // Los tips de mascota y mensajes de bienvenida ahora se importan desde data/gameProblems.js
   const [mascotTip, setMascotTip] = useState({ visible: false, text: '' });
+  const [lastShownTip, setLastShownTip] = useState('');
   const mascotTipRef = useRef(null);
+  const tutorialTipBackupRef = useRef(null);
   // Frases cortas para el estado idle para no repetir siempre '¡Listo!'
   const idlePhrases = [
     'Aquí estoy.',
@@ -213,23 +250,93 @@ const NetworkManager = () => {
     'Vamos con la siguiente.',
     'Preparado para el desafío.'
   ];
-  const [mascotIdleText, setMascotIdleText] = useState('');
+  const [mascotIdleText, setMascotIdleText] = useState('¡Aquí estoy!');
 
   // Opción: dejar la alerta principal quieta (sin animación)
   const [alertsStatic, setAlertsStatic] = useState(false);
 
   const showMascotTip = () => {
-    // elegir tip aleatorio
-    const tip = mascotTips[Math.floor(Math.random() * mascotTips.length)];
+    // Nos aseguramos de que isAnswering esté en false para no bloquear interacciones
+    setIsAnswering(false);
+    
+    // Si hay un timer activo, lo limpiamos para reiniciar la cuenta
+    if (mascotTipRef.current) {
+      clearTimeout(mascotTipRef.current);
+      mascotTipRef.current = null;
+    }
     // limpiar cualquier explicación de popup para evitar duplicados
     setPopupMascotExplain({ visible: false, text: '', side: 'right' });
-    setMascotTip({ visible: true, text: tip });
+    // Activar el borde azul
+    setMascotHighlight(true);
+    // If the tutorial panel is open, show a short advice then restore the tutorial message
+    if (showTutorial) {
+      // Back up current tutorial text if not already backed up
+      if (!tutorialTipBackupRef.current) tutorialTipBackupRef.current = mascotTip.text || '';
+      const tip = mascotTips[Math.floor(Math.random() * mascotTips.length)];
+      setMascotTip({ visible: true, text: tip });
+      setMascotMood('thinking');
+      if (mascotTipRef.current) clearTimeout(mascotTipRef.current);
+      mascotTipRef.current = setTimeout(() => {
+        // restore the tutorial message (if still in tutorial)
+        if (showTutorial) {
+          setMascotTip({ visible: true, text: tutorialTipBackupRef.current || '' });
+        } else {
+          setMascotTip({ visible: false, text: '' });
+        }
+        setMascotHighlight(false); // Desactivamos el highlight después de la transición del mensaje
+        tutorialTipBackupRef.current = null;
+        mascotTipRef.current = null;
+        setMascotMood('idle');
+        setIsAnswering(false); // Aseguramos que no se bloqueen interacciones
+      }, 5000);
+      return;
+    }
+
+    // If the welcome screen is open, show friendly messages only (no gameplay tips)
+    if (showWelcome) {
+      let newMsg;
+      do {
+        newMsg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+      } while (newMsg === lastShownTip && welcomeMessages.length > 1);
+      
+      if (mascotTipRef.current) clearTimeout(mascotTipRef.current);
+      setLastShownTip(newMsg);
+      setMascotTip({ visible: true, text: newMsg });
+      setMascotMood('happy');
+      mascotTipRef.current = setTimeout(() => {
+        if (showWelcome) {
+          // En la pantalla de bienvenida, cambiamos directamente al mensaje original
+          setMascotTip({ visible: true, text: '¡Hola! Soy Teli, te ayudaré a mantener la red escolar estable con consejos y alertas sencillas.' });
+        } else {
+          setMascotTip({ visible: false, text: '' });
+        }
+        setMascotHighlight(false);
+        mascotTipRef.current = null;
+        setIsAnswering(false); // Aseguramos que no se bloqueen interacciones
+      }, 5000);
+      return;
+    }
+
+    // elegir tip aleatorio diferente al último mostrado
+    let newTip;
+    do {
+      newTip = mascotTips[Math.floor(Math.random() * mascotTips.length)];
+    } while (newTip === lastShownTip && mascotTips.length > 1);
+    
+    setLastShownTip(newTip);
+    setMascotTip({ visible: true, text: newTip });
     setMascotMood('thinking');
     if (mascotTipRef.current) clearTimeout(mascotTipRef.current);
     mascotTipRef.current = setTimeout(() => {
+      // Primero ocultamos el mensaje
       setMascotTip({ visible: false, text: '' });
-      setMascotMood('idle');
-    }, 4000);
+      // Breve retraso antes de quitar el highlight para una transición suave
+      setTimeout(() => {
+        setMascotHighlight(false);
+        setMascotMood('idle');
+      }, 150);
+      mascotTipRef.current = null;
+    }, 5000);
   };
 
   // ...existing code...
@@ -245,26 +352,77 @@ const NetworkManager = () => {
     const t = setTimeout(() => setMascotMood('idle'), duration);
     return () => clearTimeout(t);
   }, [mascotMood]);
-  // Tutorial shown inline on first load: show by default on page load
+  // Tutorial shown on demand: default to hidden on initial load
   // The user can check "No mostrar de nuevo" to persist that preference.
-  const [showTutorial, setShowTutorial] = useState(true);
-  const [tutorialDontShowAgain, setTutorialDontShowAgain] = useState(false);
-  // El juego NO comienza hasta que el usuario pulse "Comenzar" en la pantalla de inicio
-  // (si el tutorial ya fue visto, mostramos un panel de inicio donde debe elegirse rondas)
-  const [gameStarted, setGameStarted] = useState(false);
-  // estado temporal para la pantalla de inicio (rondas seleccionadas antes de comenzar)
-  const [startRounds, setStartRounds] = useState(() => {
+  const [showTutorial, setShowTutorial] = useState(false);
+  // Show a mandatory welcome screen when the page is opened
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [tutorialDontShowAgain, setTutorialDontShowAgain] = useState(() => {
     try {
-      const v = Number(localStorage.getItem('nm_prefRounds'));
-      return v && !Number.isNaN(v) ? v : 12;
-    } catch (e) { return 12; }
+      return localStorage.getItem('nm_dontShowTutorial') === '1';
+    } catch (e) {
+      return false;
+    }
   });
-  // opción para usar siempre la elección (persistida)
-  const [alwaysUseRounds, setAlwaysUseRounds] = useState(() => {
-    try { return localStorage.getItem('nm_alwaysUseRounds') === '1'; } catch (e) { return false; }
-  });
+  // Estados para ejemplos interactivos en el tutorial
+  const [showPopupExample, setShowPopupExample] = useState(false);
+  const [showRebootExample, setShowRebootExample] = useState(false);
+  const [demoStability, setDemoStability] = useState(50);
+  // El juego NO comienza hasta que el usuario pulse "Comenzar" en la pantalla de inicio
+  const [gameStarted, setGameStarted] = useState(false);
   // Items / recursos
   const [rebootAvailable, setRebootAvailable] = useState(2); // number of reboots available
+
+
+  const [transitioningToTutorial, setTransitioningToTutorial] = useState(false);
+  
+  // Estados para controlar las animaciones de transición
+  const [welcomeExiting, setWelcomeExiting] = useState(false);
+  const [tutorialExiting, setTutorialExiting] = useState(false);
+  const [gameContentVisible, setGameContentVisible] = useState(false);
+
+  // show the mascot tip persistently while the welcome hero is visible
+  useEffect(() => {
+  const greetText = '¡Hola, soy Teli! Te ayudaré a mantener la red escolar estable con consejos y alertas sencillas.';
+    if (showWelcome) {
+      setMascotTip({ visible: true, text: greetText });
+      setMascotMood('happy');
+    } else {
+      setMascotTip({ visible: false, text: '' });
+      setMascotMood('idle');
+    }
+  }, [showWelcome]);
+
+  // disable page scroll while welcome hero is visible
+  useEffect(() => {
+    if (showWelcome) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+    return undefined;
+  }, [showWelcome]);
+
+  // disable page scroll while tutorial panel is visible and show a tutorial-specific mascot tip
+  useEffect(() => {
+    if (showTutorial) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      // show tutorial-specific message in the mascot tip (do NOT include the mascot name here)
+      const tutorialText = 'Seré tu compañero durante el juego. ¡Haz clic en mí cuando necesites ayuda o consejos!';
+      // clear any existing timeout so this tip persists while tutorial is open
+      if (mascotTipRef.current) { clearTimeout(mascotTipRef.current); mascotTipRef.current = null; }
+      setMascotTip({ visible: true, text: tutorialText });
+      setMascotMood('thinking');
+      return () => { document.body.style.overflow = prev; };
+    }
+    // when tutorial closes, clear the mascot tip unless welcome is visible
+    if (!showTutorial && !showWelcome) {
+      setMascotTip({ visible: false, text: '' });
+      setMascotMood('idle');
+    }
+    return undefined;
+  }, [showTutorial, showWelcome]);
 
   // Mostrar tips periódicamente durante la partida para dar variedad sin que el usuario tenga que clicar
   useEffect(() => {
@@ -281,12 +439,12 @@ const NetworkManager = () => {
     if (mascotMood !== 'idle') return;
     // no forzamos frase si ya hay un tip visible o si no comenzó el juego
     if (mascotTip.visible || !gameStarted) {
-      setMascotIdleText('');
+      setMascotIdleText('¡Aquí estoy!');
       return;
     }
     const choice = idlePhrases[Math.floor(Math.random() * idlePhrases.length)];
     setMascotIdleText(choice);
-    const t = setTimeout(() => setMascotIdleText(''), 6000); // desaparece tras 6s
+    const t = setTimeout(() => setMascotIdleText('¡Aquí estoy!'), 6000); // vuelve al mensaje por defecto
     return () => clearTimeout(t);
   }, [mascotMood, mascotTip.visible, gameStarted]);
 
@@ -294,7 +452,7 @@ const NetworkManager = () => {
     // only pick a new problem when the game has been started
     if (!currentProblem && !gameOver && gameStarted) {
       // Filtrar problemas que aún no se han usado
-      const availableProblems = problems.filter(p => !usedProblemIds.includes(p.id));
+      const availableProblems = gameProblems.filter(p => !usedProblemIds.includes(p.id));
       
       // Si no quedan problemas disponibles, reiniciar la lista
       if (availableProblems.length === 0) {
@@ -317,7 +475,7 @@ const NetworkManager = () => {
   // settings removed; tutorial remains accessible via button
 
   const handleAnswer = (correct, index) => {
-    if (isAnswering) return; // Prevenir múltiples clics
+    if (isAnswering || malwareActive) return; // Prevenir múltiples clics y bloquear durante popup malicioso
     setIsAnswering(true);
     setSelectedIndex(index);
 
@@ -420,7 +578,7 @@ const NetworkManager = () => {
   ]);
 
   const showMalware = () => {
-    if (!gameStarted || malwareActive || gameOver) return;
+    if (!gameStarted || malwareActive || gameOver || showExplanation) return;
     // escoger del pool mixto para más variedad
     const next = mixedPopupPool[Math.floor(Math.random() * mixedPopupPool.length)];
     setMalwareCurrent(next);
@@ -440,29 +598,30 @@ const NetworkManager = () => {
     setIsAnswering(false);
 
     if (correct) {
-      setPopupSuccessCount(prev => {
-        const v = prev + 1;
-        if (v === 3) unlockAchievement('popupPro');
-        return v;
-      });
+      setPopupSuccessCount(prev => prev + 1);
       setScore(prev => prev + 5);
       setStability(prev => Math.min(100, prev + 5));
-      setMascotMood('happy');
+      // NO cambiar el mood de Teli por respuestas del popup malicioso
+      // setMascotMood('happy'); // Comentado para que Teli no reaccione
       // no mostramos explicación modal para respuestas correctas, solo feedback visual
       // no avanzamos de ronda solo por el popup
       // cerrar popup inmediatamente en respuestas correctas
       setMalwareActive(false);
+      lastPopupClosedRef.current = Date.now(); // Registrar cuando se cerró
+      // Ocultar cualquier explicación de Teli que esté visible del popup anterior
+      setPopupMascotExplain({ visible: false, text: '', side: 'right' });
       return;
     }
 
-  // Respuesta incorrecta en popup: aplicamos una penalización suave y educativa
-  // Penalización base pequeña; escalamos ligeramente con el progreso
-  const basePenalty = 4;
-  const scale = 1 + (round / Math.max(1, totalRounds)) * 0.3; // hasta ~1.3x
-  const penalty = Math.round(basePenalty * scale);
-  // restar estabilidad pero dejando siempre al menos 5 puntos para evitar muertes instantáneas por popup
-  setStability(prev => Math.max(5, prev - penalty));
-  setMascotMood('sad');
+  // Respuesta incorrecta en popup: solo educativo, SIN penalización
+  // NO se aplica penalización por respuestas incorrectas en popups maliciosos
+  // const basePenalty = 4;
+  // const scale = 1 + (round / Math.max(1, totalRounds)) * 0.3; // hasta ~1.3x
+  // const penalty = Math.round(basePenalty * scale);
+  // NO restar estabilidad por respuestas incorrectas en popups
+  // setStability(prev => Math.max(5, prev - penalty)); // Comentado para eliminar penalización
+  // NO cambiar el mood de Teli por respuestas del popup malicioso
+  // setMascotMood('sad'); // Comentado para que Teli no reaccione
     // En lugar de abrir el modal principal, mostramos la burbuja de la mascota junto al popup
     const chosenWrong = malwareCurrent && malwareCurrent.options[optionIndex];
   const explanation = (chosenWrong && chosenWrong.explanation) || (malwareCurrent && malwareCurrent.options.find(o => !o.correct)?.explanation) || 'Eso no fue seguro, mejor la próxima vez cerrar la ventana.';
@@ -481,30 +640,15 @@ const NetworkManager = () => {
     setStability(prev => Math.min(100, prev + 20));
   };
 
-  // Achievements helper
-  const ACHIEVEMENT_NAMES = {
-    firstWin: 'Primera victoria',
-    perfectGame: 'Juego perfecto',
-    stableHero: 'Héroe estable',
-    popupPro: 'Caza-popups'
-  };
 
-  const unlockAchievement = (key) => {
-    setAchievements(prev => {
-      if (prev[key]) return prev;
-      const next = { ...prev, [key]: true };
-      try { localStorage.setItem('network_achievements', JSON.stringify(next)); } catch (e) {}
-      // queue toast
-      setAchievementsQueue(q => [...q, key]);
-      return next;
-    });
-  };
 
   // (special rounds removed)
 
   const closePopupMascotExplain = () => {
     setPopupMascotExplain({ visible: false, text: '', side: 'right' });
+    // Cerrar también el popup malicioso cuando se cierra la explicación
     setMalwareActive(false);
+    lastPopupClosedRef.current = Date.now(); // Registrar cuando se cerró
     setIsAnswering(false);
     setMascotMood('idle');
   };
@@ -512,18 +656,28 @@ const NetworkManager = () => {
   const closeTutorial = (saveDontShow = false) => {
     // persist preference only if the user explicitly asked to not show again
     if (saveDontShow) {
-      try { localStorage.setItem('nm_seenTutorial', '1'); } catch (e) {}
+      try { localStorage.setItem('nm_dontShowTutorial', '1'); } catch (e) {}
     }
-    setShowTutorial(false);
-    // do not auto-start here; we want to show the rounds selection after closing tutorial
+    
+    // Iniciar animación de salida del tutorial
+    setTutorialExiting(true);
+    setTimeout(() => {
+      setShowTutorial(false);
+      setTutorialExiting(false);
+      // Start game automatically after closing tutorial
+      if (!gameStarted) {
+        startGame();
+      }
+    }, 400);
   };
 
   // (tutorial interactivo eliminado; se mantiene el tutorial estático)
 
-  const startGame = (rounds) => {
-    const r = rounds || startRounds || 12;
-    setTotalRounds(r);
+  const startGame = () => {
     setGameStarted(true);
+    // Para transiciones desde tutorial - mostrar contenido inmediatamente
+    setGameContentVisible(true);
+
     // saludo corto de la mascota al comenzar
     setMascotMood('happy');
     // mostrar un mensaje inmediato en la mascota para evitar que quede un mensaje anterior
@@ -545,18 +699,18 @@ const NetworkManager = () => {
     setPopupMascotExplain({ visible: false, text: '', side: 'right' });
     setMalwareActive(false);
     setLostByPopup(false);
+    // Limpiar timers de popups maliciosos
+    if (malwareScheduleRef.current) {
+      clearTimeout(malwareScheduleRef.current);
+      malwareScheduleRef.current = null;
+    }
+    malwareStartTimeRef.current = null;
+    malwareRemainingTimeRef.current = null;
     // ensure currentProblem is null so the effect picks a fresh, unused problem
     setCurrentProblem(null);
   };
 
-  // Si el usuario marcó "usar siempre" y ya no está el tutorial, iniciamos automáticamente
-  useEffect(() => {
-    if (!showTutorial && !gameStarted && alwaysUseRounds) {
-      // usar un pequeño timeout para evitar colisiones en el flujo de render inicial
-      const t = setTimeout(() => startGame(startRounds), 50);
-      return () => clearTimeout(t);
-    }
-  }, [showTutorial, gameStarted, alwaysUseRounds, startRounds]);
+
 
   const closeExplanation = (advance = true) => {
     setShowExplanation(false);
@@ -564,14 +718,15 @@ const NetworkManager = () => {
     // Si la explicación vino del juego normal (advance=true) avanzamos la ronda.
     if (!advance) return; // por ejemplo: explicaciones de popups no avanzan la ronda
 
-    // Verificamos fin de juego
-    if (round >= totalRounds) {
+    // Verificamos si estamos en la última ronda (15)
+    if (round === totalRounds) {
       setGameOver(true);
-      setGameWon(stability > 50);
+      setGameWon(stability > 75); // Victoria solo si la estabilidad es mayor a 75%
       setIsAnswering(false);
       return;
     }
 
+    // Si no es la última ronda, avanzamos a la siguiente
     setRound(prev => prev + 1);
     // Avanzar a la siguiente pregunta
     setCurrentProblem(null);
@@ -620,6 +775,8 @@ const NetworkManager = () => {
     setPopupMascotExplain({ visible: false, text: '', side: 'right' });
     setMalwareActive(false);
     setLostByPopup(false);
+    // Resetear el borde de la burbuja al reiniciar el juego
+    setBubbleBorderType('default');
     if (malwareScheduleRef.current) {
       clearTimeout(malwareScheduleRef.current);
       malwareScheduleRef.current = null;
@@ -627,6 +784,10 @@ const NetworkManager = () => {
   // no quedan timers de rondas especiales porque esa mecánica fue eliminada
     // keep gameStarted as false so player must start from the start modal
     setGameStarted(false);
+    // Reiniciar estados de animación
+    setGameContentVisible(false);
+    setWelcomeExiting(false);
+    setTutorialExiting(false);
   };
 
   // Elegir momentos aleatorios para mostrar el popup malicioso
@@ -636,8 +797,39 @@ const NetworkManager = () => {
     // Si ya está activo, no programamos otro
     if (malwareActive) return;
 
-    // Programar evento entre POPUP_INTERVAL_MIN y MAX
-    const delay = POPUP_INTERVAL_MIN + Math.floor(Math.random() * (POPUP_INTERVAL_MAX - POPUP_INTERVAL_MIN));
+    // Si hay una explicación abierta, pausar el timer
+    if (showExplanation) {
+      // Si hay un timer activo, pausarlo
+      if (malwareScheduleRef.current && malwareStartTimeRef.current) {
+        clearTimeout(malwareScheduleRef.current);
+        const elapsed = Date.now() - malwareStartTimeRef.current;
+        malwareRemainingTimeRef.current = Math.max(0, malwareRemainingTimeRef.current - elapsed);
+      }
+      return;
+    }
+
+    // Si tenemos tiempo restante de una pausa, usar ese tiempo
+    let delay;
+    if (malwareRemainingTimeRef.current > 0) {
+      delay = malwareRemainingTimeRef.current;
+      malwareRemainingTimeRef.current = 0;
+    } else {
+      // Nuevo timer: programar evento entre POPUP_INTERVAL_MIN y MAX
+      delay = POPUP_INTERVAL_MIN + Math.floor(Math.random() * (POPUP_INTERVAL_MAX - POPUP_INTERVAL_MIN));
+      
+      // Si recién se cerró un popup, asegurar tiempo mínimo adicional
+      if (lastPopupClosedRef.current) {
+        const timeSinceLastPopup = Date.now() - lastPopupClosedRef.current;
+        if (timeSinceLastPopup < MIN_TIME_BETWEEN_POPUPS) {
+          const extraDelay = MIN_TIME_BETWEEN_POPUPS - timeSinceLastPopup;
+          delay = Math.max(delay, extraDelay);
+        }
+      }
+    }
+    
+    malwareStartTimeRef.current = Date.now();
+    malwareRemainingTimeRef.current = delay;
+    
     malwareScheduleRef.current = setTimeout(() => {
       showMalware();
     }, delay);
@@ -645,11 +837,11 @@ const NetworkManager = () => {
     return () => {
       if (malwareScheduleRef.current) clearTimeout(malwareScheduleRef.current);
     };
-  }, [round, malwareActive, gameOver]);
+  }, [round, malwareActive, gameOver, showExplanation]);
 
   // Rondas especiales eliminadas: ya no programamos rounds extra.
 
-  // (Achievements and leaderboard have been removed per user request)
+
 
   const launchConfetti = () => {
     // generate confetti pieces
@@ -668,9 +860,6 @@ const NetworkManager = () => {
   useEffect(() => {
     if (!gameOver) return;
     if (gameWon) {
-      unlockAchievement('firstWin');
-      if (stability > 90) unlockAchievement('stableHero');
-      if (correctStreak >= totalRounds) unlockAchievement('perfectGame');
       launchConfetti();
       setMascotMood('cheer');
     } else {
@@ -683,16 +872,10 @@ const NetworkManager = () => {
     }
   }, [gameOver, gameWon, lostByPopup]);
 
-  // achievements removed
-          {achievementsQueue.length > 0 && (
-            <div className={styles.achievementToast} role="status" aria-live="polite">
-              <span style={{ marginRight: 8 }}>🏆</span>
-              <strong>Logro desbloqueado:</strong> {ACHIEVEMENT_NAMES[achievementsQueue[0]] || achievementsQueue[0]}
-            </div>
-          )}
   return (
+    <>
     <div className={styles.gameContainer}>
-      <div className={styles.header}>
+      <div className={`${styles.header} ${gameContentVisible ? styles.gameContentEntrance : ''}`}>
   {/* Hide stats until the game has started */}
   {gameStarted && (
     <div className={styles.statsContainer}>
@@ -702,12 +885,13 @@ const NetworkManager = () => {
               style={{ width: `${stability}%` }}
             />
           </div>
-            <div className={styles.stats}>
-              <div className={styles.statLeft}><span>Estabilidad de la Red: {stability}%</span></div>
-              <div className={styles.statCenter}><span>Puntuación: {score}</span></div>
-              <div className={styles.statRight}><span>Ronda: {round}/{totalRounds}</span></div>
-            </div>
-            {/* Control: dejar la alerta principal quieta (sin movimiento) */}
+            {gameStarted && (
+              <div className={styles.stats}>
+                <div className={styles.statLeft}><span>Estabilidad de la Red: {stability}%</span></div>
+                <div className={styles.statCenter}><span>Puntuación: {score}</span></div>
+                <div className={styles.statRight}><span>Ronda: {round}/{totalRounds}</span></div>
+              </div>
+            )}
             {gameStarted && (
               <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -717,88 +901,104 @@ const NetworkManager = () => {
             )}
             {/* rounds selection moved to the start modal; hide control here since rounds are fixed after start */}
     </div>) }
-          {showExplanation && (
-            <div className={styles.modalBackdrop} onClick={() => closeExplanation(explanationAdvance)}>
-              <div className={styles.modal} onClick={e => e.stopPropagation()}>
-                <h4>{explanationIsHint ? 'Pista' : '¿Por qué esto no fue buena idea?'}</h4>
-                <p>{explanationText}</p>
-                <div style={{ textAlign: 'right' }}>
-                  <button onClick={() => closeExplanation(explanationAdvance)} className={styles.resetButton}>{explanationIsHint ? 'Cerrar pista' : '¡Entendido!'}</button>
-                </div>
-              </div>
-            </div>
-          )}
           {/* Tutorial modal shown on first load */}
-          {/* Inline tutorial panel: always shown on page load until closed */}
-          {showTutorial && (
-            <div className={styles.tutorialPanel}>
-              <h3>Bienvenido a Network Manager</h3>
-              {/* intro paragraph removed per user request */}
-              <ul className={styles.tutorialList}>
-                <li><strong>Popups</strong>: cuando aparezcan, aprende a identificarlos; algunos son maliciosos y debes cerrarlos con seguridad.</li>
-                <li><strong>Reboot</strong>: es un recurso limitado que restaura +20% de estabilidad. Úsalo con cuidado.</li>
-                <li>Cómo conseguir <strong>pistas</strong>: cada 3 respuestas correctas <em>consecutivas</em> te otorgan +1 pista adicional.</li>
-                <li>La <strong>mascota</strong> te dará consejos rápidos y explicaciones cuando los necesites.</li>
-              </ul>
-              <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'space-between', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <input type="checkbox" checked={tutorialDontShowAgain} onChange={e => setTutorialDontShowAgain(e.target.checked)} /> No mostrar de nuevo
-                </label>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button className={styles.resetButton} onClick={() => { closeTutorial(tutorialDontShowAgain); }}>Comenzar</button>
+          {/* Welcome modal: mandatory intro shown on page load */}
+          {/* Inline welcome hero (not a popup) */}
+          {showWelcome && (
+            <>
+              <div className={styles.welcomeBackdrop} />
+              <div className={`${styles.welcomeHero} ${transitioningToTutorial ? styles.heroExit : ''} ${welcomeExiting ? styles.welcomeToGameExit : ''}`}>
+                <div style={{ width: '100%', textAlign: 'center', position: 'relative' }}>
+                <div className={styles.welcomeIcon}>🕵️‍♀️🧩</div>
+                <h1 style={{ margin: 0, color: '#fff', fontSize: '2.2rem', lineHeight: 1.05, letterSpacing: '-0.02em' }}>¡Bienvenid@ al Desafío de Análisis!</h1>
+                <p style={{ margin: '12px 0 0 0', color: 'rgba(255,255,255,0.95)', fontSize: '1.2rem', lineHeight: 1.4 }}>
+                  ¡Ponte en acción y aprende a resolver problemas usando información! 
+                  Tu amigo Teli te acompañará en esta divertida aventura donde aprenderás a tomar decisiones inteligentes.
+                </p>
+                <div className={styles.welcomeFeatures}>
+                  <div className={styles.featureItem}>
+                    <span role="img" aria-label="explore">🔍</span>
+                    <span>Explora pistas</span>
+                  </div>
+                  <div className={styles.featureItem}>
+                    <span role="img" aria-label="solve">🎯</span>
+                    <span>Resuelve retos</span>
+                  </div>
+                  <div className={styles.featureItem}>
+                    <span role="img" aria-label="learn">🧠</span>
+                    <span>¡Aprende jugando!</span>
+                  </div>
+                </div>
+                <div style={{ marginTop: 24, display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                  <button className={`${styles.welcomeButton} ${styles.primaryButton}`} onClick={() => {
+                    const shouldShowTutorial = !localStorage.getItem('nm_dontShowTutorial');
+                    
+                    if (shouldShowTutorial) {
+                      // Transición hacia el tutorial
+                      setTransitioningToTutorial(true);
+                      setTimeout(() => {
+                        setShowWelcome(false);
+                        setTransitioningToTutorial(false);
+                        setShowTutorial(true);
+                      }, 380);
+                    } else {
+                      // Transición hacia el juego - coordinada para evitar doble animación
+                      setWelcomeExiting(true);
+                      setTimeout(() => {
+                        setShowWelcome(false);
+                        setWelcomeExiting(false);
+                        // Iniciar el juego inmediatamente sin timeout adicional
+                        setGameStarted(true);
+                        setGameContentVisible(true); // Activar contenido del juego inmediatamente
+                        
+                        // Configurar mascota y limpiar estados
+                        setMascotMood('happy');
+                        setPopupMascotExplain({ visible: false, text: '', side: 'right' });
+                        if (mascotTipRef.current) { clearTimeout(mascotTipRef.current); mascotTipRef.current = null; }
+                        setMascotTip({ visible: true, text: 'Perfecto — iniciando partida...' });
+                        mascotTipRef.current = setTimeout(() => { setMascotTip({ visible: false, text: '' }); mascotTipRef.current = null; }, 2500);
+                        
+                        // Limpiar estados de explicación
+                        setShowExplanation(false);
+                        setExplanationText('');
+                        setExplanationIsHint(false);
+                        setExplanationAdvance(true);
+                      }, 500);
+                    }
+                  }} style={{
+                    backgroundColor: '#4CAF50',
+                    color: 'white',
+                    padding: '12px 24px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 6px rgba(76, 175, 80, 0.3)'
+                  }}>Comenzar</button>
+                </div>
+                
+                {/* (removed inline mascot inside the welcome hero to avoid duplicate bubbles) */}
                 </div>
               </div>
-            </div>
+            </>
           )}
+
+
 
           {/* Interactive tutorial (stepped) */}
           {/* interactive tutorial removed; static tutorial modal remains above */}
           {/* startPanel moved into mainContent (rendered there) */}
           {/* Reboot item (single) removed — controls consolidated below */}
-          {/* Malware popup mini-event */}
-          {malwareActive && malwareCurrent && (
-            <>
-              <div className={styles.malwareBackdrop} onClick={() => { /* block clicks to game */ }} />
-              <div className={styles.malwareContainer}>
-              <div className={`${styles.malwarePopup} ${malwareLostAnim ? styles.lostPopup : ''}`}>
-                  <div className={styles.malwareHeader}>
-                    <div className={styles.malwareTitle}>{malwareCurrent.title}</div>
-                  </div>
-                  <div className={styles.malwareBody}>{malwareCurrent.body}</div>
-                  <div className={styles.malwareOptions}>
-                    {malwareCurrent.options.map((opt, i) => (
-                      <button
-                        key={i}
-                        className={styles.malwareButton}
-                        onClick={() => handleMalwareChoice(opt.correct, 'click', i)}
-                      >
-                        {opt.text}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {/* Mascota explicadora específica para popups maliciosos */}
-                {popupMascotExplain.visible && (
-                  <div className={`${styles.popupMascotBubble} ${styles.belowPopup}`}>
-                      <div className={styles.bubbleHeader}>
-                        <div className={styles.mascotFace}>👾</div>
-                        <div style={{ fontWeight: 700 }}>{mascotName}</div>
-                        {/* thinkingDots intentionally not shown for popup explanations to avoid 'loading' look */}
-                        <button className={styles.bubbleClose} onClick={closePopupMascotExplain}>✖</button>
-                      </div>
-                    <div>{popupMascotExplain.text}</div>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
+
           {/* Leaderboard modal */}
-          {/* Leaderboard and Achievements are now persistently shown in the left sidebar */}
+
           {/* Inline controls row: left = actions, right = tutorial (small). Hidden while game over. */}
           {!gameOver && gameStarted && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, alignItems: 'center', gap: 12 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <button className={styles.hintButton} onClick={useReboot} disabled={rebootAvailable <= 0}>{rebootAvailable > 0 ? `Reboot (+20%) (${rebootAvailable})` : 'Reboot usado'}</button>
+                <button className={styles.hintButton} onClick={useReboot} disabled={rebootAvailable <= 0}>{rebootAvailable > 0 ? `Reinicio (+20%) (${rebootAvailable})` : 'Reinicio usado'}</button>
                 <button
                   className={styles.hintButton}
                   onClick={useHint}
@@ -815,67 +1015,6 @@ const NetworkManager = () => {
             </div>
           )}
 
-          {/* Mascota */}
-          <div className={styles.mascotContainer}>
-            <div className={`${styles.mascot} ${styles[mascotMood]}`} title="Mascota" onClick={showMascotTip} role="button">
-              <div className={styles.mascotFace}>👾</div>
-              <div className={styles.mascotText}>
-                <div style={{ fontWeight: 700 }}>{mascotName}</div>
-                {mascotTip.visible ? (
-                  <div>
-                    <div className={styles.mascotTipInline}>{mascotTip.text}</div>
-                  </div>
-                ) : (
-                  <div style={{ fontSize: '0.85rem' }}>
-                    {/* Context-aware idle text: when on start panel show guidance; during tutorial keep bubble; during gameplay show mood brief messages */}
-                    {!showTutorial && !gameStarted ? (
-                      'Elige el número de rondas y pulsa Comenzar.'
-                    ) : showTutorial ? (
-                      ''
-                    ) : (
-                      /* during active game, show mood messages or a short idle phrase */
-                      (mascotMood !== 'idle' ? (
-                        (mascotMood === 'happy' && '¡Buen trabajo!') ||
-                        (mascotMood === 'sad' && 'Oh...') ||
-                        (mascotMood === 'cheer' && '¡Genial!') ||
-                        (mascotMood === 'thinking' && 'Mmm...') || ''
-                      ) : (
-                        mascotIdleText || ''
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            {mascotGreetingVisible && (
-              <div className={`${styles.popupMascotBubble} ${styles.right}`} style={{ position: 'fixed', bottom: 90, right: 24 }}>
-                <div className={styles.bubbleHeader}>
-                  <div className={styles.mascotFace}>👾</div>
-                  <div style={{ fontWeight: 700 }}>{mascotName}</div>
-                </div>
-                <div>¡Hola! ¡Vamos a estabilizar la red!</div>
-              </div>
-            )}
-            {showTutorial && (
-              <div className={`${styles.popupMascotBubble} ${styles.right}`} style={{ position: 'fixed', bottom: 90, right: 24 }}>
-                <div className={styles.bubbleHeader}>
-                  <div className={styles.mascotFace}>👾</div>
-                  <div style={{ fontWeight: 700 }}>{mascotName}</div>
-                </div>
-                <div>Lee las instrucciones del tutorial y pulsa <strong>Comenzar</strong> cuando estés listo.</div>
-              </div>
-            )}
-            {/* show a helpful bubble when the player is on the start panel (select rounds) */}
-            {!showTutorial && !gameStarted && (
-              <div className={`${styles.popupMascotBubble} ${styles.right}`} style={{ position: 'fixed', bottom: 90, right: 24 }}>
-                <div className={styles.bubbleHeader}>
-                  <div className={styles.mascotFace}>👾</div>
-                  <div style={{ fontWeight: 700 }}>{mascotName}</div>
-                </div>
-                <div>Elige cuántas rondas quieres jugar y pulsa <strong>Comenzar</strong>. ¡Teli te acompañará durante la partida!</div>
-              </div>
-            )}
-          </div>
           {/* Confetti */}
           {confettiActive && (
             <div className={styles.confettiContainer} aria-hidden>
@@ -888,65 +1027,78 @@ const NetworkManager = () => {
               ))}
             </div>
           )}
-          {/* Achievements removed */}
+
           
         </div>
 
-      {/* Ranking and Achievements removed as requested */}
-
-  <div className={styles.mainContent}>
-          {/* start panel: placed here so it's visually lower on the page */}
-          {!showTutorial && !gameStarted && (
-            <div className={styles.startPanel} onClick={e => e.stopPropagation()}>
-              <div className={styles.startTitle}><strong>Preparar partida</strong> — Elige rondas</div>
-              <div className={styles.roundPills} role="tablist" aria-label="Seleccionar rondas">
-                {[10, 12, 15, 20].map(r => (
-                  <button
-                    key={r}
-                    className={`${styles.roundPill} ${startRounds === r ? styles.selectedPill : ''}`}
-                    onClick={() => {
-                      setStartRounds(r);
-                      try { localStorage.setItem('nm_prefRounds', String(r)); } catch (e) {}
-                    }}
-                    aria-pressed={startRounds === r}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-              <label className={styles.alwaysUseLabel} style={{ marginLeft: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input type="checkbox" checked={alwaysUseRounds} onChange={e => {
-                  const val = e.target.checked;
-                  setAlwaysUseRounds(val);
-                  try { localStorage.setItem('nm_alwaysUseRounds', val ? '1' : '0'); } catch (err) {}
-                  if (val) {
-                    try { localStorage.setItem('nm_prefRounds', String(startRounds)); } catch (err) {}
-                  }
-                }} />
-                <span style={{ color: '#d6dbe0', fontSize: '0.9rem' }}>Usar siempre esta elección</span>
-              </label>
-              <div className={styles.startControls}>
-                <button className={styles.resetButton} onClick={() => {
-                  try { localStorage.setItem('nm_prefRounds', String(startRounds)); } catch (e) {}
-                  startGame(startRounds);
-                }}>Comenzar</button>
-                {/* 'Ver tutorial' moved here; top small control will be hidden while not started */}
-                <button className={`${styles.resetButton} ${styles.greenButton}`} onClick={() => {
-                  // Force showing the tutorial and clear any persistent "no mostrar" flag
-                  try { localStorage.removeItem('nm_seenTutorial'); } catch (e) {}
-                  setTutorialDontShowAgain(false);
-                  setShowTutorial(true);
-                }}>Ver tutorial</button>
+      {/* Mascota - movida fuera del header para evitar que se anime con el contenido del juego */}
+      <div className={`${styles.mascotContainer} ${showTutorial ? styles.tutorialActive : ''}`}>
+        <div className={`${styles.mascot} ${styles[mascotMood]} ${mascotHighlight ? styles.highlight : ''}`} title="Mascota" onClick={showMascotTip} role="button">
+          <div className={styles.mascotTop}>
+            <div className={styles.mascotFace}>👾</div>
+            <div className={styles.mascotName}>{mascotName}</div>
+          </div>
+          <div className={styles.mascotText}>
+            {/* Render the message bubble below the emoji and name - SIEMPRE con burbuja */}
+            <div>
+              <div className={styles.mascotTipInline}>
+                <div className={styles.mascotTipBody}>
+                  {mascotTip.visible ? (
+                    mascotTip.text
+                  ) : (
+                    /* Context-aware idle text: SIEMPRE mostrar algo */
+                    !showTutorial && !gameStarted && !showWelcome ? (
+                      '¡Listo para ayudar!'
+                    ) : showTutorial ? (
+                      '¡Aquí estoy!'
+                    ) : (
+                      /* during active game, show mood messages or a short idle phrase */
+                      (mascotMood !== 'idle' ? (
+                        (mascotMood === 'happy' && '¡Buen trabajo!') ||
+                        (mascotMood === 'sad' && 'Oh...') ||
+                        (mascotMood === 'cheer' && '¡Genial!') ||
+                        (mascotMood === 'thinking' && 'Mmm...') || 
+                        '¡Aquí estoy!'
+                      ) : (
+                        mascotIdleText || '¡Aquí estoy!'
+                      ))
+                    )
+                  )}
+                </div>
               </div>
             </div>
-          )}
+          </div>
+        </div>
+        {/* The inline white mascot tip (bottom-right) handles tutorial/start/welcome messages via mascotTip state. Duplicate fixed popup bubbles removed. */}
+      </div>
+
+
+
+  <div className={`${styles.mainContent} ${gameContentVisible ? styles.gameContentEntrance : ''}`}>
+
 
           {gameOver ? (
           <div className={styles.modalBackdrop} onClick={() => {}}>
             <div className={`${styles.modal} ${!gameWon ? styles.lostModal : ''}`} onClick={e => e.stopPropagation()}>
               <h2 style={{ marginTop: 0 }}>{gameWon ? '¡Lo lograste! 🎉' : '¡Oh no!'}</h2>
               {gameWon ? (
-                <p>¡La red está estable gracias a ti! ¡Buen trabajo, detective de la red!</p>
+                <>
+                  <p>¡La red está estable gracias a ti! ¡Buen trabajo, detective de la red!</p>
+                  <div style={{ 
+                    marginTop: 16, 
+                    padding: '12px', 
+                    backgroundColor: '#1e3a8a', 
+                    borderRadius: '8px', 
+                    border: '2px solid #3b82f6',
+                    fontFamily: 'monospace',
+                    fontSize: '14px',
+                    color: '#60a5fa',
+                    textAlign: 'center'
+                  }}>
+                    <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#93c5fd' }}>🚩 FLAG CAPTURADA</p>
+                    <p style={{ margin: 0, wordBreak: 'break-all' }}>D1FT3L{`{N3tw0rk_M4st3r_${score}_${stability}}`}</p>
+                  </div>
+                </>
               ) : (
                 <p>Ups, la red necesita ayuda. ¡Inténtalo otra vez y verás mejora!</p>
               )}
@@ -975,11 +1127,13 @@ const NetworkManager = () => {
                   if (option.correct) classes.push(styles.correct);
                   else classes.push(styles.incorrect);
                 }
+                
                 return (
                   <button
                     key={index}
                     onClick={() => handleAnswer(option.correct, index)}
                     className={classes.join(' ')}
+                    disabled={malwareActive} // Deshabilitar el botón cuando hay popup malicioso (sin cambio visual)
                   >
                     <span>{option.text}</span>
                     <span className={styles.optionIcon} aria-hidden>
@@ -999,7 +1153,106 @@ const NetworkManager = () => {
         )}
       </div>
     </div>
+
+    {/* Tutorial modal - FUERA del contenedor principal para evitar conflictos de z-index */}
+    {showTutorial && (
+      <>
+        <div className={styles.tutorialBackdrop} />
+        <div className={`${styles.tutorialPanel} ${tutorialExiting ? styles.tutorialExit : ''}`}>
+          <h2 style={{ color: '#2196F3', marginBottom: '20px', textAlign: 'center' }}>Aprende a jugar 🎮</h2>
+          
+          <div className={styles.tutorialSection}>
+            <h3>🎯 Ventanas emergentes</h3>
+            <p>Durante el juego aparecerán ventanas con preguntas que deberás resolver. ¡Ten cuidado! Algunas son engañosas.</p>
+          </div>
+
+          <div className={styles.tutorialSection}>
+            <h3>💡 Sistema de Pistas</h3>
+            <p>Gana una pista por cada 3 respuestas correctas seguidas. Úsalas cuando necesites ayuda con una pregunta - ¡no afectan la estabilidad de la red!</p>
+          </div>
+
+          <div className={styles.tutorialSection}>
+            <h3>🔄 Recuperación de Estabilidad</h3>
+            <p>¿La estabilidad está muy baja? Tienes 2 oportunidades para recuperar +20% de estabilidad.</p>
+          </div>
+
+          <div style={{ marginTop: 24, display: 'flex', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'rgba(255,255,255,0.8)' }}>
+              <input 
+                type="checkbox" 
+                checked={tutorialDontShowAgain} 
+                onChange={e => setTutorialDontShowAgain(e.target.checked)}
+                style={{ width: '16px', height: '16px' }}
+              /> 
+              No mostrar de nuevo
+            </label>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button 
+                className={`${styles.resetButton} ${styles.primaryButton}`} 
+                onClick={() => { closeTutorial(tutorialDontShowAgain); }}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    )}
+
+    {/* Modal de explicación - FUERA del contenedor principal para máximo z-index */}
+    {showExplanation && (
+      <div className={styles.modalBackdrop} onClick={() => closeExplanation(explanationAdvance)}>
+        <div className={styles.modal} onClick={e => e.stopPropagation()}>
+          <h4>{explanationIsHint ? 'Pista' : '¿Por qué esto no fue buena idea?'}</h4>
+          <p>{explanationText}</p>
+          <div style={{ textAlign: 'right' }}>
+            <button onClick={() => closeExplanation(explanationAdvance)} className={styles.resetButton}>
+              {explanationIsHint ? 'Cerrar pista' : '¡Entendido!'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Popup malicioso - FUERA del contenedor principal para correcto posicionamiento */}
+    {malwareActive && malwareCurrent && (
+      <>
+        <div className={styles.malwareBackdrop} onClick={() => { /* block clicks to game */ }} />
+        <div className={styles.malwareContainer}>
+          <div className={`${styles.malwarePopup} ${malwareLostAnim ? styles.lostPopup : ''}`}>
+            <div className={styles.malwareHeader}>
+              <div className={styles.malwareTitle}>{malwareCurrent.title}</div>
+            </div>
+            <div className={styles.malwareBody}>{malwareCurrent.body}</div>
+            <div className={styles.malwareOptions}>
+              {malwareCurrent.options.map((opt, i) => (
+                <button
+                  key={i}
+                  className={styles.malwareButton}
+                  onClick={() => handleMalwareChoice(opt.correct, 'click', i)}
+                >
+                  {opt.text}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Mascota explicadora específica para popups maliciosos */}
+          {popupMascotExplain.visible && !showWelcome && (
+            <div className={`${styles.popupMascotBubble} ${styles.belowPopup}`}>
+              <div className={styles.bubbleHeader}>
+                <div className={styles.mascotFace}>👾</div>
+                <div style={{ fontWeight: 700, color: '#0b2340' }}>{mascotName}</div>
+                {/* thinkingDots intentionally not shown for popup explanations to avoid 'loading' look */}
+                <button className={styles.bubbleClose} onClick={closePopupMascotExplain}>✖</button>
+              </div>
+              <div>{popupMascotExplain.text}</div>
+            </div>
+          )}
+        </div>
+      </>
+    )}
+  </>
   );
-};
+}
 
 export default NetworkManager;

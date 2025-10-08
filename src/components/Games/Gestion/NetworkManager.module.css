@@ -563,19 +563,19 @@
 }
 
 .modal {
-  background: #111217; /* dark modal background */
+  background: rgba(255, 255, 255, 0.95); /* fondo blanco semi-transparente */
   padding: 24px;
   border-radius: 12px;
   max-width: 520px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   z-index: 20100; /* Por encima del backdrop */
-  color: #eef2f7; /* light text */
+  color: #2c3e50; /* texto oscuro para contraste */
 }
 
 .modal h4 {
   margin: 0 0 8px 0;
-  color: #ffffff;
+  color: #2c3e50; /* título oscuro para contraste con fondo claro */
 }
 
 .modal p {
@@ -1048,6 +1048,11 @@
   pointer-events: auto;
 }
 
+/* Mascota durante tutorial - z-index mayor para que se vea por encima del tutorial */
+.mascotContainer.tutorialActive {
+  z-index: 16000; /* por encima del tutorialBackdrop (15000) y tutorialPanel (1000) */
+}
+
 .mascot {
   display: flex;
   align-items: center;
@@ -1270,21 +1275,7 @@
   to { transform: translateY(120vh) rotate(540deg); opacity: 0.9; }
 }
 
-/* Achievements toast */
-.achievementToast {
-  position: fixed;
-  left: 18px;
-  bottom: 18px;
-  transform: none;
-  background: #fff; /* fondo claro */
-  color: #111; /* texto oscuro */
-  padding: 10px 14px;
-  border-radius: 8px;
-  z-index: 16000; /* por encima de confetti */
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  display: inline-flex;
-  align-items: center;
-}
+
 
 .modal ol, .modal ul {
   max-height: 220px;

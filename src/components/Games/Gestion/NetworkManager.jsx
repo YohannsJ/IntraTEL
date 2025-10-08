@@ -20,40 +20,40 @@ const NetworkManager = () => {
   const gameProblems = [
     {
       id: 1,
-      description: "El análisis de tráfico de red muestra congestión en el 80% de los enlaces. ¿Cuál es la mejor estrategia de gestión?",
-      options: [
-        { text: "Implementar QoS (Quality of Service) y priorizar tráfico crítico", correct: true },
-        { text: "Bloquear todo el tráfico no esencial permanentemente", correct: false, explanation: "Bloquear tráfico puede afectar la productividad y no es sostenible." },
-        { text: "Aumentar el ancho de banda sin analizar el origen", correct: false, explanation: "Sin análisis, el problema podría persistir y generar costos innecesarios." }
-      ],
-      explanation: "QoS permite gestionar eficientemente el ancho de banda priorizando aplicaciones críticas."
-    },
+      description: "Recibes un correo que dice: 'Tu cuenta será suspendida si no confirmas tu contraseña ahora'. ¿Qué deberías hacer?",
+    options: [
+      { text: "Hacer clic rápido antes de que suspendan la cuenta", correct: false, explanation: "Los atacantes usan urgencia para engañarte." },
+      { text: "Reenviar el correo a todos tus contactos", correct: false, explanation: "Así solo difundes el intento de phishing." },
+      { text: "No hacer clic y verificar el mensaje directamente en el sitio oficial", correct: true },
+    ],
+    explanation: "El phishing busca que entregues tus datos haciéndose pasar por servicios legítimos."
+  },
     {
       id: 2,
-      description: "Los datos de monitoreo muestran latencia alta en conexiones VPN. ¿Cómo optimizar el rendimiento?",
-      options: [
-        { text: "Analizar rutas de red y implementar túneles optimizados", correct: true },
-        { text: "Eliminar todas las conexiones VPN", correct: false, explanation: "Las VPN son esenciales para trabajo remoto seguro." },
-        { text: "Aumentar la encriptación sin considerar el rendimiento", correct: false, explanation: "Más encriptación puede aumentar la latencia sin análisis adecuado." }
-      ],
-      explanation: "La optimización de rutas y configuración de túneles reduce significativamente la latencia."
-    },
+      description: "¿Qué es lo más seguro al crear una contraseña?",
+    options: [
+      { text: "Usar tu fecha de nacimiento", correct: false, explanation: "Es fácil de adivinar con tus datos públicos." },
+      { text: "Usar una combinación de letras, números y símbolos", correct: true },
+      { text: "Usar la misma contraseña para todo", correct: false, explanation: "Si una se filtra, todas tus cuentas quedan expuestas." }
+    ],
+    explanation: "Las contraseñas seguras mezclan distintos tipos de caracteres y no se repiten."
+  },
     {
       id: 3,
-      description: "El dashboard de gestión muestra picos de uso de CPU del 95% en servidores críticos. ¿Cuál es la acción prioritaria?",
-      options: [
-        { text: "Implementar balanceado de carga y escalamiento horizontal", correct: true },
-        { text: "Reiniciar todos los servidores simultáneamente", correct: false, explanation: "Reiniciar todos a la vez causaría interrupción total del servicio." },
-        { text: "Reducir la funcionalidad de las aplicaciones", correct: false, explanation: "Reducir funcionalidad afecta la experiencia del usuario." }
-      ],
-      explanation: "El balanceado de carga distribuye eficientemente la carga entre múltiples servidores."
-    },
+      description: "Estás en un café y el Wi-Fi no tiene contraseña. ¿Qué deberías evitar hacer?",
+    options: [
+      { text: "Iniciar sesión en tu banco o correo personal", correct: true },
+      { text: "Buscar memes o ver videos", correct: false, explanation: "Eso no implica riesgo de robo de información." },
+      { text: "Usar auriculares", correct: false, explanation: "Los auriculares no tienen relación con la ciberseguridad." }
+    ],
+    explanation: "Las redes abiertas permiten que otros usuarios intercepten tus datos fácilmente."
+  },
     {
       id: 4,
       description: "Los logs de seguridad revelan intentos de acceso no autorizado desde múltiples IPs. ¿Cuál es la respuesta más efectiva?",
       options: [
-        { text: "Implementar análisis de comportamiento y bloqueo dinámico de IPs", correct: true },
         { text: "Cerrar todos los puertos de red", correct: false, explanation: "Cerrar todos los puertos haría inaccesibles los servicios legítimos." },
+        { text: "Implementar análisis de comportamiento y bloqueo dinámico de IPs", correct: true },
         { text: "Cambiar todas las direcciones IP del sistema", correct: false, explanation: "Cambiar IPs es complejo y no soluciona el problema de seguridad." }
       ],
       explanation: "El análisis comportamental identifica patrones maliciosos y permite respuesta automatizada."
@@ -62,111 +62,111 @@ const NetworkManager = () => {
       id: 5,
       description: "El análisis de datos muestra que el 60% del ancho de banda se usa para streaming no relacionado con trabajo. ¿Cómo gestionar esto?",
       options: [
-        { text: "Implementar políticas de uso y horarios de limitación de ancho de banda", correct: true },
         { text: "Bloquear permanentemente todo contenido multimedia", correct: false, explanation: "Bloquear todo multimedia puede afectar contenido educativo legítimo." },
-        { text: "Ignorar el problema hasta que se resuelva solo", correct: false, explanation: "Ignorar el problema puede llevar a degradación continua del servicio." }
+        { text: "Ignorar el problema hasta que se resuelva solo", correct: false, explanation: "Ignorar el problema puede llevar a degradación continua del servicio." },
+        { text: "Implementar políticas de uso y horarios de limitación de ancho de banda", correct: true },
       ],
       explanation: "Las políticas balanceadas permiten uso personal controlado sin afectar el trabajo."
     },
     {
       id: 6,
-      description: "Los métricas de rendimiento indican fragmentación en bases de datos críticas. ¿Cuál es la mejor estrategia?",
-      options: [
-        { text: "Programar desfragmentación automática en horarios de baja demanda", correct: true },
-        { text: "Eliminar todas las bases de datos y empezar desde cero", correct: false, explanation: "Eliminar bases de datos causaría pérdida masiva de información." },
-        { text: "Aumentar la memoria RAM sin optimizar las consultas", correct: false, explanation: "Más RAM no resuelve la fragmentación subyacente." }
-      ],
-      explanation: "La desfragmentación programada mantiene el rendimiento óptimo sin interrumpir operaciones."
-    },
+      description: "Tu amigo te pide tu contraseña para 'ver algo rápido'. ¿Qué deberías hacer?",
+    options: [
+      { text: "Dársela solo si es un amigo cercano", correct: false, explanation: "Incluso sin mala intención, puede poner tu cuenta en riesgo." },
+      { text: "Cambiar la contraseña después", correct: false, explanation: "Compartirla ya rompe la seguridad, no es buena práctica." },
+      { text: "No compartirla con nadie", correct: true },
+    ],
+    explanation: "Las contraseñas son personales y su seguridad depende de que solo tú las conozcas."
+  },
     {
       id: 7,
-      description: "El análisis de tráfico de red detecta un aumento del 300% en el uso de protocolo HTTPS en horarios específicos. ¿Cómo investigar?",
-      options: [
-        { text: "Implementar DPI (Deep Packet Inspection) y análisis de patrones temporales", correct: true },
-        { text: "Bloquear todo el tráfico HTTPS", correct: false, explanation: "HTTPS es esencial para la seguridad de comunicaciones web." },
-        { text: "Ignorar el aumento por ser tráfico cifrado", correct: false, explanation: "Patrones anómalos requieren investigación incluso si están cifrados." }
-      ],
-      explanation: "DPI permite analizar metadatos y patrones sin comprometer la privacidad del contenido."
-    },
+      description: "¿Qué indica una dirección web segura?",
+    options: [
+      { text: "Empieza con https:// y tiene un candado en la barra del navegador", correct: true },
+      { text: "Tiene colores llamativos y emojis", correct: false, explanation: "Eso no garantiza seguridad, puede ser parte del engaño." },
+      { text: "Se ve profesional", correct: false, explanation: "Los sitios falsos pueden imitar el diseño de los reales." }
+    ],
+    explanation: "HTTPS significa que la conexión está cifrada y protege tus datos en tránsito."
+  },
     {
       id: 8,
-      description: "Los reportes de gestión muestran degradación gradual en SLA de servicios críticos. ¿Cuál es la acción más estratégica?",
-      options: [
-        { text: "Implementar monitoreo predictivo con ML para prevenir degradación", correct: true },
-        { text: "Esperar hasta que los SLA fallen completamente", correct: false, explanation: "Esperar hasta el fallo completo resulta en mayor impacto y costos." },
-        { text: "Reducir los requisitos de SLA para evitar penalizaciones", correct: false, explanation: "Reducir SLA disminuye la calidad del servicio para los usuarios." }
-      ],
-      explanation: "El monitoreo predictivo permite acción proactiva antes de que ocurran fallas críticas."
-    },
+      description: "Si te llega un mensaje por WhatsApp con un link que promete premios, ¿qué deberías hacer?",
+    options: [
+      { text: "Abrirlo rápido para no perder el premio", correct: false, explanation: "Es una técnica común para robar datos personales." },
+      { text: "No abrirlo y eliminar el mensaje", correct: true },
+      { text: "Compartirlo con amigos por si ganan algo", correct: false, explanation: "Difundirlo propaga el fraude." }
+    ],
+    explanation: "Los enlaces con promesas exageradas suelen ser intentos de phishing o malware."
+  },
     {
       id: 9,
-      description: "El análisis de datos de usuarios muestra patrones inusuales de consumo de recursos en aplicaciones críticas. ¿Cómo proceder?",
-      options: [
-        { text: "Implementar alertas basadas en anomalías y análisis de causa raíz", correct: true },
-        { text: "Restringir el acceso a todas las aplicaciones críticas", correct: false, explanation: "Restringir acceso puede impactar la productividad sin resolver el problema." },
-        { text: "Actualizar todas las aplicaciones sin análisis previo", correct: false, explanation: "Actualizaciones sin análisis pueden introducir nuevos problemas." }
-      ],
-      explanation: "La detección de anomalías permite identificar problemas antes de que se vuelvan críticos."
-    },
+      description: "Si tu computador empieza a comportarse raro después de instalar GTA_VI_Gratis_Full_Cr4ck3d_100%_r34l_1_link.rar, ¿qué deberías hacer?",
+    options: [
+      { text: "Desinstalarlo y analizar el sistema con un antivirus", correct: true },
+      { text: "Ignorarlo, seguro se arregla solo", correct: false, explanation: "Los virus no se eliminan sin acción." },
+      { text: "Instalar más Juegos Full_Cr4ck3d_100%_r34l_1_link.rar al azar", correct: false, explanation: "Podrías empeorar la infección." }
+    ],
+    explanation: "Siempre analiza los síntomas de comportamiento extraño: pueden indicar software malicioso, NO INSTALAR DE SITIOS NO CONOCIDOS, NI JUEGOS PIRATAS 👀."
+  },
     {
       id: 10,
-      description: "Los datos de telemetría revelan latencia inconsistente en comunicaciones entre centros de datos. ¿Cuál es la solución más eficiente?",
-      options: [
-        { text: "Optimizar rutas de red y implementar cache distribuido", correct: true },
-        { text: "Centralizar todos los datos en un solo centro", correct: false, explanation: "Centralizar crea un punto único de falla y puede aumentar la latencia." },
-        { text: "Duplicar todos los enlaces sin optimización", correct: false, explanation: "Más enlaces sin optimización no garantiza mejor rendimiento." }
-      ],
-      explanation: "La optimización de rutas y cache distribuido reduce latencia manteniendo redundancia."
-    },
+      description: "Alguien te etiqueta en una publicación que promete regalos si completas un formulario. ¿Qué deberías pensar?",
+    options: [
+      { text: "Seguro es real porque lo compartió un amigo", correct: false, explanation: "Los amigos también pueden caer en engaños." },
+      { text: "No pasa nada si doy mi información", correct: false, explanation: "Estás entregando datos valiosos a desconocidos." },
+      { text: "Podría ser una estafa para recolectar datos personales", correct: true },
+    ],
+    explanation: "Muchas estafas en redes sociales se difunden mediante etiquetas o concursos falsos."
+  },
     {
       id: 11,
-      description: "El análisis de logs muestra intentos repetitivos de acceso a archivos sensibles desde cuentas autorizadas. ¿Cómo evaluar la situación?",
-      options: [
-        { text: "Implementar análisis de comportamiento de usuarios y auditoría detallada", correct: true },
-        { text: "Desactivar todas las cuentas inmediatamente", correct: false, explanation: "Desactivar todas las cuentas interrumpe operaciones críticas sin investigación." },
-        { text: "Cambiar las ubicaciones de todos los archivos", correct: false, explanation: "Mover archivos no aborda el problema de comportamiento anómalo." }
-      ],
-      explanation: "El análisis comportamental distingue entre uso legítimo y potencial amenaza interna."
-    },
+      description: "Estás en un laboratorio y te ofrecen un pendrive 'gratis' para probar. ¿Qué haces?",
+    options: [
+      { text: "No lo conectas sin escanearlo antes", correct: true },
+      { text: "Lo conectas a tu pc personal para ver qué hay", correct: false, explanation: "Puede contener malware que se instala al instante." },
+      { text: "Lo prestas a un compañero", correct: false, explanation: "Así solo se propaga el riesgo a más equipos." }
+    ],
+    explanation: "Los pendrives desconocidos son una forma común de propagar virus o ransomware."
+  },
     {
       id: 12,
       description: "Los métricas de red muestran pérdida de paquetes del 2% en enlaces críticos durante horas pico. ¿Cuál es la estrategia óptima?",
       options: [
-        { text: "Implementar buffer dinámico y reenvío adaptativo", correct: true },
         { text: "Reducir el tamaño de todos los paquetes a la mitad", correct: false, explanation: "Reducir tamaño de paquetes aumenta overhead sin resolver la congestión." },
+        { text: "Implementar buffer dinámico y reenvío adaptativo", correct: true },
         { text: "Eliminar el tráfico de menor prioridad permanentemente", correct: false, explanation: "Eliminar tráfico permanentemente afecta funcionalidades del sistema." }
       ],
       explanation: "Los buffers dinámicos y reenvío adaptativo manejan eficientemente la congestión temporal."
     },
     {
       id: 13,
-      description: "El dashboard de gestión indica uso asimétrico de recursos: 90% en servidor A, 20% en servidor B. ¿Cómo optimizar?",
+      description: "Si una aplicación comienza a pedir acceso a datos que no necesita, ¿qué deberías hacer?",
       options: [
-        { text: "Implementar migración de cargas dinámicas y auto-escalado", correct: true },
-        { text: "Apagar el servidor B para ahorrar energía", correct: false, explanation: "Apagar servidor B elimina redundancia y capacidad de respaldo." },
-        { text: "Forzar todo el tráfico al servidor B", correct: false, explanation: "Forzar tráfico sin análisis puede sobrecargar el servidor menos potente." }
+        { text: "Revisar permisos y ajustar según necesidad", correct: true },
+        { text: "Eliminar la aplicación y reinstalarla", correct: false, explanation: "Reinstalar no garantiza que se resuelva el problema de permisos." },
+        { text: "Autorizar todo, total lo necesita para funcionar", correct: false, explanation: "Autorizar todos los permisos sin revisión puede comprometer la seguridad." }
       ],
       explanation: "La migración dinámica y auto-escalado optimizan el uso de recursos automáticamente."
     },
     {
       id: 14,
-      description: "Los datos de monitoreo revelan degradación en tiempo de respuesta de API críticas durante actualizaciones. ¿Cómo mejorar el proceso?",
-      options: [
-        { text: "Implementar despliegue blue-green y testing automatizado", correct: true },
-        { text: "Suspender todas las actualizaciones indefinidamente", correct: false, explanation: "Sin actualizaciones, se acumulan vulnerabilidades de seguridad." },
-        { text: "Realizar todas las actualizaciones en horario laboral", correct: false, explanation: "Actualizaciones en horario laboral maximizan el impacto en usuarios." }
-      ],
-      explanation: "Blue-green deployment permite actualizaciones sin tiempo de inactividad."
-    },
+      description: "Quieres saber con quién habla otra persona en redes sociales. ¿Qué es lo ético y legal?",
+    options: [
+      { text: "Usar herramientas para leer sus mensajes privados sin permiso", correct: false, explanation: "Acceder a mensajes privados sin permiso es invasión y puede ser delito." },
+      { text: "Preguntarle abiertamente a la persona si te interesa saber", correct: false, explanation: "Pregunta directa es ética, pero recuerda respetar su derecho a no responder." },
+      { text: "No intentar acceder a sus mensajes privados; respetar su privacidad", correct: true },
+    ],
+    explanation: "Los mensajes privados son privados; la vía correcta es comunicación abierta y consentimiento, nunca intrusión."
+  },
     {
       id: 15,
-      description: "El análisis predictivo indica probable falla de disco en servidor de base de datos dentro de 72 horas. ¿Cuál es la acción más prudente?",
+      description: "Alguien doxea tu IP privada (192.168.x.x). ¿Qué deberías hacer?",
       options: [
-        { text: "Ejecutar respaldo completo y preparar migración planificada", correct: true },
-        { text: "Esperar a que falle el disco para actuar", correct: false, explanation: "Esperar la falla puede resultar en pérdida de datos y tiempo de inactividad." },
-        { text: "Reemplazar todos los discos del centro de datos", correct: false, explanation: "Reemplazar todos los discos es costoso e innecesario sin análisis específico." }
+        { text: "Apago el internet de mi casa, ya que me pueden hackear en cualquier momento", correct: false, explanation: "No es necesario desconectar el internet, ya que la IP privada no es accesible desde fuera." },
+        { text: "Nada, por que la ip privada no se muestra en internet, es no es accesible desde afuera", correct: true },
+        { text: "Llamar a la policia o a la PDI", correct: false, explanation: "Llamar a la policía no es necesario, ya que no hay un delito en curso." }
       ],
-      explanation: "La acción preventiva basada en análisis predictivo minimiza riesgos y tiempo de inactividad."
+      explanation: "La IP privada no es accesible desde internet, por lo que no hay riesgo inmediato."
     }
   ];
 
@@ -226,6 +226,8 @@ const NetworkManager = () => {
   // Nombre fijo de la mascota (no editable)
   const [mascotName] = useState('Telix');
   const [popupSuccessCount, setPopupSuccessCount] = useState(0);
+  const [popupFlagObtained, setPopupFlagObtained] = useState(false); // Flag especial por 5 popups
+  const [popupsDisabled, setPopupsDisabled] = useState(false); // Desactivar popups después de 5
   const [correctStreak, setCorrectStreak] = useState(0);
   // Animacion aplicada al popup malicioso cuando la perdida ocurre por un popup
   const [malwareLostAnim, setMalwareLostAnim] = useState(false);
@@ -601,11 +603,27 @@ const NetworkManager = () => {
     setIsAnswering(false);
 
     if (correct) {
-      setPopupSuccessCount(prev => prev + 1);
+      const newPopupCount = popupSuccessCount + 1;
+      setPopupSuccessCount(newPopupCount);
       setScore(prev => prev + 5);
       setStability(prev => Math.min(100, prev + 5));
-      // NO cambiar el mood de Telix por respuestas del popup malicioso
-      // setMascotMood('happy'); // Comentado para que Telix no reaccione
+      
+      // Verificar si se alcanzaron 5 popups correctos
+      if (newPopupCount === 5 && !popupFlagObtained) {
+        setPopupFlagObtained(true);
+        setPopupsDisabled(true); // Desactivar futuros popups
+        setScore(prev => prev + 50); // Bonus adicional por la flag especial
+        // Mostrar mensaje especial
+        setMascotMood('cheer');
+        setMascotTip({ visible: true, text: '🎉 ¡Increíble! Has bloqueado 5 popups maliciosos. ¡Flag especial desbloqueada!' });
+        setTimeout(() => {
+          setMascotTip({ visible: false, text: '' });
+          setMascotMood('idle');
+        }, 5000);
+      }
+      
+      // NO cambiar el mood de Teli por respuestas del popup malicioso
+      // setMascotMood('happy'); // Comentado para que Teli no reaccione
       // no mostramos explicación modal para respuestas correctas, solo feedback visual
       // no avanzamos de ronda solo por el popup
       // cerrar popup inmediatamente en respuestas correctas
@@ -751,6 +769,50 @@ const NetworkManager = () => {
     setHintUsed(true);
   };
 
+  // Función para calcular la flag según el puntaje final
+  const calculateFinalFlag = (finalScore) => {
+    // 3 niveles de banderas basadas en puntaje
+    // Bronce: 0-150 pts (30 pts)
+    // Plata: 151-250 pts (60 pts)
+    // Oro: 251+ pts (100 pts)
+    
+    if (finalScore >= 251) {
+      return {
+        name: 'Gestión Oro - Maestro de Red',
+        value: 'D1FT3L{G3ST10N_M43STR0_D3_R3D_0R0}',
+        points: 100,
+        description: '¡Excelente desempeño! Dominas la gestión de redes.',
+        tier: 'gold'
+      };
+    } else if (finalScore >= 151) {
+      return {
+        name: 'Gestión Plata - Experto en Red',
+        value: 'D1FT3L{G3ST10N_3XP3RT0_3N_R3D_PL4T4}',
+        points: 60,
+        description: 'Muy buen trabajo. Tienes sólidos conocimientos de gestión.',
+        tier: 'silver'
+      };
+    } else {
+      return {
+        name: 'Gestión Bronce - Analista de Red',
+        value: 'D1FT3L{G3ST10N_4N4L1ST4_D3_R3D_BR0NC3}',
+        points: 30,
+        description: 'Buen comienzo. Continúa practicando para mejorar.',
+        tier: 'bronze'
+      };
+    }
+  };
+
+  // Función para obtener la flag especial de popups
+  const getPopupBonusFlag = () => {
+    return {
+      name: 'Defensor Anti-Malware',
+      value: 'D1FT3L{D3F3NS0R_4NT1_M4LW4R3_5_P0PUPS}',
+      points: 50,
+      description: '¡Bloqueaste 5 popups maliciosos! Excelente vigilancia.'
+    };
+  };
+
   // Minimal reset function: restarts the game to initial state
   const resetGame = () => {
     setStability(100);
@@ -795,7 +857,7 @@ const NetworkManager = () => {
 
   // Elegir momentos aleatorios para mostrar el popup malicioso
   useEffect(() => {
-    if (!gameStarted || gameOver) return;
+    if (!gameStarted || gameOver || popupsDisabled) return; // Detener si popups están desactivados
 
     // Si ya está activo, no programamos otro
     if (malwareActive) return;
@@ -1083,33 +1145,148 @@ const NetworkManager = () => {
           {gameOver ? (
             <div className={styles.gameEndScreen}>
               <div className={styles.gameEndContent}>
-                <h2 style={{ marginTop: 0 }}>{gameWon ? '¡Lo lograste! 🎉' : '¡Oh no!'}</h2>
+                <h2 style={{ marginTop: 0 }}>{gameWon ? '¡Lo lograste! 🎉' : '¡Juego Terminado!'}</h2>
                 {gameWon ? (
                   <>
                     <p>¡La red está estable gracias a ti! ¡Buen trabajo, detective de la red!</p>
-                    <div style={{ 
-                      marginTop: 16, 
-                      padding: '12px', 
-                      backgroundColor: '#1e3a8a', 
-                      borderRadius: '8px', 
-                      border: '2px solid #3b82f6',
-                      fontFamily: 'monospace',
-                      fontSize: '14px',
-                      color: '#60a5fa',
-                      textAlign: 'center',
-                      maxWidth: '90%',
-                      margin: '0 auto'
-                    }}>
-                      <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#93c5fd' }}>🚩 FLAG CAPTURADA</p>
-                      <p style={{ margin: 0, wordBreak: 'break-all' }}>D1FT3L{`{N3tw0rk_M4st3r_${score}_${stability}}`}</p>
-                    </div>
+                    
+                    {/* Flag principal del juego */}
+                    {(() => {
+                      const mainFlag = calculateFinalFlag(score);
+                      return (
+                        <div style={{ 
+                          marginTop: 16, 
+                          padding: '12px', 
+                          backgroundColor: mainFlag.tier === 'gold' ? '#854d0e' : mainFlag.tier === 'silver' ? '#475569' : '#78350f',
+                          borderRadius: '8px', 
+                          border: `2px solid ${mainFlag.tier === 'gold' ? '#fbbf24' : mainFlag.tier === 'silver' ? '#94a3b8' : '#f59e0b'}`,
+                          fontFamily: 'monospace',
+                          fontSize: '14px',
+                          color: mainFlag.tier === 'gold' ? '#fef3c7' : mainFlag.tier === 'silver' ? '#e2e8f0' : '#fef3c7',
+                          textAlign: 'center',
+                          maxWidth: '90%',
+                          margin: '0 auto 16px auto'
+                        }}>
+                          <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: mainFlag.tier === 'gold' ? '#fbbf24' : mainFlag.tier === 'silver' ? '#cbd5e1' : '#f59e0b' }}>
+                            🚩 FLAG CAPTURADA - {mainFlag.tier === 'gold' ? '🥇 ORO' : mainFlag.tier === 'silver' ? '🥈 PLATA' : '🥉 BRONCE'}
+                          </p>
+                          <p style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 'bold' }}>
+                            {mainFlag.name}
+                          </p>
+                          <p style={{ margin: '0 0 8px 0', wordBreak: 'break-all', fontSize: '13px' }}>{mainFlag.value}</p>
+                          <p style={{ margin: '0', fontSize: '12px' }}>
+                            +{mainFlag.points} puntos
+                          </p>
+                          <p style={{ margin: '8px 0 0 0', fontSize: '11px', fontStyle: 'italic' }}>
+                            {mainFlag.description}
+                          </p>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Flag bonus por popups (si se obtuvo) */}
+                    {popupFlagObtained && (() => {
+                      const bonusFlag = getPopupBonusFlag();
+                      return (
+                        <div style={{ 
+                          marginTop: 8, 
+                          padding: '12px', 
+                          backgroundColor: '#1e3a8a',
+                          borderRadius: '8px', 
+                          border: '2px solid #3b82f6',
+                          fontFamily: 'monospace',
+                          fontSize: '14px',
+                          color: '#60a5fa',
+                          textAlign: 'center',
+                          maxWidth: '90%',
+                          margin: '0 auto'
+                        }}>
+                          <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#93c5fd' }}>
+                            ⭐ FLAG BONUS - ANTI-MALWARE
+                          </p>
+                          <p style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 'bold', color: '#fbbf24' }}>
+                            {bonusFlag.name}
+                          </p>
+                          <p style={{ margin: '0 0 8px 0', wordBreak: 'break-all', fontSize: '13px' }}>{bonusFlag.value}</p>
+                          <p style={{ margin: '0', fontSize: '12px', color: '#93c5fd' }}>
+                            +{bonusFlag.points} puntos
+                          </p>
+                          <p style={{ margin: '8px 0 0 0', fontSize: '11px', color: '#e0e7ff', fontStyle: 'italic' }}>
+                            {bonusFlag.description}
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </>
                 ) : (
-                  <p>Ups, la red necesita ayuda. ¡Inténtalo otra vez y verás mejora!</p>
+                  <>
+                    <p>La red necesita ayuda. ¡Inténtalo otra vez!</p>
+                    
+                    {/* Mostrar flag incluso si perdió */}
+                    {(() => {
+                      const mainFlag = calculateFinalFlag(score);
+                      return (
+                        <div style={{ 
+                          marginTop: 16, 
+                          padding: '12px', 
+                          backgroundColor: '#78350f',
+                          borderRadius: '8px', 
+                          border: '2px solid #f59e0b',
+                          fontFamily: 'monospace',
+                          fontSize: '14px',
+                          color: '#fef3c7',
+                          textAlign: 'center',
+                          maxWidth: '90%',
+                          margin: '0 auto'
+                        }}>
+                          <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#f59e0b' }}>🚩 FLAG OBTENIDA</p>
+                          <p style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 'bold' }}>
+                            {mainFlag.name}
+                          </p>
+                          <p style={{ margin: '0 0 8px 0', wordBreak: 'break-all', fontSize: '13px' }}>{mainFlag.value}</p>
+                          <p style={{ margin: '0', fontSize: '12px' }}>
+                            +{mainFlag.points} puntos
+                          </p>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Flag bonus por popups (si se obtuvo) */}
+                    {popupFlagObtained && (() => {
+                      const bonusFlag = getPopupBonusFlag();
+                      return (
+                        <div style={{ 
+                          marginTop: 8, 
+                          padding: '12px', 
+                          backgroundColor: '#1e3a8a',
+                          borderRadius: '8px', 
+                          border: '2px solid #3b82f6',
+                          fontFamily: 'monospace',
+                          fontSize: '14px',
+                          color: '#60a5fa',
+                          textAlign: 'center',
+                          maxWidth: '90%',
+                          margin: '8px auto 0 auto'
+                        }}>
+                          <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#93c5fd' }}>
+                            ⭐ FLAG BONUS
+                          </p>
+                          <p style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: 'bold', color: '#fbbf24' }}>
+                            {bonusFlag.name}
+                          </p>
+                          <p style={{ margin: '0 0 8px 0', wordBreak: 'break-all', fontSize: '13px' }}>{bonusFlag.value}</p>
+                          <p style={{ margin: '0', fontSize: '12px', color: '#93c5fd' }}>
+                            +{bonusFlag.points} puntos
+                          </p>
+                        </div>
+                      );
+                    })()}
+                  </>
                 )}
                 <div className={styles.finalStats}>
                   <p><strong>Estabilidad final:</strong> {stability}%</p>
                   <p><strong>Puntuación final:</strong> {score}</p>
+                  {popupFlagObtained && <p style={{ color: '#3b82f6', fontWeight: 'bold' }}>⭐ Popups bloqueados: 5/5</p>}
                 </div>
                 <button onClick={resetGame} className={styles.resetButton}>
                   Jugar de nuevo

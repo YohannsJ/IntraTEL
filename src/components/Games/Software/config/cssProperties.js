@@ -55,6 +55,17 @@ export const CSS_PROPERTIES = {
         { name: 'Espacio alrededor', value: 'space-around', description: 'Espacio alrededor de elementos' }
       ],
       example: 'center'
+    },
+    {
+      property: 'flex-direction',
+      description: 'Dirección de los elementos flex',
+      values: [
+        { name: 'Fila', value: 'row', description: 'Elementos en fila (horizontal)' },
+        { name: 'Columna', value: 'column', description: 'Elementos en columna (vertical)' },
+        { name: 'Fila inversa', value: 'row-reverse', description: 'Fila en orden inverso' },
+        { name: 'Columna inversa', value: 'column-reverse', description: 'Columna en orden inverso' }
+      ],
+      example: 'row'
     }
   ],
 

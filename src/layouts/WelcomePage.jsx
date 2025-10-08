@@ -70,10 +70,10 @@ const WelcomePage = () => {
         <header className={styles.header}>
           <div className={styles.welcomeIcon}>🎓</div>
           <h1 className={styles.title}>
-            ¡Bienvenido a IntraTEL, {user?.first_name}!
+            ¡Bienvenido a Didactic-Tel, {user?.first_name}!
           </h1>
           <p className={styles.subtitle}>
-           Has elegido una carrera apasionante que está a la vanguardia en las TIC e integra telecomunicaciones, redes de computadores, programación, hardware y datos (hasta machine learning). En IntraTEL, conocerás estos pilares de la carrera 
+           Has elegido una carrera apasionante que está a la vanguardia en las TIC e integra telecomunicaciones, redes de computadores, programación, hardware y datos (hasta machine learning). En Didactic-Tel, conocerás estos pilares de la carrera 
               a través de juegos interactivos y desafiantes.
           </p>
         </header>

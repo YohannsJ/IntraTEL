@@ -39,7 +39,7 @@ const Footer = () => {
     <footer className={styles.footer}>
   <div className={styles.footerContainer}>
     <div className={styles.left}>
-      <p>© {new Date().getFullYear()} IntraTEL · Ingeniería Civil Telemática</p>
+      <p>© {new Date().getFullYear()} Didactic-Tel · Ingeniería Civil Telemática</p>
     </div>
 
     <div className={styles.center}>

@@ -125,7 +125,7 @@ const LandingPage = () => {
             }}
           >
             <h1 className={styles.heroTitle}>
-              Bienvenido a <span className={styles.brandName}>IntraTEL</span>
+              Bienvenido a <span className={styles.brandName}>Didactic-Tel</span>
             </h1>
             <p className={styles.heroSubtitle}>
               Una plataforma interactiva diseñada por DifTel para ofrecer una experiencia única 
@@ -150,7 +150,7 @@ const LandingPage = () => {
       {/* Features Section */}
       <section className={styles.features}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>¿Por qué elegir IntraTEL?</h2>
+          <h2 className={styles.sectionTitle}>¿Por qué elegir Didactic-Tel?</h2>
           <p className={styles.sectionSubtitle}>
             Una experiencia de aprendizaje diseñada específicamente para estudiantes de telecomunicaciones
           </p>
@@ -181,7 +181,7 @@ const LandingPage = () => {
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>¿Cómo funciona?</h2>
           <p className={styles.sectionSubtitle}>
-            Tres simples pasos para comenzar tu aventura en IntraTel
+            Tres simples pasos para comenzar tu aventura en Didactic-Tel
           </p>
         </div>
         

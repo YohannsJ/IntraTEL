@@ -4,6 +4,7 @@ import { DevicePreview } from './components/DevicePreview.jsx';
 import { ElementLibrary } from './components/ElementLibrary.jsx';
 import { GameHeader } from './components/GameHeader.jsx';
 import { ProgressTracker } from './components/ProgressTracker.jsx';
+import { FlagPopup } from './components/FlagPopup.jsx';
 import { generateCSS, validateLevel } from './utils/cssGenerator.js';
 import { LEVELS } from './config/levelData.js';
 import Footer from '../../Footer/Footer.jsx';
@@ -52,6 +53,7 @@ export default function CSSCodeGame() {
   const [showHints, setShowHints] = useState(gameState.showHints ?? true);
   const [attempts, setAttempts] = useState(gameState.attempts || 0);
   const [notification, setNotification] = useState(null);
+  const [flagPopup, setFlagPopup] = useState({ isOpen: false, level: null });
 
   // Efecto para guardar automáticamente el estado cuando cambie
   useEffect(() => {
@@ -126,21 +128,11 @@ export default function CSSCodeGame() {
       }
       setCompletedLevels(newCompletedLevels);
       
-      // Mostrar flag si es el último nivel
-      if (currentLevel === LEVELS.length - 1) {
-        showNotification('🎉 ¡Felicitaciones! Has completado todos los niveles. D1FT3L{CSS_MASTER_COMPLETE}', 'flag', 10000);
-      } else {
-        showNotification(`¡Nivel completado! D1FT3L{CSS_LEVEL_${currentLevel + 1}_COMPLETE}`, 'success', 5000);
-      }
+      // Mostrar popup de bandera personalizada
+      setFlagPopup({ isOpen: true, level: currentLevel });
       
-      // Auto-avanzar al siguiente nivel después de 2 segundos
-      if (currentLevel < LEVELS.length - 1) {
-        setTimeout(() => {
-          setCurrentLevel(currentLevel + 1);
-          setCssProperties({});
-          setAttempts(0);
-        }, 2000);
-      }
+      // Auto-avanzar al siguiente nivel después de cerrar el popup (excepto último nivel)
+      // Esta lógica se manejará en el callback de cerrar popup
     } else {
       showNotification(`Intento ${newAttempts}: El resultado no coincide con el objetivo. ¡Sigue intentando!`, 'error');
     }
@@ -153,6 +145,21 @@ export default function CSSCodeGame() {
     setAttempts(0);
   }, []);
 
+  // Cerrar popup de bandera
+  const closeFlagPopup = useCallback(() => {
+    const wasLastLevel = flagPopup.level === LEVELS.length - 1;
+    setFlagPopup({ isOpen: false, level: null });
+    
+    // Auto-avanzar al siguiente nivel si no es el último
+    if (!wasLastLevel && flagPopup.level !== null && flagPopup.level < LEVELS.length - 1) {
+      setTimeout(() => {
+        setCurrentLevel(flagPopup.level + 1);
+        setCssProperties({});
+        setAttempts(0);
+      }, 300);
+    }
+  }, [flagPopup.level]);
+
   // Resetear progreso
   const resetProgress = useCallback(() => {
     try {
@@ -163,6 +170,7 @@ export default function CSSCodeGame() {
       setAttempts(0);
       setDeviceType('web');
       setShowHints(true);
+      setFlagPopup({ isOpen: false, level: null });
       showNotification('Progreso reiniciado', 'info');
     } catch (error) {
       showNotification('Error al reiniciar progreso', 'error');
@@ -231,6 +239,13 @@ export default function CSSCodeGame() {
       
       {/* Footer con créditos de todos los creadores */}
       <Footer />
+      
+      {/* Popup de banderas */}
+      <FlagPopup
+        level={flagPopup.level}
+        isOpen={flagPopup.isOpen}
+        onClose={closeFlagPopup}
+      />
     </div>
   );
 }

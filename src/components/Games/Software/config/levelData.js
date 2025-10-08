@@ -179,6 +179,78 @@ export const LEVELS = [
       "Mantén width y height iguales para un círculo perfecto"
     ]
   },
+
+  {
+    id: 3,
+    title: "Flexbox: Centrado avanzado",
+    description: "Domina el centrado con Flexbox",
+    html: `
+      <div class="target-element">
+        <div class="content">
+          Centrado Perfecto
+        </div>
+      </div>
+    `,
+    baseCSS: `
+      .target-element {
+        width: 250px;
+        height: 150px;
+        background: #8b5cf6;
+        color: white;
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        margin: 20px auto;
+      }
+      
+      .content {
+        font-weight: 500;
+        font-size: 16px;
+      }
+    `,
+    availableProperties: [
+      'display',
+      'align-items',
+      'justify-content',
+      'flex-direction',
+      'text-align'
+    ],
+    expectedResult: {
+      css: `
+        .target-element {
+          width: 250px;
+          height: 150px;
+          background: #8b5cf6;
+          color: white;
+          border: 2px dashed rgba(255, 255, 255, 0.3);
+          margin: 20px auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+        }
+        
+        .content {
+          font-weight: 500;
+          font-size: 16px;
+        }
+      `,
+      description: "Centra el contenido perfectamente usando Flexbox"
+    },
+    validation: {
+      requiredProperties: ['display', 'align-items', 'justify-content'],
+      acceptableValues: {
+        'display': ['flex'],
+        'align-items': ['center'],
+        'justify-content': ['center']
+      }
+    },
+    hints: [
+      "Usa 'display: flex' para crear un contenedor flexible",
+      "Usa 'align-items: center' para centrar verticalmente",
+      "Usa 'justify-content: center' para centrar horizontalmente",
+      "Agrega 'text-align: center' para centrar el texto"
+    ]
+  },
+
   {
     id: 4,
     title: "Desafío final: Elemento estilizado",

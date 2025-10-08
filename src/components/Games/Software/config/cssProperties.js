@@ -32,6 +32,29 @@ export const CSS_PROPERTIES = {
         { name: 'Ninguno', value: 'none', description: 'No flota' }
       ],
       example: 'left'
+    },
+    {
+      property: 'align-items',
+      description: 'Alineación vertical en flexbox',
+      values: [
+        { name: 'Inicio', value: 'flex-start', description: 'Alinea al inicio' },
+        { name: 'Centro', value: 'center', description: 'Centra verticalmente' },
+        { name: 'Final', value: 'flex-end', description: 'Alinea al final' },
+        { name: 'Estirar', value: 'stretch', description: 'Estira para llenar' }
+      ],
+      example: 'center'
+    },
+    {
+      property: 'justify-content',
+      description: 'Alineación horizontal en flexbox',
+      values: [
+        { name: 'Inicio', value: 'flex-start', description: 'Alinea al inicio' },
+        { name: 'Centro', value: 'center', description: 'Centra horizontalmente' },
+        { name: 'Final', value: 'flex-end', description: 'Alinea al final' },
+        { name: 'Espacio entre', value: 'space-between', description: 'Espacio entre elementos' },
+        { name: 'Espacio alrededor', value: 'space-around', description: 'Espacio alrededor de elementos' }
+      ],
+      example: 'center'
     }
   ],
 
@@ -109,7 +132,11 @@ export const CSS_PROPERTIES = {
         { name: 'Pequeño', value: '8px', description: 'Margen pequeño' },
         { name: 'Mediano', value: '16px', description: 'Margen mediano' },
         { name: 'Grande', value: '24px', description: 'Margen grande' },
-        { name: 'Muy grande', value: '32px', description: 'Margen muy grande' }
+        { name: 'Muy grande', value: '32px', description: 'Margen muy grande' },
+        { name: 'Centrar horizontal', value: 'auto', description: 'Centra horizontalmente' },
+        { name: 'Centrar 16px', value: '16px auto', description: 'Margen vertical 16px, centrado horizontal' },
+        { name: 'Centrar 20px', value: '20px auto', description: 'Margen vertical 20px, centrado horizontal' },
+        { name: 'Centrar 24px', value: '24px auto', description: 'Margen vertical 24px, centrado horizontal' }
       ],
       example: '16px'
     },
@@ -133,9 +160,12 @@ export const CSS_PROPERTIES = {
       description: 'Borde del elemento',
       values: [
         { name: 'Sin borde', value: 'none', description: 'Sin borde' },
-        { name: 'Fino', value: '1px solid #ccc', description: 'Borde fino gris' },
-        { name: 'Mediano', value: '2px solid #000', description: 'Borde mediano negro' },
-        { name: 'Grueso', value: '3px solid #333', description: 'Borde grueso' },
+        { name: 'Fino gris claro', value: '1px solid #e5e7eb', description: 'Borde fino gris claro (ideal para tarjetas)' },
+        { name: 'Fino gris', value: '1px solid #ccc', description: 'Borde fino gris' },
+        { name: 'Fino dos', value: '2px solid #e5e7eb', description: 'Borde fino de 2px gris claro' },
+        { name: 'Mediano negro', value: '2px solid #000', description: 'Borde mediano negro' },
+        { name: 'Grueso oscuro', value: '3px solid #333', description: 'Borde grueso oscuro (ideal para formas)' },
+        { name: 'Grueso negro', value: '3px solid #000', description: 'Borde grueso negro' },
         { name: 'Punteado', value: '2px dotted #666', description: 'Borde punteado' }
       ],
       example: '1px solid #e5e7eb'
@@ -146,9 +176,12 @@ export const CSS_PROPERTIES = {
       values: [
         { name: 'Sin redondez', value: '0', description: 'Esquinas cuadradas' },
         { name: 'Poco redondeado', value: '4px', description: 'Esquinas ligeramente redondeadas' },
-        { name: 'Redondeado', value: '8px', description: 'Esquinas redondeadas' },
+        { name: 'Suave', value: '6px', description: 'Esquinas suavemente redondeadas' },
+        { name: 'Redondeado', value: '8px', description: 'Esquinas redondeadas (ideal para tarjetas)' },
+        { name: 'Más redondeado', value: '12px', description: 'Esquinas más redondeadas' },
         { name: 'Muy redondeado', value: '16px', description: 'Esquinas muy redondeadas' },
-        { name: 'Circular', value: '50%', description: 'Completamente circular' }
+        { name: 'Círculo perfecto', value: '50%', description: 'Convierte en círculo perfecto' },
+        { name: 'Circular 60px', value: '60px', description: 'Muy redondeado con 60px' }
       ],
       example: '8px'
     }
@@ -161,6 +194,7 @@ export const CSS_PROPERTIES = {
       values: [
         { name: 'Automático', value: 'auto', description: 'Ancho automático' },
         { name: 'Pequeño', value: '100px', description: 'Ancho pequeño' },
+        { name: 'Normal', value: '120px', description: 'Ancho normal para formas' },
         { name: 'Mediano', value: '200px', description: 'Ancho mediano' },
         { name: 'Grande', value: '300px', description: 'Ancho grande' },
         { name: 'Completo', value: '100%', description: 'Ancho completo' }
@@ -174,6 +208,7 @@ export const CSS_PROPERTIES = {
         { name: 'Automático', value: 'auto', description: 'Alto automático' },
         { name: 'Pequeño', value: '50px', description: 'Alto pequeño' },
         { name: 'Mediano', value: '100px', description: 'Alto mediano' },
+        { name: 'Normal', value: '120px', description: 'Alto normal para formas' },
         { name: 'Grande', value: '150px', description: 'Alto grande' },
         { name: 'Muy grande', value: '200px', description: 'Alto muy grande' }
       ],

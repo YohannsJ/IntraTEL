@@ -134,13 +134,18 @@ export const LEVELS = [
         justify-content: center;
         text-align: center;
         margin: 20px auto;
+        box-sizing: border-box;
       }
     `,
     availableProperties: [
       'border',
       'border-radius',
       'width',
-      'height'
+      'height',
+      'margin',
+      'display',
+      'align-items',
+      'justify-content'
     ],
     expectedResult: {
       css: `
@@ -154,6 +159,7 @@ export const LEVELS = [
           justify-content: center;
           text-align: center;
           margin: 20px auto;
+          box-sizing: border-box;
           border: 3px solid #333;
           border-radius: 50%;
         }
@@ -163,7 +169,7 @@ export const LEVELS = [
     validation: {
       requiredProperties: ['border', 'border-radius'],
       acceptableValues: {
-        'border': ['3px solid #333', '2px solid #000', '3px solid #000'],
+        'border': ['3px solid #333', '2px solid #000', '3px solid #000', '2px solid #333'],
         'border-radius': ['50%', '60px']
       }
     },
@@ -173,99 +179,24 @@ export const LEVELS = [
       "Mantén width y height iguales para un círculo perfecto"
     ]
   },
-
-  {
-    id: 3,
-    title: "Layout flexbox",
-    description: "Aprende los conceptos básicos de flexbox",
-    html: `
-      <div class="container">
-        <div class="item">1</div>
-        <div class="item">2</div>
-        <div class="item">3</div>
-      </div>
-    `,
-    baseCSS: `
-      .container {
-        width: 100%;
-        height: 150px;
-        background: #f3f4f6;
-        border: 2px solid #d1d5db;
-      }
-      
-      .item {
-        width: 60px;
-        height: 60px;
-        background: #8b5cf6;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        margin: 5px;
-      }
-    `,
-    availableProperties: [
-      'display',
-      'margin',
-      'padding'
-    ],
-    expectedResult: {
-      css: `
-        .container {
-          width: 100%;
-          height: 150px;
-          background: #f3f4f6;
-          border: 2px solid #d1d5db;
-          display: flex;
-          padding: 16px;
-        }
-      `,
-      description: "Convierte el contenedor en flexbox para organizar los elementos horizontalmente"
-    },
-    validation: {
-      requiredProperties: ['display'],
-      acceptableValues: {
-        'display': ['flex']
-      }
-    },
-    hints: [
-      "Usa 'display: flex' en el contenedor",
-      "Agrega padding al contenedor para separación",
-      "Los elementos se organizarán horizontalmente automáticamente"
-    ]
-  },
-
   {
     id: 4,
-    title: "Desafío final: Tarjeta completa",
-    description: "Crea una tarjeta estilizada combinando todo lo aprendido",
+    title: "Desafío final: Elemento estilizado",
+    description: "Crea un elemento completo combinando todo lo aprendido",
     html: `
-      <div class="card">
-        <div class="card-header">
-          Tarjeta CSS
-        </div>
-        <div class="card-content">
-          Esta es una tarjeta creada con CSS. Combina colores, espaciado, bordes y tipografía.
-        </div>
+      <div class="target-element">
+        ¡Desafío Final CSS!
+        <br><br>
+        Has completado todos los niveles básicos.
       </div>
     `,
     baseCSS: `
-      .card {
+      .target-element {
         max-width: 300px;
         margin: 20px auto;
-      }
-      
-      .card-header {
-        background: #1f2937;
+        padding: 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 16px;
-      }
-      
-      .card-content {
-        background: white;
-        padding: 16px;
-        color: #374151;
       }
     `,
     availableProperties: [
@@ -279,29 +210,20 @@ export const LEVELS = [
     ],
     expectedResult: {
       css: `
-        .card {
+        .target-element {
           max-width: 300px;
           margin: 20px auto;
+          padding: 24px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
           border: 1px solid #e5e7eb;
           border-radius: 8px;
-        }
-        
-        .card-header {
-          background: #1f2937;
-          color: white;
-          padding: 16px;
           font-size: 20px;
           font-weight: 700;
           text-align: center;
         }
-        
-        .card-content {
-          background: white;
-          padding: 16px;
-          color: #374151;
-        }
       `,
-      description: "Crea una tarjeta con bordes redondeados, header centrado y estilizado"
+      description: "Crea un elemento con bordes redondeados, texto centrado y estilizado"
     },
     validation: {
       requiredProperties: ['border', 'border-radius', 'font-size', 'font-weight', 'text-align'],
@@ -314,10 +236,11 @@ export const LEVELS = [
       }
     },
     hints: [
-      "Agrega borde y border-radius a la tarjeta principal",
-      "Estiliza el header con font-size y font-weight",
-      "Centra el texto del header con text-align",
-      "Experimenta con diferentes valores de padding y margin"
+      "Agrega borde con 'border: 1px solid #e5e7eb'",
+      "Redondea las esquinas con 'border-radius: 8px'",
+      "Aumenta el tamaño del texto con 'font-size: 20px'",
+      "Haz el texto más grueso con 'font-weight: 700'",
+      "Centra el texto con 'text-align: center'"
     ]
   }
 ];

@@ -128,9 +128,9 @@ export default function CSSCodeGame() {
       
       // Mostrar flag si es el último nivel
       if (currentLevel === LEVELS.length - 1) {
-        showNotification('🎉 ¡Felicitaciones! Has completado todos los niveles. FLAG{CSS_MASTER_COMPLETE}', 'flag', 10000);
+        showNotification('🎉 ¡Felicitaciones! Has completado todos los niveles. D1FT3L{CSS_MASTER_COMPLETE}', 'flag', 10000);
       } else {
-        showNotification(`¡Nivel completado! FLAG{CSS_LEVEL_${currentLevel + 1}_COMPLETE}`, 'success', 5000);
+        showNotification(`¡Nivel completado! D1FT3L{CSS_LEVEL_${currentLevel + 1}_COMPLETE}`, 'success', 5000);
       }
       
       // Auto-avanzar al siguiente nivel después de 2 segundos

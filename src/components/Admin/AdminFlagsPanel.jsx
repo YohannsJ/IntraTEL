@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getApiUrl, getAuthHeaders, logError } from '../../config';
+import ProgressDashboard from './ProgressDashboard';
 import styles from './AdminFlagsPanel.module.css';
 
 const AdminFlagsPanel = () => {
   const { user } = useAuth();
   const [allFlags, setAllFlags] = useState([]);
+  const [availableFlags, setAvailableFlags] = useState([]);
   const [recentFlags, setRecentFlags] = useState([]);
   const [groupLeaderboard, setGroupLeaderboard] = useState([]);
   const [individualLeaderboard, setIndividualLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('recent');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [showCreateFlag, setShowCreateFlag] = useState(false);
+  const [editingFlagId, setEditingFlagId] = useState(null); // Cambiado a solo guardar el ID
+  const [flagForm, setFlagForm] = useState({
+    flagName: '',
+    flagValue: '',
+    description: '',
+    points: 10
+  });
 
   const fetchAllFlags = async () => {
     try {
@@ -73,12 +83,28 @@ const AdminFlagsPanel = () => {
     }
   };
 
+  const fetchAvailableFlags = async () => {
+    try {
+      const response = await fetch(getApiUrl('/flags/admin/available'), {
+        headers: getAuthHeaders()
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableFlags(data.data);
+      }
+    } catch (error) {
+      logError('Error fetching available flags:', error);
+    }
+  };
+
   const refreshData = async () => {
     await Promise.all([
       fetchAllFlags(),
       fetchRecentFlags(),
       fetchGroupLeaderboard(),
-      fetchIndividualLeaderboard()
+      fetchIndividualLeaderboard(),
+      fetchAvailableFlags()
     ]);
   };
 
@@ -137,6 +163,94 @@ const AdminFlagsPanel = () => {
     }
   };
 
+  const handleCreateFlag = async () => {
+    try {
+      const response = await fetch(getApiUrl('/flags/admin/create'), {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(flagForm)
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        alert('Flag creada exitosamente');
+        setShowCreateFlag(false);
+        setFlagForm({ flagName: '', flagValue: '', description: '', points: 10 });
+        await fetchAvailableFlags();
+      } else {
+        alert(data.message || 'Error creando flag');
+      }
+    } catch (error) {
+      logError('Error creating flag:', error);
+      alert('Error creando flag');
+    }
+  };
+
+  const handleEditFlag = async (flagId) => {
+    try {
+      const response = await fetch(getApiUrl(`/flags/admin/${flagId}`), {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(flagForm)
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        alert('Flag actualizada exitosamente');
+        setEditingFlagId(null);
+        await Promise.all([fetchAvailableFlags(), fetchAllFlags(), fetchRecentFlags()]);
+      } else {
+        alert(data.message || 'Error actualizando flag');
+      }
+    } catch (error) {
+      logError('Error updating flag:', error);
+      alert('Error actualizando flag');
+    }
+  };
+
+  const handleDeleteFlag = async (flagId, flagName) => {
+    if (!confirm(`¿Estás seguro de que quieres eliminar la flag "${flagName}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(getApiUrl(`/flags/admin/${flagId}`), {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        alert(data.message);
+        await fetchAvailableFlags();
+      } else {
+        alert(data.message || 'Error eliminando flag');
+      }
+    } catch (error) {
+      logError('Error deleting flag:', error);
+      alert('Error eliminando flag');
+    }
+  };
+
+  const startEdit = (flag) => {
+    setEditingFlagId(flag.id);
+    setFlagForm({
+      flagName: flag.flag_name,
+      flagValue: flag.flag_value,
+      description: flag.description || '',
+      points: flag.points
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingFlagId(null);
+    setShowCreateFlag(false);
+    setFlagForm({ flagName: '', flagValue: '', description: '', points: 10 });
+  };
+
   // Verificar si el usuario es admin
   if (user?.role !== 'admin') {
     return (
@@ -189,10 +303,22 @@ const AdminFlagsPanel = () => {
 
       <div className={styles.tabs}>
         <button
+          className={`${styles.tab} ${activeTab === 'dashboard' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          Dashboard de Progreso
+        </button>
+        <button
           className={`${styles.tab} ${activeTab === 'recent' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('recent')}
         >
           Actividad Reciente ({recentFlags.length})
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'available' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('available')}
+        >
+          Gestionar Flags ({availableFlags.length})
         </button>
         <button
           className={`${styles.tab} ${activeTab === 'groups' ? styles.activeTab : ''}`}
@@ -215,6 +341,12 @@ const AdminFlagsPanel = () => {
       </div>
 
       <div className={styles.content}>
+        {activeTab === 'dashboard' && (
+          <div className={styles.section}>
+            <ProgressDashboard />
+          </div>
+        )}
+
         {activeTab === 'recent' && (
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>⚡ Actividad en Tiempo Real</h3>
@@ -244,6 +376,187 @@ const AdminFlagsPanel = () => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'available' && (
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>⚙️ Gestionar Flags Disponibles</h3>
+              <button
+                className={styles.createButton}
+                onClick={() => setShowCreateFlag(true)}
+              >
+                ➕ Nueva Flag
+              </button>
+            </div>
+
+            {showCreateFlag && (
+              <div className={styles.flagForm}>
+                <h4>Crear Nueva Flag</h4>
+                <div className={styles.formGroup}>
+                  <label>Nombre de la Flag:</label>
+                  <input
+                    type="text"
+                    value={flagForm.flagName}
+                    onChange={(e) => setFlagForm({ ...flagForm, flagName: e.target.value })}
+                    placeholder="Ej: Flag de SQL Injection"
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Valor de la Flag:</label>
+                  <input
+                    type="text"
+                    value={flagForm.flagValue}
+                    onChange={(e) => setFlagForm({ ...flagForm, flagValue: e.target.value })}
+                    placeholder="Ej: FLAG{sql_injection_found}"
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Descripción:</label>
+                  <textarea
+                    value={flagForm.description}
+                    onChange={(e) => setFlagForm({ ...flagForm, description: e.target.value })}
+                    placeholder="Descripción de la flag..."
+                    rows="3"
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Puntos:</label>
+                  <input
+                    type="number"
+                    value={flagForm.points}
+                    onChange={(e) => setFlagForm({ ...flagForm, points: parseInt(e.target.value) || 10 })}
+                    min="1"
+                    max="100"
+                  />
+                </div>
+                <div className={styles.formActions}>
+                  <button
+                    className={styles.submitButton}
+                    onClick={showCreateFlag ? handleCreateFlag : null}
+                  >
+                    Crear
+                  </button>
+                  <button
+                    className={styles.cancelButton}
+                    onClick={cancelEdit}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className={styles.flagsList}>
+              {availableFlags.map((flag) => (
+                <div key={flag.id} className={styles.flagCard}>
+                  {editingFlagId === flag.id ? (
+                    // Formulario de edición inline
+                    <div className={styles.flagEditForm}>
+                      <div className={styles.flagHeader}>
+                        <h4 className={styles.flagTitle}>✏️ Editando: {flag.flag_name}</h4>
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Nombre de la Flag:</label>
+                        <input
+                          type="text"
+                          value={flagForm.flagName}
+                          onChange={(e) => setFlagForm({ ...flagForm, flagName: e.target.value })}
+                          placeholder="Ej: Flag de SQL Injection"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Valor de la Flag:</label>
+                        <input
+                          type="text"
+                          value={flagForm.flagValue}
+                          onChange={(e) => setFlagForm({ ...flagForm, flagValue: e.target.value })}
+                          placeholder="Ej: FLAG{sql_injection_found}"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Descripción:</label>
+                        <textarea
+                          value={flagForm.description}
+                          onChange={(e) => setFlagForm({ ...flagForm, description: e.target.value })}
+                          placeholder="Descripción de la flag..."
+                          rows="3"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Puntos:</label>
+                        <input
+                          type="number"
+                          value={flagForm.points}
+                          onChange={(e) => setFlagForm({ ...flagForm, points: parseInt(e.target.value) || 10 })}
+                          min="1"
+                          max="100"
+                        />
+                      </div>
+                      <div className={styles.formActions}>
+                        <button
+                          className={styles.submitButton}
+                          onClick={() => handleEditFlag(flag.id)}
+                        >
+                          💾 Guardar Cambios
+                        </button>
+                        <button
+                          className={styles.cancelButton}
+                          onClick={cancelEdit}
+                        >
+                          ❌ Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    // Vista normal de la flag
+                    <>
+                      <div className={styles.flagHeader}>
+                        <h4 className={styles.flagTitle}>{flag.flag_name}</h4>
+                        <div className={styles.flagActions}>
+                          <button
+                            className={styles.editButton}
+                            onClick={() => startEdit(flag)}
+                            title="Editar flag"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className={styles.deleteButton}
+                            onClick={() => handleDeleteFlag(flag.id, flag.flag_name)}
+                            title="Eliminar flag"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                      <div className={styles.flagDetails}>
+                        <div className={styles.flagValue}>
+                          <strong>Valor:</strong> <code>{flag.flag_value}</code>
+                        </div>
+                        {flag.description && (
+                          <div className={styles.flagDescription}>
+                            <strong>Descripción:</strong> {flag.description}
+                          </div>
+                        )}
+                        <div className={styles.flagMeta}>
+                          <span className={styles.flagPoints}>
+                            <strong>Puntos:</strong> {flag.points}
+                          </span>
+                          <span className={styles.flagCreated}>
+                            <strong>Creada:</strong> {formatDateTime(flag.created_at).date}
+                          </span>
+                          <span className={styles.flagStatus}>
+                            <strong>Estado:</strong> {flag.is_active ? '✅ Activa' : '❌ Inactiva'}
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}

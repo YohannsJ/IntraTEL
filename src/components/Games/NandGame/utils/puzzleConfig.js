@@ -40,7 +40,7 @@ export function buildPuzzleNOT() {
     expected: (inputs) => !inputs[0],
     inputLabels: ["A"],
     outputLabel: "Y",
-    flag: "FLAG{N0T_G4T3_M4ST3R}",
+    flag: "D1FT3L{N0T_G4T3_4M4T3UR}",
   };
 }
 
@@ -72,15 +72,15 @@ export function buildPuzzleAND() {
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_1", 
-      relativeX: 30, // 35% desde la izquierda
-      relativeY: 45 // 40% desde arriba (centrado entre A y B)
+      relativeX: 50, // 35% desde la izquierda
+      relativeY: 20 // 40% desde arriba (centrado entre A y B)
     },
     { 
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_2", 
-      relativeX: 65, // 65% desde la izquierda
-      relativeY: 45 // 40% desde arriba
+      relativeX: 50, // 65% desde la izquierda
+      relativeY: 40 // 40% desde arriba
     },
     { 
       id: uid("OUT"), 
@@ -100,7 +100,7 @@ export function buildPuzzleAND() {
     expected: (inputs) => Boolean(inputs[0] && inputs[1]),
     inputLabels: ["A", "B"],
     outputLabel: "Y",
-    flag: "FLAG{4ND_L0G1C_W1Z4RD}",
+    flag: "D1FT3L{4ND_L0G1C_W1Z4RD}",
   };
 }
 
@@ -132,22 +132,22 @@ export function buildPuzzleOR() {
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_1", 
-      relativeX: 30, // 30% desde la izquierda
-      relativeY: 25 // 25% desde arriba (nivel de A)
+      relativeX: 20, // 30% desde la izquierda
+      relativeY: 10 // 25% desde arriba (nivel de A)
     }, // NOT A
     { 
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_2", 
-      relativeX: 30, // 30% desde la izquierda
-      relativeY: 65 // 65% desde arriba (nivel de B)
+      relativeX: 40, // 30% desde la izquierda
+      relativeY: 10 // 65% desde arriba (nivel de B)
     }, // NOT B
     { 
       id: uid("N"), 
       type: NODE_TYPES.NAND, 
       label: "Nand_3", 
-      relativeX: 65, // 65% desde la izquierda
-      relativeY: 45 // 45% desde arriba (centrado)
+      relativeX: 60, // 65% desde la izquierda
+      relativeY: 10 // 45% desde arriba (centrado)
     }, // NAND(NOT A, NOT B)
     { 
       id: uid("OUT"), 
@@ -167,7 +167,7 @@ export function buildPuzzleOR() {
     expected: (inputs) => Boolean(inputs[0] || inputs[1]),
     inputLabels: ["A", "B"],
     outputLabel: "Y",
-    flag: "FLAG{0R_G4T3_CH4MP10N}",
+    flag: "D1FT3L{0R_G4T3_CH4MP10N}",
   };
 }
 
@@ -238,7 +238,7 @@ export function buildPuzzleXOR() {
     expected: (inputs) => Boolean(inputs[0] ^ inputs[1]),
     inputLabels: ["A", "B"],
     outputLabel: "Y",
-    flag: "FLAG{X0R_M4ST3R_H4CK3R}",
+    flag: "D1FT3L{X0R_M4ST3R_H4CK3R}",
   };
 }
 

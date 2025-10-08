@@ -7,6 +7,7 @@ import { TruthTable } from './components/TruthTable.jsx';
 import { DynamicTruthTable } from './components/DynamicTruthTable.jsx';
 import { Toolbar } from './components/Toolbar.jsx';
 import StylishAlert from './components/StylishAlert.jsx';
+import Footer from '../../Footer/Footer.jsx';
 import styles from './styles/NandGame.module.css';
 
 /**
@@ -648,7 +649,7 @@ export default function NandGame() {
             type: 'success',
             title: '🏆 ¡Maestro NAND!',
             message: '¡Increíble! Has completado todos los puzzles NAND. Eres un verdadero maestro de la lógica digital. Aquí tienes tu flag especial:',
-            flagValue: 'FLAG{NAND_TOTAL_MASTER_4_DE_4}',
+            flagValue: 'D1FT3L{NAND_TOTAL_MASTER_4_DE_4}',
             showCopyButton: true,
             autoClose: false
           });
@@ -666,8 +667,8 @@ export default function NandGame() {
         type: 'error',
         title: '❌ Intento Fallido',
         message: `La tabla de verdad no coincide con el resultado esperado. Revisa tus conexiones y vuelve a intentarlo.\n\nIntentos fallidos: ${newFailedAttempts}`,
-        autoClose: true,
-        autoCloseDelay: 4000
+        autoClose: false,
+        // autoCloseDelay: 4000
       });
     }
   }, [nodes, connections, currentPuzzle, solved, mode, showAlert, failedAttempts]);
@@ -679,12 +680,16 @@ export default function NandGame() {
   }, []);
 
   return (
+    <>
     <div className={styles.nandGame}>
       <div className={styles.gameContainer}>
-        {/* Header del juego */}
-        <header className={styles.gameHeader}>
-          {/* Controles izquierdos - Ejercicios y modo */}
-          <div className={styles.leftControls}>
+        {/* Título del juego */}
+        <h1 className={styles.gameTitle}>NandGame</h1>
+        
+        {/* Barra de pestañas con controles */}
+        <div className={styles.tabBar}>
+          {/* Controles izquierdos - Selector de nivel y modo */}
+          <div className={styles.leftTabControls}>
             {mode === 'puzzle' && (
               <select
                 className={`${styles.puzzleSelect} ${solved[puzzles[puzzleIndex]?.key] ? styles.completed : ''} ${styles.active}`}
@@ -710,185 +715,66 @@ export default function NandGame() {
             
             {mode === 'puzzle' ? (
               <button
-                className={`${styles.controlButton}`}
+                className={`${styles.tabButton}`}
                 onClick={enterSandboxMode}
               >
-                Modo Sandbox
+                🎨 Sandbox
               </button>
             ) : (
               <button
-                className={`${styles.controlButton} ${styles.activeMode} ${styles.essential}`}
+                className={`${styles.tabButton} ${styles.activeTabButton}`}
                 onClick={returnToPuzzle}
                 title="Volver al modo puzzle"
               >
-                🔙 Volver a Puzzles
+                🔙 Puzzles
               </button>
             )}
           </div>
           
-          {/* Título central */}
-          <h1 className={styles.gameTitle}>
-            NandGame
-          </h1>
-          
-          {/* Controles derechos - Acciones y exportar/importar */}
-          <div className={styles.rightControls}>
-            {/* Grupo de exportar/importar */}
-            <div className={styles.exportImportGroup}>
-              {/* <button
-                className={styles.exportImportButton}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                title="Opciones de exportar/importar"
-              >
-                📁 Archivos ▼
-              </button> */}
-              
-              <div className={`${styles.exportImportDropdown} ${dropdownOpen ? styles.open : ''}`}>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => {
-                    exportGameState();
-                    setDropdownOpen(false);
-                  }}
-                >
-                  📥 Exportar
-                </button>
-                
-                <label className={styles.dropdownItem}>
-                  📤 Importar
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={(e) => {
-                      importGameState(e);
-                      setDropdownOpen(false);
-                    }}
-                    style={{ display: 'none' }}
-                  />
-                </label>
-              </div>
-            </div>
-            
-            {/* Acciones rápidas */}
-            <div className={styles.quickActions}>
+          {/* Controles derechos - Acciones */}
+          <div className={styles.rightTabControls}>
+            {mode === 'puzzle' && (
               <button
-                className={styles.emojiButton}
-                onClick={clearAllConnections}
-                title="Borrar cables"
+                className={styles.tabButton}
+                onClick={() => resetToPuzzle(puzzleIndex)}
+                title="Reiniciar ejercicio"
               >
-                🗑️
+                🔄 Reiniciar
               </button>
-              
-              {mode === 'puzzle' && (
-                <button
-                  className={styles.emojiButton}
-                  onClick={() => resetToPuzzle(puzzleIndex)}
-                  title="Reiniciar ejercicio"
-                >
-                  🔄
-                </button>
-              )}
-              
-              {/* <button
-                className={`${styles.controlButton} ${styles.dangerButton}`}
-                onClick={clearSavedProgress}
-                title="Elimina todo el progreso guardado y reinicia el juego"
+            )}
+            
+            {mode === 'puzzle' && (
+              <button
+                className={`${styles.tabButton} ${styles.solveTabButton}`}
+                onClick={trySolve}
               >
-                🗑️ Limpiar Progreso
-              </button> */}
-              
-              {mode === 'puzzle' && (
-                <button
-                  className={`${styles.controlButton} ${styles.solveButton} ${styles.essential}`}
-                  onClick={trySolve}
-                >
-                  Probar
-                </button>
-              )}
-            </div>
-              {mode === 'puzzle' && (
-                  <button
-                    className={styles.controlButton}
-                    onClick={() => {
-                      resetToPuzzle(puzzleIndex);
-                      setMoreDropdownOpen(false);
-                    }}
-                  >
-                    🔄 Reiniciar
-                  </button>
-                )}
-                
-            {/* Grupo de más opciones - solo visible en móviles */}
-            <div className={styles.moreGroup}>
-              {/* <button
-                className={styles.moreButton}
-                onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
-                title="Más opciones"
-              >
-                ⋯
+                ✓ Probar
               </button>
-               */}
-              <div className={`${styles.moreDropdown} ${moreDropdownOpen ? styles.open : ''}`}>
-                {/* Exportar/Importar en móviles */}
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => {
-                    exportGameState();
-                    setMoreDropdownOpen(false);
-                  }}
-                >
-                  📥 Exportar
-                </button>
-                
-                <label className={styles.dropdownItem}>
-                  📤 Importar
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={(e) => {
-                      importGameState(e);
-                      setMoreDropdownOpen(false);
-                    }}
-                    style={{ display: 'none' }}
-                  />
-                </label>
-
-                {/* Botones ocultos en móviles */}
-                
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => {
-                    clearSavedProgress();
-                    setMoreDropdownOpen(false);
-                  }}
-                >
-                  🗑️ Limpiar Progreso
-                </button>
-              </div>
-            </div>
+            )}
           </div>
-        </header>
+        </div>
+        
+        {/* Área de trabajo */}
+        <div className={styles.workspaceWrapper}>
+          {/* Descripción del puzzle */}
+          {mode === 'puzzle' && (
+            <p className={styles.puzzleDescription}>
+              <span className={styles.puzzleTitle}>{currentPuzzle.title}</span>
+              {" — "}
+              {currentPuzzle.description}
+            </p>
+          )}
 
+          {mode === 'sandbox' && (
+            <p className={styles.puzzleDescription}>
+              <span className={styles.puzzleTitle}>Modo Sandbox</span>
+              {" — "}
+              Experimenta libremente con todas las compuertas lógicas disponibles. Arrastra para mover, conecta puertos para crear circuitos.
+            </p>
+          )}
 
-        {/* Descripción del puzzle */}
-        {mode === 'puzzle' && (
-          <p className={styles.puzzleDescription}>
-            <span className={styles.puzzleTitle}>{currentPuzzle.title}</span>
-            {" — "}
-            {currentPuzzle.description}
-          </p>
-        )}
-
-        {mode === 'sandbox' && (
-          <p className={styles.puzzleDescription}>
-            <span className={styles.puzzleTitle}>Modo Sandbox</span>
-            {" — "}
-            Experimenta libremente con todas las compuertas lógicas disponibles. Arrastra para mover, conecta puertos para crear circuitos.
-          </p>
-        )}
-
-        {/* Grid principal */}
-        <div className={styles.gameGrid}>
+          {/* Grid principal */}
+          <div className={styles.gameGrid}>
           {/* Panel del circuito */}
           <div 
             className={styles.circuitPanel}
@@ -1013,6 +899,11 @@ export default function NandGame() {
         autoClose={alert.autoClose}
         autoCloseDelay={alert.autoCloseDelay}
       />
-    </div>
+      </div> {/* Fin workspaceWrapper */}
+    </div> {/* Fin gameContainer */}
+      
+    {/* Footer con créditos de todos los creadores - fuera del contenedor del juego */}
+    <Footer />
+  </>
   );
 }

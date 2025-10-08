@@ -68,6 +68,7 @@ class Database {
           role TEXT DEFAULT 'student' CHECK(role IN ('admin', 'teacher', 'student')),
           group_id INTEGER,
           is_active BOOLEAN DEFAULT 1,
+          last_login DATETIME,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           FOREIGN KEY (group_id) REFERENCES groups (id) ON DELETE SET NULL

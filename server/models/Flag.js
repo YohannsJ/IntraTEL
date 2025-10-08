@@ -233,6 +233,116 @@ class Flag {
     }
   }
 
+  static async getSystemStats() {
+    try {
+      const totalFlags = await database.get(
+        'SELECT COUNT(*) as count FROM available_flags WHERE is_active = 1'
+      );
+      
+      const maxPoints = await database.get(
+        'SELECT SUM(points) as total FROM available_flags WHERE is_active = 1'
+      );
+      
+      const totalUsers = await database.get(
+        'SELECT COUNT(*) as count FROM users WHERE is_active = 1'
+      );
+      
+      const totalSubmissions = await database.get(
+        'SELECT COUNT(*) as count FROM user_flags'
+      );
+
+      // Estudiantes activos en la última hora
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      const activeUsers = await database.get(
+        'SELECT COUNT(*) as count FROM users WHERE last_login >= ? AND is_active = 1',
+        [oneHourAgo]
+      );
+
+      // Asegurar que el mínimo sea 1
+      const activeUsersCount = Math.max(1, activeUsers.count || 0);
+
+      return {
+        totalFlags: totalFlags.count || 0,
+        maxPoints: maxPoints.total || 0,
+        totalUsers: totalUsers.count || 0,
+        totalSubmissions: totalSubmissions.count || 0,
+        activeUsers: activeUsersCount
+      };
+    } catch (error) {
+      throw new Error(`Error al obtener estadísticas del sistema: ${error.message}`);
+    }
+  }
+
+  static async updateFlag(flagId, flagData) {
+    try {
+      const { flagName, flagValue, description, points } = flagData;
+      
+      // Obtener la flag actual para comparar
+      const currentFlag = await this.getFlagById(flagId);
+      if (!currentFlag) {
+        throw new Error('Flag no encontrada');
+      }
+      console.log(flagData)
+      // Actualizar la flag disponible
+      await database.run(
+        `UPDATE available_flags 
+         SET flag_name = ?, flag_value = ?, description = ?, points = ?
+         WHERE id = ?`,
+        [flagName, flagValue, description, points || 0, flagId]
+      );
+
+      // Si el valor de la flag cambió, crear nuevas entradas en user_flags
+      // para preservar los valores antiguos de los usuarios que ya la tenían
+      if (currentFlag.flag_value !== flagValue) {
+        // Obtener todos los usuarios que ya tienen esta flag
+        const usersWithFlag = await database.all(
+          'SELECT user_id, flag_value, obtained_at FROM user_flags WHERE flag_id = ?',
+          [flagId]
+        );
+
+        if (usersWithFlag.length > 0) {
+          // Para cada usuario, actualizar solo el flag_id referenciado,
+          // pero mantener su flag_value original
+          // Esto significa que seguirán viendo el valor que originalmente enviaron
+          console.log(`Flag ${flagId} valor cambiado de "${currentFlag.flag_value}" a "${flagValue}"`);
+          console.log(`${usersWithFlag.length} usuarios mantienen su valor original`);
+        }
+      }
+
+      return await this.getFlagById(flagId);
+    } catch (error) {
+      throw new Error(`Error actualizando flag: ${error.message}`);
+    }
+  }
+
+  static async deleteFlag(flagId) {
+    try {
+      // Verificar si existen usuarios con esta flag
+      const usersWithFlag = await database.get(
+        'SELECT COUNT(*) as count FROM user_flags WHERE flag_id = ?',
+        [flagId]
+      );
+
+      if (usersWithFlag.count > 0) {
+        // Si hay usuarios con esta flag, solo marcarla como inactiva
+        await database.run(
+          'UPDATE available_flags SET is_active = 0 WHERE id = ?',
+          [flagId]
+        );
+        return { deleted: false, deactivated: true, affectedUsers: usersWithFlag.count };
+      } else {
+        // Si no hay usuarios con esta flag, eliminarla completamente
+        await database.run(
+          'DELETE FROM available_flags WHERE id = ?',
+          [flagId]
+        );
+        return { deleted: true, deactivated: false, affectedUsers: 0 };
+      }
+    } catch (error) {
+      throw new Error(`Error eliminando flag: ${error.message}`);
+    }
+  }
+
   static async getGroupLeaderboard(limit = 10) {
     try {
       const groupLeaderboard = await database.all(
@@ -322,6 +432,65 @@ class Flag {
       return flags;
     } catch (error) {
       throw new Error(`Error obteniendo flags recientes: ${error.message}`);
+    }
+  }
+
+  static async getUserProgressOverTime() {
+    try {
+      // Obtener todas las flags de usuarios con puntos acumulados
+      const progressData = await database.all(
+        `SELECT 
+           u.id as user_id,
+           u.username,
+           u.first_name,
+           u.last_name,
+           uf.obtained_at,
+           af.points,
+           af.flag_name,
+           SUM(af.points) OVER (PARTITION BY u.id ORDER BY uf.obtained_at) as cumulative_points
+         FROM user_flags uf
+         JOIN available_flags af ON uf.flag_id = af.id
+         JOIN users u ON uf.user_id = u.id
+         WHERE u.is_active = 1
+         ORDER BY u.id, uf.obtained_at`
+      );
+
+      // Agrupar por usuario
+      const userProgressMap = {};
+      
+      progressData.forEach(row => {
+        const userId = row.user_id;
+        
+        if (!userProgressMap[userId]) {
+          userProgressMap[userId] = {
+            userId: userId,
+            username: row.username,
+            firstName: row.first_name,
+            lastName: row.last_name,
+            fullName: `${row.first_name} ${row.last_name}`,
+            progress: []
+          };
+        }
+        
+        userProgressMap[userId].progress.push({
+          timestamp: row.obtained_at,
+          points: row.cumulative_points,
+          flagPoints: row.points,
+          flagName: row.flag_name
+        });
+      });
+
+      // Convertir a array y ordenar por total de puntos
+      const users = Object.values(userProgressMap);
+      users.sort((a, b) => {
+        const aTotal = a.progress.length > 0 ? a.progress[a.progress.length - 1].points : 0;
+        const bTotal = b.progress.length > 0 ? b.progress[b.progress.length - 1].points : 0;
+        return bTotal - aTotal;
+      });
+
+      return users;
+    } catch (error) {
+      throw new Error(`Error obteniendo progreso de usuarios: ${error.message}`);
     }
   }
 }

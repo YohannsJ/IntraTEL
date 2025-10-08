@@ -23,13 +23,34 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1.5rem;
-  background-color: var(--theme-surface);
-  border-bottom: 1px solid var(--theme-border);
-  position: sticky;
+  /* Fondo casi completamente transparente para ver la imagen de fondo */
+  background: rgba(15, 20, 25, 0.05);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
   height: 60px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, background 0.3s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Efecto hover en toda la navbar para darle más presencia cuando se interactúa */
+.navbar:hover {
+  background: rgba(15, 20, 25, 0.15);
+  border-bottom-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.navbarHidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .navBrand {
@@ -92,6 +113,63 @@
   display: inline-block;
 }
 
+/* Dropdown de Usuario - mismo estilo que juegos */
+.userDropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown de usuario alineado a la derecha en desktop */
+.userDropdownMenu {
+  right: 0;
+  left: auto;
+}
+
+/* Divisor en el dropdown */
+.dropdownDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0.25rem 0;
+}
+
+/* Botón de logout dentro del dropdown */
+.logoutDropdownButton {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: #ff7b7b;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.logoutDropdownButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.logoutDropdownButton:hover::before {
+  left: 100%;
+}
+
+.logoutDropdownButton:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ff5555;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
 .dropdownToggle {
   background: none;
   border: none;
@@ -111,39 +189,68 @@
 
 .dropdownMenu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 0.5rem);
   left: 0;
-  background: var(--theme-surface);
-  border: 1px solid var(--theme-border);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* Fondo semi-transparente para glassmorphism */
+  background: rgba(10, 15, 20, 0.4);
+  /* Múltiples capas de backdrop-filter para mejor efecto */
+  backdrop-filter: blur(24px) saturate(200%) contrast(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%) contrast(120%);
+  border: 1.5px solid rgba(59, 130, 246, 0.5);
+  border-radius: 14px;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+    0 5px 20px rgba(59, 130, 246, 0.3);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  min-width: 200px;
+  transform: translateY(-15px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 220px;
   z-index: 1001;
-  overflow: hidden;
+  overflow: visible;
   max-height: 0;
+  /* Crítico para backdrop-filter */
+  will-change: backdrop-filter, transform, opacity;
+  contain: layout style paint;
 }
 
 .dropdownMenu.dropdownOpen {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
-  max-height: 400px;
+  transform: translateY(0) scale(1);
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .dropdownItem {
   display: block;
-  padding: 0.6rem 0.9rem;
-  color: var(--theme-text-secondary);
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.95);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid var(--theme-border);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   white-space: nowrap;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.dropdownItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.dropdownItem:hover::before {
+  left: 100%;
 }
 
 .dropdownItem:last-child {
@@ -151,9 +258,10 @@
 }
 
 .dropdownItem:hover {
-  background: var(--theme-background-secondary);
-  color: var(--theme-text);
-  transform: translateX(4px);
+  background: rgba(59, 130, 246, 0.35);
+  color: #ffffff;
+  transform: translateX(6px);
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
 }
 
 /* Utilidades para mostrar/ocultar en diferentes pantallas */
@@ -389,7 +497,7 @@
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    flex: 0;
+    flex: 1;
     justify-content: center;
     align-items: center;
     margin: 0 1rem;
@@ -414,6 +522,14 @@
   
   /* Dropdown en desktop */
   .gamesDropdown {
+    position: relative;
+    display: inline-block;
+    width: auto;
+    margin: 0;
+  }
+
+  /* User dropdown en desktop */
+  .userDropdown {
     position: relative;
     display: inline-block;
     width: auto;
@@ -583,6 +699,15 @@
     align-items: center;
     margin: 0.25rem 0;
   }
+
+  /* User dropdown en mobile - mismo estilo */
+  .userDropdown {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.25rem 0;
+  }
   
   .dropdownToggle {
     width: auto;
@@ -693,6 +818,10 @@
   
   /* Dropdown en mobile pequeño - más compacto */
   .gamesDropdown {
+    margin: 0.2rem 0;
+  }
+
+  .userDropdown {
     margin: 0.2rem 0;
   }
   

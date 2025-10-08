@@ -3,8 +3,8 @@
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem;
-  background: #0f1419;
+  padding: 100px 2rem 2rem; /* Ajustado para navbar fija */
+  /* background: #0f1419; */
   color: #f1f5f9;
   min-height: 100vh;
 }

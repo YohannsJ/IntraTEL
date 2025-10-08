@@ -2,23 +2,33 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { apiUrl, apiHeaders } from '../../../config/index.js';
 import { useNavigate } from 'react-router-dom';
 import Spectrogram from './Spectrogram.jsx';
+import Footer from '../../Footer/Footer.jsx';
 import styles from './EspectroGame.module.css';
 
 // Componente memoizado del Spectrogram para optimización
 const MemoizedSpectrogram = React.memo(Spectrogram);
 
-// Patrones de frecuencias para diferentes niveles (constante fuera del componente)
-const FREQUENCY_PATTERNS = {
-  1: { base: 2400, range: 50 },   // WiFi 2.4 GHz
-  2: { base: 2450, range: 100 },  // Bluetooth + WiFi
-  3: { base: 900, range: 200 },   // GSM 900
-  4: { base: 1800, range: 300 },  // GSM 1800
-  5: { base: 2100, range: 400 },  // UMTS
-  6: { base: 800, range: 500 },   // LTE Band 20
-  7: { base: 1900, range: 600 },  // PCS
-  8: { base: 700, range: 700 },   // LTE Band 17
-  9: { base: 2600, range: 800 },  // LTE Band 7
-  10: { base: 3500, range: 1000 } // 5G
+// Definición de bandas de frecuencia de telecomunicaciones reales
+const FREQUENCY_BANDS = {
+  'WiFi 2.4 GHz': { min: 2400, max: 2485, description: 'Wi-Fi en banda ISM 2.4 GHz' },
+  'WiFi 5 GHz': { min: 5150, max: 5825, description: 'Wi-Fi en banda 5 GHz' },
+  'Bluetooth': { min: 2400, max: 2485, description: 'Bluetooth en banda ISM 2.4 GHz' },
+  'GSM 900': { min: 880, max: 960, description: 'GSM 900 MHz' },
+  'GSM 1800': { min: 1710, max: 1880, description: 'GSM 1800 MHz (DCS)' },
+  'UMTS 2100': { min: 1920, max: 2170, description: 'UMTS en banda 2100 MHz' },
+  'LTE 700': { min: 694, max: 790, description: 'LTE banda 700 MHz' },
+  'LTE 800': { min: 791, max: 862, description: 'LTE banda 800 MHz' },
+  'LTE 1800': { min: 1710, max: 1880, description: 'LTE banda 1800 MHz' },
+  'LTE 2600': { min: 2500, max: 2690, description: 'LTE banda 2600 MHz' },
+  '5G Sub-6': { min: 3400, max: 3800, description: '5G en banda sub-6 GHz' },
+  'FM Radio': { min: 87.5, max: 108, description: 'Radio FM' }
+};
+
+// Patrones de frecuencias para generar desafíos por nivel
+const LEVEL_PATTERNS = {
+  1: ['WiFi 2.4 GHz', 'Bluetooth', 'FM Radio'],
+  2: ['Bluetooth', 'WiFi 5 GHz', 'UMTS 2100', 'LTE 800'],
+  3: ['LTE 700', 'LTE 800', 'LTE 1800', 'LTE 2600', '5G Sub-6']
 };
 
 const EspectroGame = () => {
@@ -28,8 +38,19 @@ const EspectroGame = () => {
     score: 0,
     isPlaying: false,
     completed: false,
-    currentFrequency: 0,
-    targetFrequency: 2400, // MHz
+    // Nivel 1: Ajuste manual de frecuencia
+    currentFrequency: 2400,
+    targetFrequency: 2400, // MHz objetivo
+    // Nivel 2: Identificación de bandas
+    correctBand: 'WiFi 2.4 GHz', // Banda correcta para la frecuencia mostrada
+    selectedBand: null, // Banda seleccionada por el jugador
+    // Nivel 3: Cálculo Nyquist y potencia
+    requiredDataRate: 0, // Mbps requerido
+    calculatedBandwidth: 0, // Ancho de banda calculado por el jugador
+    calculatedPower: 0, // Potencia calculada por el jugador
+    targetPower: 0, // Potencia objetivo
+    distance: 0, // Distancia en km para cálculos de potencia
+    // Parámetros comunes
     bandwidth: 10, // Inicia en 10 MHz
     signalPower: 10, // Inicia en 10 dBm
     noise: -90, // dBm
@@ -38,7 +59,6 @@ const EspectroGame = () => {
     startTime: null,
     attempts: 0,
     perfectStreak: 0,
-  // patternMode y autoPattern eliminados porque no se usan
   });
 
   // Estados para logros y progreso
@@ -166,12 +186,85 @@ const EspectroGame = () => {
     }
   }, [sessionAchievements, syncAchievementsToServer]);
 
-  // Generar nueva frecuencia objetivo basada en el nivel
-  const generateTargetFrequency = useCallback((level) => {
-    const pattern = FREQUENCY_PATTERNS[level] || FREQUENCY_PATTERNS[10];
-    const minFreq = Math.max(300, pattern.base - pattern.range / 2);
-    const maxFreq = Math.min(6000, pattern.base + pattern.range / 2);
-    return minFreq + Math.random() * (maxFreq - minFreq);
+  // Generar desafío para Nivel 1: Ajuste manual de frecuencia
+  const generateLevel1Challenge = useCallback(() => {
+    const targetFreq = 2400 + Math.floor(Math.random() * 85); // 2400-2485 MHz (WiFi 2.4 GHz)
+    return {
+      targetFrequency: targetFreq,
+      currentFrequency: Math.max(2300, targetFreq - 50), // Empezar cerca pero no exacto
+    };
+  }, []);
+
+  // Generar desafío para Nivel 2: Identificación de bandas
+  const generateLevel2Challenge = useCallback(() => {
+    const availableBands = LEVEL_PATTERNS[2] || ['Bluetooth', 'WiFi 5 GHz', 'UMTS 2100', 'LTE 800'];
+    const randomBand = availableBands[Math.floor(Math.random() * availableBands.length)];
+    const bandInfo = FREQUENCY_BANDS[randomBand];
+    
+    // Generar una frecuencia dentro del rango de la banda seleccionada
+    const frequency = bandInfo.min + Math.floor(Math.random() * (bandInfo.max - bandInfo.min));
+    
+    return {
+      frequency: frequency,
+      correctBand: randomBand,
+      bandInfo: bandInfo
+    };
+  }, []);
+
+  // Generar desafío para Nivel 3: Cálculo Nyquist y potencia
+  const generateLevel3Challenge = useCallback(() => {
+    const dataRate = 20 + Math.floor(Math.random() * 60); // 20-80 Mbps (para que Nyquist dé resultado entre 10-40 MHz)
+    const distance = 1 + Math.floor(Math.random() * 4); // 1-5 km (más realista)
+    const frequency = 2000; // Frecuencia fija para simplificar
+    
+    // Cálculo de potencia usando fórmula simplificada que incluye distancia:
+    // P_total = P_base + 10*log10(d) donde d es la distancia en km
+    // Esto simula las pérdidas por propagación
+    const basePower = 10; // dBm base (potencia mínima)
+    const pathLoss = 10 * Math.log10(distance); // Pérdidas por distancia
+    const targetPower = basePower + pathLoss;
+    
+    return {
+      requiredDataRate: dataRate,
+      targetFrequency: frequency,
+      targetPower: Math.round(targetPower),
+      distance: distance
+    };
+  }, []);
+
+  // Función para seleccionar una banda (Nivel 2)
+  const selectBand = useCallback((bandName) => {
+    setGameState(prev => ({
+      ...prev,
+      selectedBand: bandName
+    }));
+  }, []);
+
+  // Función para ajustar frecuencia (Nivel 1)
+  const adjustFrequency = useCallback((value) => {
+    setGameState(prev => ({
+      ...prev,
+      currentFrequency: parseInt(value)
+    }));
+  }, []);
+
+  // Funciones para Nivel 3
+  const updateCalculatedBandwidth = useCallback((value) => {
+    setGameState(prev => ({
+      ...prev,
+      calculatedBandwidth: parseFloat(value),
+      // En Nivel 3, sincronizar bandwidth con calculatedBandwidth
+      ...(prev.level === 3 && { bandwidth: parseFloat(value) })
+    }));
+  }, []);
+
+  const updateCalculatedPower = useCallback((value) => {
+    setGameState(prev => ({
+      ...prev,
+      calculatedPower: parseFloat(value),
+      // En Nivel 3, sincronizar signalPower con calculatedPower
+      ...(prev.level === 3 && { signalPower: parseFloat(value) })
+    }));
   }, []);
 
   // Calcular SNR (Signal to Noise Ratio)
@@ -188,19 +281,52 @@ const EspectroGame = () => {
   }, [gameState.targetFrequency]);
 
   const startGame = () => {
-    const newTargetFreq = generateTargetFrequency(gameState.level);
     // Limpiar espectrograma al iniciar el juego
     if (typeof window !== 'undefined' && window.__INTRATEL_CLEAR_SPECTROGRAM) {
       window.__INTRATEL_CLEAR_SPECTROGRAM();
     }
-    setGameState(prev => ({
-      ...prev,
-      isPlaying: true,
-      startTime: Date.now(),
-      targetFrequency: newTargetFreq,
-      currentFrequency: Math.max(300, newTargetFreq - 100), // Empezar cerca pero no exacto
-      attempts: 0,
-    }));
+    
+    let challenge;
+    const level = gameState.level;
+    
+    if (level === 1) {
+      challenge = generateLevel1Challenge();
+      setGameState(prev => ({
+        ...prev,
+        isPlaying: true,
+        startTime: Date.now(),
+        targetFrequency: challenge.targetFrequency,
+        currentFrequency: challenge.currentFrequency,
+        attempts: 0,
+        selectedBand: null, // Reset para otros niveles
+      }));
+    } else if (level === 2) {
+      challenge = generateLevel2Challenge();
+      setGameState(prev => ({
+        ...prev,
+        isPlaying: true,
+        startTime: Date.now(),
+        targetFrequency: challenge.frequency,
+        correctBand: challenge.correctBand,
+        selectedBand: null,
+        currentFrequency: challenge.frequency,
+        attempts: 0,
+      }));
+    } else if (level === 3) {
+      challenge = generateLevel3Challenge();
+      setGameState(prev => ({
+        ...prev,
+        isPlaying: true,
+        startTime: Date.now(),
+        requiredDataRate: challenge.requiredDataRate,
+        targetFrequency: challenge.targetFrequency,
+        targetPower: challenge.targetPower,
+        distance: challenge.distance,
+        calculatedBandwidth: 0,
+        calculatedPower: 0,
+        attempts: 0,
+      }));
+    }
     
     // Actualizar estadísticas de partidas jugadas
     setGameProgress(prev => ({
@@ -215,44 +341,85 @@ const EspectroGame = () => {
     
     const newLevel = gameState.level + 1;
     
-    const newTargetFreq = generateTargetFrequency(newLevel);
     // Limpiar espectrograma al cambiar de nivel
     if (typeof window !== 'undefined' && window.__INTRATEL_CLEAR_SPECTROGRAM) {
       window.__INTRATEL_CLEAR_SPECTROGRAM();
     }
-    setGameState(prev => ({
-      ...prev,
-      level: newLevel,
-      targetFrequency: newTargetFreq,
-      currentFrequency: Math.max(300, newTargetFreq - 100),
-      completed: false,
-      isPlaying: true,
-      bandwidth: 10, // Reinicia a 10
-      signalPower: 10, // Reinicia a 10
-      noise: prev.noise - 2, // Menos ruido = más fácil ver la señal
-      startTime: Date.now(),
-      attempts: 0,
-    }));
-  }, [gameState.level, generateTargetFrequency]);
+    
+    let challenge;
+    
+    if (newLevel === 1) {
+      challenge = generateLevel1Challenge();
+      setGameState(prev => ({
+        ...prev,
+        level: newLevel,
+        targetFrequency: challenge.targetFrequency,
+        currentFrequency: challenge.currentFrequency,
+        completed: false,
+        isPlaying: true,
+        bandwidth: 10,
+        signalPower: 10,
+        noise: prev.noise - 2,
+        startTime: Date.now(),
+        attempts: 0,
+        selectedBand: null,
+      }));
+    } else if (newLevel === 2) {
+      challenge = generateLevel2Challenge();
+      setGameState(prev => ({
+        ...prev,
+        level: newLevel,
+        targetFrequency: challenge.frequency,
+        correctBand: challenge.correctBand,
+        selectedBand: null,
+        currentFrequency: challenge.frequency,
+        completed: false,
+        isPlaying: true,
+        bandwidth: 10,
+        signalPower: 10,
+        noise: prev.noise - 2,
+        startTime: Date.now(),
+        attempts: 0,
+      }));
+    } else if (newLevel === 3) {
+      challenge = generateLevel3Challenge();
+      setGameState(prev => ({
+        ...prev,
+        level: newLevel,
+        requiredDataRate: challenge.requiredDataRate,
+        targetFrequency: challenge.targetFrequency,
+        targetPower: challenge.targetPower,
+        distance: challenge.distance,
+        calculatedBandwidth: 0,
+        calculatedPower: 0,
+        completed: false,
+        isPlaying: true,
+        bandwidth: 25,
+        signalPower: 25,
+        noise: prev.noise - 2,
+        startTime: Date.now(),
+        attempts: 0,
+      }));
+    }
+  }, [gameState.level, generateLevel1Challenge, generateLevel2Challenge, generateLevel3Challenge]);
 
-  const adjustFrequency = useCallback((value) => {
-    setGameState(prev => ({
-      ...prev,
-      currentFrequency: parseFloat(value)
-    }));
-  }, []);
+
 
   const adjustBandwidth = useCallback((value) => {
     setGameState(prev => ({
       ...prev,
-      bandwidth: parseFloat(value)
+      bandwidth: parseFloat(value),
+      // En Nivel 3, sincronizar con calculatedBandwidth
+      ...(prev.level === 3 && { calculatedBandwidth: parseFloat(value) })
     }));
   }, []);
 
   const adjustPower = useCallback((value) => {
     setGameState(prev => ({
       ...prev,
-      signalPower: parseFloat(value)
+      signalPower: parseFloat(value),
+      // En Nivel 3, sincronizar con calculatedPower
+      ...(prev.level === 3 && { calculatedPower: parseFloat(value) })
     }));
   }, []);
 
@@ -301,11 +468,7 @@ const EspectroGame = () => {
     return { color: '#ff6b6b', icon: '❌' }; // rojo
   }, []);
 
-  const frequencyStatus = useMemo(() => {
-    const diff = Math.abs(gameState.currentFrequency - gameState.targetFrequency);
-    const tol = Math.max(0.01, gameState.bandwidth / 2);
-    return statusFromDiff(diff, tol);
-  }, [gameState.currentFrequency, gameState.targetFrequency, gameState.bandwidth, statusFromDiff]);
+
 
   const bandwidthStatus = useMemo(() => {
     const diff = Math.abs(gameState.bandwidth - currentTargets.bandwidth);
@@ -324,25 +487,150 @@ const EspectroGame = () => {
   // Determinar estado de acierto/error para feedback visual
 
   const checkTuning = () => {
-    const { currentFrequency, targetFrequency, bandwidth, snr, signalPower, level, startTime, attempts } = gameState;
-    const frequencyError = Math.abs(currentFrequency - targetFrequency);
+    const { level, targetFrequency, currentFrequency, correctBand, selectedBand, 
+            requiredDataRate, calculatedBandwidth, calculatedPower, distance,
+            bandwidth, snr, signalPower, startTime, attempts } = gameState;
+    
     const t = levelTargets[(level - 1) % levelTargets.length];
     const bandwidthTarget = t.bandwidth;
     const powerTarget = t.power;
-    const inBand = frequencyError <= bandwidth / 2;
-    const goodBandwidth = Math.abs(bandwidth - bandwidthTarget) <= 2;
-    const goodPower = signalPower === powerTarget;
-    const goodSignal = snr >= 20;
-
+    
     // Incrementar intentos
     setGameState(prev => ({
       ...prev,
       attempts: prev.attempts + 1
     }));
+    
+    let success = false;
+    let score = 0;
+    let hints = [];
+    
+    if (level === 1) {
+      // Nivel 1: Ajuste manual de frecuencia
+      const frequencyError = Math.abs(currentFrequency - targetFrequency);
+      const goodFrequency = frequencyError <= 1; // Tolerancia de 1 MHz
+      const goodBandwidth = Math.abs(bandwidth - bandwidthTarget) <= 2;
+      const goodPower = signalPower === powerTarget;
+      const goodSignal = snr >= 20;
+      
+      success = goodFrequency && goodBandwidth && goodPower && goodSignal;
+      score = success ? Math.max(0, 100 - frequencyError * 2) : 0;
+      
+      if (!goodFrequency) hints.push({
+        icon: '🎯',
+        title: 'Ajustar Frecuencia',
+        message: `Objetivo: ${Math.round(targetFrequency)} MHz (±1 MHz)`,
+        current: `Actual: ${Math.round(currentFrequency)} MHz`
+      });
+      
+    } else if (level === 2) {
+      // Nivel 2: Identificación de bandas
+      const correctBandSelected = selectedBand === correctBand;
+      const goodBandwidth = Math.abs(bandwidth - bandwidthTarget) <= 2;
+      const goodPower = signalPower === powerTarget;
+      const goodSignal = snr >= 20;
+      
+      success = correctBandSelected && goodBandwidth && goodPower && goodSignal;
+      score = success ? 100 : 0;
+      
+      if (!correctBandSelected) {
+        const bandInfo = FREQUENCY_BANDS[correctBand];
+        hints.push({
+          icon: '📡',
+          title: 'Identificar Banda Correcta',
+          message: `Frecuencia: ${targetFrequency.toFixed(1)} MHz`,
+          current: `Banda correcta: ${correctBand} (${bandInfo.min}-${bandInfo.max} MHz)`
+        });
+      }
+      
+    } else if (level === 3) {
+      // Nivel 3: Cálculo Nyquist y potencia con distancia
+      const nyquistBandwidth = requiredDataRate / 2;
+      const correctBandwidth = Math.abs(calculatedBandwidth - nyquistBandwidth) <= 2; // Nyquist: B >= R/2
+      
+      // Nueva fórmula: P_total = P_base + 10*log10(d)
+      // donde P_base = 10 dBm y d es la distancia en km
+      const basePower = 10;
+      const pathLoss = 10 * Math.log10(distance);
+      const expectedPower = basePower + pathLoss;
+      const powerDifference = Math.abs(calculatedPower - expectedPower);
+      const correctPower = powerDifference <= 1.5; // Tolerancia de ±1.5 dBm
+      
+      // En Nivel 3, el SNR es menos crítico
+      const goodSignal = snr >= 10;
+      
+      // Debug info
+      console.log('Nivel 3 Debug:', {
+        calculatedBandwidth,
+        nyquistBandwidth, 
+        correctBandwidth,
+        distance,
+        basePower,
+        pathLoss: pathLoss.toFixed(1),
+        expectedPower: expectedPower.toFixed(1),
+        calculatedPower,
+        powerDifference: powerDifference.toFixed(1),
+        correctPower,
+        snr: snr.toFixed(1),
+        goodSignal
+      });
+      
+      success = correctBandwidth && correctPower && goodSignal;
+      score = success ? 100 : 0;
+      
+      if (!correctBandwidth) hints.push({
+        icon: '📈',
+        title: 'Cálculo de Ancho de Banda (Nyquist)',
+        message: `Para ${requiredDataRate} Mbps, B ≥ R/2 = ${nyquistBandwidth} MHz`,
+        current: `Calculado: ${calculatedBandwidth} MHz`
+      });
+      
+      if (!correctPower) hints.push({
+        icon: '⚡',
+        title: 'Cálculo de Potencia',
+        message: `P_total = P_base + 10×log10(d) = 10 + 10×log10(${distance}) = ${expectedPower.toFixed(1)} dBm`,
+        current: `Tu respuesta: ${calculatedPower} dBm (Diferencia: ${Math.abs(calculatedPower - expectedPower).toFixed(1)} dBm)`
+      });
+      
+      if (!goodSignal) hints.push({
+        icon: '📶',
+        title: 'Calidad de Señal',
+        message: `SNR debe ser ≥ 10 dB para una buena comunicación`,
+        current: `SNR actual: ${snr.toFixed(1)} dB`
+      });
+    }
+    
+    // Verificaciones comunes para todos los niveles
+    const goodBandwidth = Math.abs(bandwidth - bandwidthTarget) <= 2;
+    const goodPower = signalPower === powerTarget;
+    const goodSignal = snr >= 20;
+    
+    if (level !== 3) { // Para niveles 1 y 2, agregar hints comunes
+      if (!goodBandwidth && bandwidthTarget !== null) {
+        hints.push({
+          icon: '📶',
+          title: 'Ajustar Ancho de Banda',
+          message: `Objetivo: ${bandwidthTarget} MHz`,
+          current: `Actual: ${bandwidth} MHz`
+        });
+      }
+      if (!goodPower) hints.push({
+        icon: '⚡',
+        title: 'Ajustar Potencia',
+        message: `Objetivo: ${powerTarget} dBm`,
+        current: `Actual: ${signalPower} dBm`
+      });
+    }
+    
+    if (!goodSignal) hints.push({
+      icon: '📡',
+      title: 'Mejorar SNR',
+      message: `Necesitas: ≥20 dB`,
+      current: `Actual: ${snr.toFixed(1)} dB`
+    });
 
-    if (inBand && goodBandwidth && goodPower && goodSignal) {
+    if (success) {
       const completionTime = (Date.now() - startTime) / 1000; // segundos
-      const score = Math.max(0, 100 - frequencyError * 2);
       
       // Actualizar estadísticas
       setGameProgress(prev => ({
@@ -368,7 +656,7 @@ const EspectroGame = () => {
         unlockAchievement('perfectTuning');
       }
       
-      if (frequencyError < 1) {
+      if (success) {
         unlockAchievement('precisionExpert');
       }
       
@@ -381,11 +669,13 @@ const EspectroGame = () => {
       if (level === 2) unlockAchievement('masterLevel2');
       if (level === 3) unlockAchievement('masterLevel3');
 
+      const newStreakCount = gameState.perfectStreak + 1;
+      
       setGameState(prev => ({
         ...prev,
         score: prev.score + score,
         completed: true,
-        perfectStreak: prev.perfectStreak + 1
+        perfectStreak: newStreakCount
       }));
 
       // Crear partículas de éxito
@@ -394,7 +684,7 @@ const EspectroGame = () => {
       setTimeout(() => {
         if (level === 3) {
           unlockAchievement('completionist');
-          if (gameState.perfectStreak >= 3) {
+          if (newStreakCount >= 3) {
             unlockAchievement('streakMaster');
           }
           
@@ -411,7 +701,14 @@ const EspectroGame = () => {
             powerTarget,
             score,
             completionTime,
-            flag: `FLAG{SPECTRUM_MASTER_L${level}}`,
+            flag: (() => {
+              switch(level) {
+                case 1: return  'D1FT3L{FREQUENCY_TUNER_2400MHZ_PRECISION}';
+                case 2: return  'D1FT3L{BAND_DETECTIVE_5G_BLUETOOTH_MASTER}';
+                case 3: return  'D1FT3L{NYQUIST_ENGINEER_POWER_CALCULATOR}';
+                default: return `D1FT3L{SPECTRUM_MASTER_L${level}}`;
+              }
+            })(),
             isGameComplete: true,
             sessionAchievements: sessionAchievements.length > 0 ? sessionAchievements : []
           });
@@ -428,7 +725,14 @@ const EspectroGame = () => {
             powerTarget,
             score,
             completionTime,
-            flag: `FLAG{SPECTRUM_MASTER_L${level}}`,
+            flag: (() => {
+              switch(level) {
+                case 1: return  'D1FT3L{FREQUENCY_TUNER_2400MHZ_PRECISION}';
+                case 2: return  'D1FT3L{BAND_DETECTIVE_5G_BLUETOOTH_MASTER}';
+                case 3: return  'D1FT3L{NYQUIST_ENGINEER_POWER_CALCULATOR}';
+                default: return `D1FT3L{SPECTRUM_MASTER_L${level}}`;
+              }
+            })(),
             isGameComplete: false
           });
           setShowSuccessModal(true);
@@ -440,34 +744,6 @@ const EspectroGame = () => {
         ...prev,
         perfectStreak: 0
       }));
-      
-      let hints = [];
-      if (!inBand) hints.push({
-        icon: '🎯',
-        title: 'Ajustar Frecuencia',
-        message: `Objetivo: ${targetFrequency.toFixed(1)} MHz (±${bandwidth/2} MHz)`,
-        current: `Actual: ${currentFrequency.toFixed(1)} MHz`
-      });
-      if (!goodBandwidth && bandwidthTarget !== null) {
-        hints.push({
-          icon: '📶',
-          title: 'Ajustar Ancho de Banda',
-          message: `Objetivo: ${bandwidthTarget} MHz`,
-          current: `Actual: ${bandwidth} MHz`
-        });
-      }
-      if (!goodPower) hints.push({
-        icon: '⚡',
-        title: 'Ajustar Potencia',
-        message: `Objetivo: ${powerTarget} dBm`,
-        current: `Actual: ${signalPower} dBm`
-      });
-      if (!goodSignal) hints.push({
-        icon: '📡',
-        title: 'Mejorar SNR',
-        message: `Necesitas: ≥20 dB`,
-        current: `Actual: ${snr.toFixed(1)} dB`
-      });
       
       setHintData(hints);
       setShowHintModal(true);
@@ -509,28 +785,28 @@ const EspectroGame = () => {
   // Tutorial steps
   const tutorialSteps = [
     {
-      title: "¡Bienvenido al Juego del Espectro!",
-      content: "Aprende a sintonizar frecuencias como un profesional. Tu objetivo es ajustar los parámetros de la señal para cumplir con los objetivos.",
+      title: "¡Bienvenido al Identificador de Bandas!",
+      content: "Aprende a identificar las bandas de frecuencia de telecomunicaciones. Se te mostrará una frecuencia y deberás seleccionar qué banda la utiliza.",
       target: null
     },
     {
-      title: "Controles de Frecuencia",
-      content: "Usa este control para ajustar la frecuencia de tu señal. Debes acercarte a la frecuencia objetivo.",
+      title: "Selección de Banda",
+      content: "Observa la frecuencia mostrada y selecciona la banda correcta entre las opciones disponibles. Cada banda tiene un rango específico de frecuencias.",
       target: ".control:first-child"
     },
     {
       title: "Ancho de Banda",
-      content: "El ancho de banda determina el rango de frecuencias de tu señal. Ajústalo según el objetivo del nivel.",
+      content: "Además de identificar la banda, debes ajustar el ancho de banda según el objetivo del nivel.",
       target: ".control:nth-child(2)"
     },
     {
       title: "Potencia de Señal",
-      content: "La potencia afecta la intensidad de tu señal y el SNR. Ajústala al valor requerido.",
+      content: "Configura la potencia de transmisión al valor objetivo mostrado en el panel.",
       target: ".control:nth-child(3)"
     },
     {
-      title: "Verificar Sintonización",
-      content: "Cuando creas que tienes los parámetros correctos, presiona este botón para verificar.",
+      title: "Verificar Identificación",
+      content: "Cuando hayas seleccionado la banda y ajustado los parámetros, presiona este botón para verificar tu respuesta.",
       target: ".checkButton"
     }
   ];
@@ -581,6 +857,13 @@ const EspectroGame = () => {
       completed: false,
       currentFrequency: 0,
       targetFrequency: 2400,
+      correctBand: 'WiFi 2.4 GHz',
+      selectedBand: null,
+      requiredDataRate: 0,
+      calculatedBandwidth: 0,
+      calculatedPower: 0,
+      targetPower: 0,
+      distance: 0,
       bandwidth: 10,
       signalPower: 10,
       noise: -90,
@@ -603,11 +886,11 @@ const EspectroGame = () => {
     firstWin: { icon: "🎉", title: "Primera Victoria", description: "¡Completaste tu primer nivel!" },
     speedRunner: { icon: "⚡", title: "Velocista", description: "Completaste un nivel en menos de 30 segundos" },
     perfectTuning: { icon: "🎯", title: "Sintonización Perfecta", description: "Alcanzaste un SNR ≥ 25 dB" },
-    masterLevel1: { icon: "🥉", title: "Maestro Nivel 1", description: "Dominaste el WiFi 2.4 GHz" },
-    masterLevel2: { icon: "🥈", title: "Maestro Nivel 2", description: "Dominaste Bluetooth + WiFi" },
-    masterLevel3: { icon: "🥇", title: "Maestro Nivel 3", description: "Dominaste GSM 900" },
+    masterLevel1: { icon: "🥉", title: "Maestro Nivel 1", description: "Dominaste la sintonización manual" },
+    masterLevel2: { icon: "🥈", title: "Maestro Nivel 2", description: "Experto en identificación de bandas" },
+    masterLevel3: { icon: "🥇", title: "Maestro Nivel 3", description: "Maestro en cálculos de Nyquist" },
     completionist: { icon: "🏆", title: "Completista", description: "¡Completaste todos los niveles!" },
-    precisionExpert: { icon: "🔬", title: "Experto en Precisión", description: "Error de frecuencia < 1 MHz" },
+    precisionExpert: { icon: "🔬", title: "Experto en Precisión", description: "Ejecución perfecta en cualquier nivel" },
     efficiency: { icon: "🎨", title: "Eficiencia", description: "Completaste con menos de 3 intentos" },
     streakMaster: { icon: "🔥", title: "Racha Perfecta", description: "3 niveles seguidos sin error" },
   }), []);
@@ -894,7 +1177,7 @@ const EspectroGame = () => {
           <span className={styles.titleEmoji}>🌐</span>
           <span className={styles.titleText}>Juego del Espectro Electromagnético</span>
         </h1>
-        <p>Sintoniza la frecuencia correcta y optimiza la señal</p>
+        <p>Domina diferentes aspectos de las telecomunicaciones en cada nivel</p>
       </div>
 
       {!gameState.isPlaying ? (
@@ -903,7 +1186,9 @@ const EspectroGame = () => {
             🚀 Iniciar Juego
           </button>
           <p className={styles.instructions}>
-            Tu objetivo es sintonizar la frecuencia de 2.4 GHz y mantener una buena calidad de señal
+            <strong>Nivel 1:</strong> Sintoniza frecuencias manualmente<br/>
+            <strong>Nivel 2:</strong> Identifica bandas de telecomunicaciones<br/>
+            <strong>Nivel 3:</strong> Realiza cálculos avanzados con Nyquist
           </p>
         </div>
       ) : (
@@ -912,64 +1197,271 @@ const EspectroGame = () => {
           <div className={styles.leftPanel}>
             <div className={styles.controlsPanel}>
               <div className={styles.controlsHeader}>
-                <h3 className={styles.controlsTitle}>🎛️ Controles de Sintonización</h3>
+                <h3 className={styles.controlsTitle}>🎛️ Controles Nivel {gameState.level}</h3>
               </div>
               <div className={styles.controlsContent}>
                 <div className={styles.targetInfo}>
-                  <h4 style={{marginBottom: 6}}>🎯 Objetivos:</h4>
+                  <h4 style={{marginBottom: 6}}>🎯 Desafío Nivel {gameState.level}:</h4>
+                  
+                  {/* Nivel 1: Ajuste de frecuencia */}
+                  {gameState.level === 1 && (
+                    <></>  
+                  )}
+                  
+                  {/* Nivel 2: Identificación de bandas */}
+                  {gameState.level === 2 && (
+                    <div style={{marginBottom:'1rem', padding: '15px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '10px', border: '2px solid #3b82f6'}}>
+                      <span style={{color: '#3b82f6', fontWeight: 700, fontSize: '1.2rem', display:'block', textAlign: 'center'}}>
+                        📡 ¿Qué banda usa esta frecuencia?
+                      </span>
+                      <span style={{color:'#ffd700', fontWeight:800, display:'block', textAlign: 'center', fontSize: '1.5rem', margin: '10px 0'}}>
+                        {gameState.targetFrequency.toFixed(1)} MHz
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Nivel 3: Cálculos Nyquist */}
+                  {gameState.level === 3 && (
+                    <div style={{marginBottom:'0.75rem', padding: '12px', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '8px', border: '2px solid #a855f7'}}>
+                      <span style={{color: '#a855f7', fontWeight: 700, fontSize: '1.1rem', display:'block', textAlign: 'center'}}>
+                        🧮 Cálculos de Ingeniería
+                      </span>
+                      
+                      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', margin: '15px 0'}}>
+                        <div style={{textAlign: 'center'}}>
+                          <span style={{color:'#e6f2ff', display:'block', marginBottom: '5px', fontSize: '0.9rem'}}>
+                            📊 Tasa de datos requerida:
+                          </span>
+                          <span style={{color:'#ffd700', fontWeight:800, fontSize: '1.2rem'}}>
+                            {gameState.requiredDataRate} Mbps
+                          </span>
+                        </div>
+                        
+                        <div style={{textAlign: 'center'}}>
+                          <span style={{color:'#e6f2ff', display:'block', marginBottom: '5px', fontSize: '0.9rem'}}>
+                            📏 Distancia del enlace:
+                          </span>
+                          <span style={{color:'#ffd700', fontWeight:800, fontSize: '1.2rem'}}>
+                            {gameState.distance} km
+                          </span>
+                        </div>
+                      </div>
+                      
+
+                      
+                      <div style={{fontSize: '0.8rem', color: '#cbd5e1', marginTop: '10px', textAlign: 'center'}}>
+                        💡 Usa teorema de Nyquist para ancho de banda y fórmula de Friis para potencia
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Objetivos comunes */}
                   <div style={{marginBottom:'1rem'}}>
-                    <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
-                      📡 Frecuencia: <span style={{color:'#9af59a'}}>{gameState.targetFrequency.toFixed(2)} MHz</span>
-                    </span>
-                    <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
-                      📶 Ancho objetivo: <span style={{color:'#9af59a'}}>{currentTargets.bandwidth} MHz</span>
-                    </span>
-                    <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
-                      ⚡ Potencia objetivo: <span style={{color:'#9af59a'}}>{currentTargets.power} dBm</span>
-                    </span>
+                    {gameState.level === 1 && (
+                      <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                        📡 Frecuencia objetivo: <span style={{color:'#9af59a'}}>{gameState.targetFrequency.toFixed(1)} MHz</span>
+                      </span>
+                    )}
+                    {gameState.level !== 3 && (
+                      <>
+                        <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                          📶 Ancho objetivo: <span style={{color:'#9af59a'}}>{currentTargets.bandwidth} MHz</span>
+                        </span>
+                        <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                          ⚡ Potencia objetivo: <span style={{color:'#9af59a'}}>{currentTargets.power} dBm</span>
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
-                <div className={styles.control}>
-                  <label>📡 Frecuencia (MHz):</label>
-                  <input
-                    type="range"
-                    min={600}
-                    max={3000}
-                    step="0.01"
-                    value={gameState.currentFrequency}
-                    onChange={(e) => adjustFrequency(e.target.value)}
-                    className={styles.slider}
-                  />
-                  <span className={styles.value} style={{ color: frequencyStatus.color }}>{frequencyStatus.icon} {parseFloat(gameState.currentFrequency).toFixed(2)} MHz</span>
-                </div>
+                {/* Control específico por nivel */}
+                
+                {/* Nivel 1: Control de frecuencia manual */}
+                {gameState.level === 1 && (
+                  <div className={styles.control}>
+                    <label>📡 Frecuencia (MHz):</label>
+                    <input
+                      type="range"
+                      min={600}
+                      max={3000}
+                      step="1"
+                      value={gameState.currentFrequency}
+                      onChange={(e) => adjustFrequency(e.target.value)}
+                      className={styles.slider}
+                    />
+                    <span className={styles.value} style={{ 
+                      color: Math.abs(gameState.currentFrequency - gameState.targetFrequency) <= 1 ? '#4ade80' : '#f87171'
+                    }}>
+                      {Math.abs(gameState.currentFrequency - gameState.targetFrequency) <= 1 ? '✓' : '✗'} 
+                      {Math.round(gameState.currentFrequency)} MHz
+                    </span>
+                  </div>
+                )}
+                
+                {/* Nivel 2: Selección de bandas */}
+                {gameState.level === 2 && (
+                  <div className={styles.control}>
+                    <label>📡 Selecciona la Banda de Frecuencia:</label>
+                    <div className={styles.bandSelectionGrid}>
+                      {Object.keys(FREQUENCY_BANDS).filter(band => 
+                        ['Bluetooth', 'WiFi 5 GHz', 'UMTS 2100', 'LTE 800'].includes(band)
+                      ).map((bandName) => {
+                        const isSelected = gameState.selectedBand === bandName;
+                        const bandInfo = FREQUENCY_BANDS[bandName];
+                        
+                        return (
+                          <button
+                            key={bandName}
+                            onClick={() => selectBand(bandName)}
+                            className={`${styles.bandButton} ${isSelected ? styles.selected : ''}`}
+                          >
+                            <div className={styles.bandName}>{bandName}</div>
+                            <div className={styles.bandRange}>
+                              {bandInfo.min}-{bandInfo.max} MHz
+                            </div>
+                            {isSelected && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '-2px',
+                                right: '-2px',
+                                background: '#3b82f6',
+                                color: 'white',
+                                borderRadius: '50%',
+                                width: '20px',
+                                height: '20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '0.7rem',
+                                fontWeight: 'bold'
+                              }}>
+                                ✓
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {gameState.selectedBand && (
+                      <div style={{ marginTop: '10px', fontSize: '0.9rem' }}>
+                        <span className={styles.value} style={{ 
+                          color: gameState.selectedBand === gameState.correctBand ? '#4ade80' : '#f87171',
+                          fontWeight: '600'
+                        }}>
+                          {gameState.selectedBand === gameState.correctBand ? '✓' : '✗'} Banda seleccionada: {gameState.selectedBand}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Nivel 3: Cálculos de Nyquist y potencia */}
+                {gameState.level === 3 && (
+                  <>
+                    <div className={styles.control}>
+                      <label>📊 Ancho de Banda Calculado (MHz) - Nyquist:</label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={40}
+                        step={1}
+                        value={gameState.calculatedBandwidth}
+                        onChange={(e) => updateCalculatedBandwidth(e.target.value)}
+                        placeholder="B ≥ R/2"
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          borderRadius: '5px',
+                          border: '1px solid rgba(255,255,255,0.3)',
+                          background: 'rgba(255,255,255,0.1)',
+                          color: '#fff',
+                          marginTop: '5px'
+                        }}
+                      />
+                      <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '5px' }}>
+                        Teorema de Nyquist: B ≥ R/2
+                      </div>
+                      <span className={styles.value} style={{ 
+                        color: Math.abs(gameState.calculatedBandwidth - (gameState.requiredDataRate / 2)) <= 2 ? '#4ade80' : '#f87171'
+                      }}>
+                        {Math.abs(gameState.calculatedBandwidth - (gameState.requiredDataRate / 2)) <= 2 ? '✓' : '✗'} 
+                        {gameState.calculatedBandwidth} MHz
+                      </span>
+                    </div>
+                    
+                    <div className={styles.control}>
+                      <label>⚡ Potencia Calculada (dBm):</label>
+                      <input
+                        type="number"
+                        min={-50}
+                        max={50}
+                        step={0.1}
+                        value={gameState.calculatedPower}
+                        onChange={(e) => updateCalculatedPower(e.target.value)}
+                        placeholder="P_total = 10 + 10×log10(d)"
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          borderRadius: '5px',
+                          border: '1px solid rgba(255,255,255,0.3)',
+                          background: 'rgba(255,255,255,0.1)',
+                          color: '#fff',
+                          marginTop: '5px'
+                        }}
+                      />
+                      <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '5px' }}>
+                        <strong>Fórmula:</strong> P<sub>total</sub> = P<sub>base</sub> + 10×log10(d)<br/>
+                        <strong>Donde:</strong> P<sub>base</sub> = 10 dBm, d = {gameState.distance || 2.5} km
+                      </div>
+                      <span className={styles.value} style={{ 
+                        color: (() => {
+                          const expectedPower = 10 + 10 * Math.log10(gameState.distance || 2.5);
+                          return Math.abs(gameState.calculatedPower - expectedPower) <= 1.5 ? '#4ade80' : '#f87171';
+                        })()
+                      }}>
+                        {(() => {
+                          const expectedPower = 10 + 10 * Math.log10(gameState.distance || 2.5);
+                          return Math.abs(gameState.calculatedPower - expectedPower) <= 1.5 ? '✓' : '✗';
+                        })()} 
+                        {gameState.calculatedPower} dBm
+                      </span>
+                    </div>
+                  </>
+                )}
 
-                <div className={styles.control}>
-                  <label>📶 Ancho de Banda (MHz):</label>
-                  <input
-                    type="range"
-                    min={1}
-                    max={40}
-                    step={1}
-                    value={gameState.bandwidth}
-                    onChange={(e) => adjustBandwidth(e.target.value)}
-                    className={styles.slider}
-                  />
-                  <span className={styles.value} style={{ color: bandwidthStatus.color }}>{bandwidthStatus.icon} {gameState.bandwidth} MHz</span>
-                </div>
+                {/* Ocultar slider de Ancho de Banda en Nivel 3 */}
+                {gameState.level !== 3 && (
+                  <div className={styles.control}>
+                    <label>📶 Ancho de Banda (MHz):</label>
+                    <input
+                      type="range"
+                      min={1}
+                      max={40}
+                      step={1}
+                      value={gameState.bandwidth}
+                      onChange={(e) => adjustBandwidth(e.target.value)}
+                      className={styles.slider}
+                    />
+                    <span className={styles.value} style={{ color: bandwidthStatus.color }}>{bandwidthStatus.icon} {gameState.bandwidth} MHz</span>
+                  </div>
+                )}
 
-                <div className={styles.control}>
-                  <label>⚡ Potencia de Señal (dBm):</label>
-                  <input
-                    type="range"
-                    min={-10}
-                    max={10}
-                    step={1}
-                    value={gameState.signalPower}
-                    onChange={(e) => adjustPower(e.target.value)}
-                    className={styles.slider}
-                  />
-                  <span className={styles.value} style={{ color: powerStatus.color }}>{powerStatus.icon} {gameState.signalPower} dBm</span>
-                </div>
+                {/* Ocultar slider de Potencia de Señal en Nivel 3 */}
+                {gameState.level !== 3 && (
+                  <div className={styles.control}>
+                    <label>⚡ Potencia de Señal (dBm):</label>
+                    <input
+                      type="range"
+                      min={-10}
+                      max={10}
+                      step={1}
+                      value={gameState.signalPower}
+                      onChange={(e) => adjustPower(e.target.value)}
+                      className={styles.slider}
+                    />
+                    <span className={styles.value} style={{ color: powerStatus.color }}>{powerStatus.icon} {gameState.signalPower} dBm</span>
+                  </div>
+                )}
 
                 <div className={styles.actions}>
                   <button 
@@ -977,7 +1469,7 @@ const EspectroGame = () => {
                     onClick={checkTuning}
                     disabled={!gameState.isPlaying}
                   >
-                    ✅ Verificar Sintonización
+                    ✅ {gameState.level === 1 ? 'Verificar Sintonización' : gameState.level === 2 ? 'Verificar Identificación' : 'Verificar Cálculos'}
                   </button>
                   <button 
                     className={styles.resetButton}
@@ -989,50 +1481,7 @@ const EspectroGame = () => {
               </div>
             </div>
             
-            {/* Estadísticas del juego */}
-            <div className={styles.gameStats}>
-              <div className={styles.gameStatsGrid}>
-                <div className={styles.stat}>
-                  <label>Nivel:</label>
-                  <span>{gameState.level}</span>
-                </div>
-                <div className={styles.stat}>
-                  <label>Puntuación:</label>
-                  <span>{gameState.score.toFixed(0)}</span>
-                </div>
-                <div className={styles.stat}>
-                  <label>SNR:</label>
-                  <span className={gameState.snr >= 20 ? styles.good : styles.bad}>
-                    {gameState.snr.toFixed(1)} dB
-                  </span>
-                </div>
-                <div className={styles.stat}>
-                  <label>Logros:</label>
-                  <span>{Object.values(achievements).filter(Boolean).length}/10</span>
-                  <button 
-                    onClick={() => setShowAchievements(!showAchievements)}
-                    style={{
-                      marginTop: '5px',
-                      padding: '5px 10px',
-                      background: 'rgba(255,255,255,0.2)',
-                      border: 'none',
-                      borderRadius: '5px',
-                      color: 'white',
-                      cursor: 'pointer',
-                      fontSize: '0.8rem',
-                    }}
-                  >
-                    {showAchievements ? '📖' : '🏆'}
-                  </button>
-                </div>
-                <div className={styles.stat}>
-                  <label>Racha:</label>
-                  <span className={gameState.perfectStreak > 0 ? styles.good : ''}>
-                    {gameState.perfectStreak} 🔥
-                  </span>
-                </div>
-              </div>
-            </div>
+
           </div>
 
           {/* Panel central - Espectrograma */}
@@ -1060,6 +1509,33 @@ const EspectroGame = () => {
                   frequencyRange={spectrogramFrequencyRange}
                 />
               </div>
+              
+              {/* Estadísticas del juego en fila horizontal */}
+              <div style={{
+                display: 'flex',
+                gap: '1rem',
+                marginTop: '0.25rem',
+                padding: '0.75rem',
+                background: 'rgba(15, 23, 42, 0.8)',
+                borderRadius: '8px',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                justifyContent: 'space-around'
+              }}>
+                <div style={{ textAlign: 'center', flex: 1 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>NIVEL:</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: '#fff' }}>{gameState.level}</div>
+                </div>
+                <div style={{ textAlign: 'center', flex: 1 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>PUNTUACIÓN:</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: '#fff' }}>{gameState.score.toFixed(0)}</div>
+                </div>
+                <div style={{ textAlign: 'center', flex: 1 }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>LOGROS:</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '600', color: '#fff' }}>
+                    {Object.values(achievements).filter(Boolean).length}/10 🏆
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1067,11 +1543,14 @@ const EspectroGame = () => {
           <div className={styles.rightPanel}>
             <div className={styles.spectrum}>
               <h4>📊 Analizador de Espectro</h4>
+              <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '8px' }}>
+                Frecuencia ocupada: {gameState.level === 3 ? gameState.targetFrequency.toFixed(1) : gameState.currentFrequency.toFixed(1)} MHz
+              </div>
               <div className={styles.spectrumDisplay}>
                 <div 
                   className={styles.signal}
                   style={{
-                    left: `${((gameState.currentFrequency - 600) / (3000 - 600)) * 100}%`,
+                    left: `${((gameState.level === 3 ? gameState.targetFrequency : gameState.currentFrequency) - 600) / (3000 - 600) * 100}%`,
                     width: `${(gameState.bandwidth / (3000 - 600)) * 100}%`,
                     height: `${Math.max(10, (gameState.signalPower + 100) * 0.8)}%`
                   }}
@@ -1096,24 +1575,77 @@ const EspectroGame = () => {
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: '1rem'}}>
               {(() => {
                 const t = levelTargets[(gameState.level - 1) % levelTargets.length];
-                const frequencyError = Math.abs(gameState.currentFrequency - gameState.targetFrequency);
-                const inBand = frequencyError <= gameState.bandwidth / 2;
-                const goodBandwidth = Math.abs(gameState.bandwidth - t.bandwidth) <= 2;
-                const goodPower = Math.abs(gameState.signalPower - t.power) <= 2;
                 const goodSignal = gameState.snr >= 20;
                 
                 let color = '#aaa';
                 let icon = '⚪';
-                let status = 'Sin ajustar';
+                let status = 'Sin configurar';
                 
-                if (inBand && goodBandwidth && goodPower && goodSignal) {
-                  color = '#2ecc40';
-                  icon = '✅';
-                  status = '¡Perfecto!';
-                } else if (gameState.bandwidth > 0 || gameState.signalPower !== 0) {
-                  color = '#ff4136';
-                  icon = '❌';
-                  status = 'Necesita ajuste';
+                if (gameState.level === 1) {
+                  // Nivel 1: Ajuste de frecuencia
+                  const frequencyError = Math.abs(gameState.currentFrequency - gameState.targetFrequency);
+                  const goodFrequency = frequencyError <= 1;
+                  const goodBandwidth = Math.abs(gameState.bandwidth - t.bandwidth) <= 2;
+                  const goodPower = Math.abs(gameState.signalPower - t.power) <= 2;
+                  
+                  if (goodFrequency && goodBandwidth && goodPower && goodSignal) {
+                    color = '#2ecc40';
+                    icon = '✅';
+                    status = '¡Perfecto!';
+                  } else if (goodFrequency) {
+                    color = '#ffaa00';
+                    icon = '⚠️';
+                    status = 'Frecuencia correcta, ajusta parámetros';
+                  } else {
+                    color = '#ff4136';
+                    icon = '❌';
+                    status = 'Ajusta la frecuencia';
+                  }
+                } else if (gameState.level === 2) {
+                  // Nivel 2: Identificación de bandas
+                  const correctBandSelected = gameState.selectedBand === gameState.correctBand;
+                  const goodBandwidth = Math.abs(gameState.bandwidth - t.bandwidth) <= 2;
+                  const goodPower = Math.abs(gameState.signalPower - t.power) <= 2;
+                  
+                  if (correctBandSelected && goodBandwidth && goodPower && goodSignal) {
+                    color = '#2ecc40';
+                    icon = '✅';
+                    status = '¡Perfecto!';
+                  } else if (gameState.selectedBand) {
+                    if (correctBandSelected) {
+                      color = '#ffaa00';
+                      icon = '⚠️';
+                      status = 'Banda correcta, ajusta parámetros';
+                    } else {
+                      color = '#ff4136';
+                      icon = '❌';
+                      status = 'Banda incorrecta';
+                    }
+                  } else {
+                    status = 'Selecciona una banda';
+                  }
+                } else if (gameState.level === 3) {
+                  // Nivel 3: Cálculos Nyquist
+                  const correctBandwidth = Math.abs(gameState.calculatedBandwidth - (gameState.requiredDataRate / 2)) <= 2;
+                  const correctPower = Math.abs(gameState.calculatedPower - gameState.targetPower) <= 2;
+                  
+                  if (correctBandwidth && correctPower && goodSignal) {
+                    color = '#2ecc40';
+                    icon = '✅';
+                    status = '¡Perfecto!';
+                  } else if (gameState.calculatedBandwidth > 0 || gameState.calculatedPower !== 0) {
+                    if (correctBandwidth && correctPower) {
+                      color = '#ffaa00';
+                      icon = '⚠️';
+                      status = 'Cálculos correctos, mejora SNR';
+                    } else {
+                      color = '#ff4136';
+                      icon = '❌';
+                      status = 'Verifica cálculos';
+                    }
+                  } else {
+                    status = 'Introduce cálculos';
+                  }
                 }
                 
                 return (
@@ -1148,20 +1680,20 @@ const EspectroGame = () => {
             </div>
 
             {/* Sección de Logros */}
-            <div className={styles.achievementsSection} style={{marginTop: '1.5rem'}}>
+            <div className={styles.achievementsSection} style={{marginTop: '0.75rem'}}>
               <div style={{
-                padding: '1rem',
+                padding: '0.75rem',
                 background: 'rgba(15, 23, 42, 0.8)',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 border: '1px solid rgba(148, 163, 184, 0.2)'
               }}>
                 <h4 style={{
-                  margin: '0 0 0.75rem 0',
-                  fontSize: '1rem',
+                  margin: '0 0 0.5rem 0',
+                  fontSize: '0.9rem',
                   color: '#94a3b8',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.5rem'
+                  gap: '0.4rem'
                 }}>
                   🏆 Logros ({Object.values(achievements).filter(Boolean).length}/10)
                 </h4>
@@ -1169,8 +1701,8 @@ const EspectroGame = () => {
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.5rem',
-                  maxHeight: '200px',
+                  gap: '0.35rem',
+                  maxHeight: '140px',
                   overflowY: 'auto'
                 }}>
                   {Object.entries(achievementMeta).slice(0, 5).map(([key, meta]) => (
@@ -1180,7 +1712,7 @@ const EspectroGame = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        padding: '0.5rem',
+                        padding: '0.4rem',
                         background: achievements[key] ? 'rgba(16, 185, 129, 0.1)' : 'rgba(148, 163, 184, 0.05)',
                         borderRadius: '6px',
                         border: `1px solid ${achievements[key] ? 'rgba(16, 185, 129, 0.3)' : 'rgba(148, 163, 184, 0.1)'}`,
@@ -1239,21 +1771,30 @@ const EspectroGame = () => {
                 )}
               </div>
             </div>
+
           </div>
         </div>
       )}
 
       <div className={styles.theory}>
-        <h4>📚 Conceptos de Telecomunicaciones</h4>
+        <h4>📚 Bandas de Frecuencia en Telecomunicaciones</h4>
         <ul>
-          <li><strong>Frecuencia:</strong> Número de oscilaciones por segundo (Hz)</li>
-          <li><strong>Ancho de Banda:</strong> Rango de frecuencias que puede transmitir un canal</li>
-          <li><strong>SNR:</strong> Relación Señal-Ruido, indica la calidad de la señal</li>
-          <li><strong>dBm:</strong> Unidad de potencia en decibeles referenciada a 1 milivatios</li>
-          <li><strong>Espectrograma:</strong> Representación visual de cómo cambia el espectro de frecuencias en el tiempo</li>
-          <li><strong>FFT:</strong> Transformada Rápida de Fourier, algoritmo para análisis espectral</li>
+          <li><strong>WiFi 2.4 GHz (2400-2485 MHz):</strong> Banda ISM para Wi-Fi y Bluetooth</li>
+          <li><strong>WiFi 5 GHz (5150-5825 MHz):</strong> Banda de 5 GHz con menos congestión</li>
+          <li><strong>GSM 900 (880-960 MHz):</strong> Red celular 2G en Europa y Ásia</li>
+          <li><strong>GSM 1800 (1710-1880 MHz):</strong> DCS-1800, extensión de GSM</li>
+          <li><strong>UMTS 2100 (1920-2170 MHz):</strong> Redes 3G en Europa</li>
+          <li><strong>LTE (700-2600 MHz):</strong> Varias bandas para redes 4G</li>
+          <li><strong>5G Sub-6 (3400-3800 MHz):</strong> Bandas medias para 5G</li>
+          <li><strong>FM Radio (87.5-108 MHz):</strong> Radiodifusión en frecuencia modulada</li>
         </ul>
+        <p style={{fontSize: '0.9rem', fontStyle: 'italic', marginTop: '15px'}}>
+          💡 <strong>Tip:</strong> Cada banda tiene características únicas de propagación y está regulada para usos específicos.
+        </p>
       </div>
+      
+      {/* Footer con créditos de todos los creadores */}
+      <Footer />
     </div>
   );
 };

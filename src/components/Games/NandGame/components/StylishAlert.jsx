@@ -60,9 +60,9 @@ const StylishAlert = ({
   return (
     <div className={styles.overlay}>
       <div className={`${styles.alert} ${getTypeClass()}`}>
-        <div className={styles.iconContainer}>
+        {/* <div className={styles.iconContainer}>
           <span className={styles.icon}>{getIcon()}</span>
-        </div>
+        </div> */}
         
         <div className={styles.content}>
           <h3 className={styles.title}>{title}</h3>

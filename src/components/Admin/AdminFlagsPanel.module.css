@@ -3,8 +3,8 @@
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
-  background: #0f1419;
+  padding: 100px 2rem 2rem; /* Ajustado para navbar fija */
+  /* background: #0f1419; */
   color: #f1f5f9;
   min-height: 100vh;
 }
@@ -241,8 +241,8 @@
 }
 
 .points {
-  background: #22c55e;
-  color: #1f2937;
+  /* background: #22c55e; */
+  color: #8c8e91;
   padding: 0.2rem 0.5rem;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -422,6 +422,225 @@
 .time {
   color: #94a3b8;
   font-size: 0.9rem;
+}
+
+/* Nuevos estilos para gestión de flags */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.createButton {
+  padding: 10px 20px;
+  background: #22c55e;
+  color: #1f2937;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.createButton:hover {
+  background: #16a34a;
+  transform: translateY(-2px);
+}
+
+.flagForm {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.flagForm h4 {
+  color: #f1f5f9;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  color: #f1f5f9;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 10px;
+  background: #0f1419;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #f1f5f9;
+  font-size: 0.9rem;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.submitButton {
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submitButton:hover {
+  background: #2563eb;
+}
+
+.cancelButton {
+  padding: 10px 20px;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelButton:hover {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.flagsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.flagCard {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.flagCard:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.flagHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.flagTitle {
+  color: #f1f5f9;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.flagActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editButton,
+.deleteButton {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.editButton {
+  background: #fbbf24;
+  color: #1f2937;
+}
+
+.editButton:hover {
+  background: #f59e0b;
+  transform: scale(1.1);
+}
+
+.deleteButton {
+  background: #ef4444;
+  color: white;
+}
+
+.deleteButton:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.flagDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.flagDetails .flagValue {
+  color: #3b82f6;
+  font-family: 'Courier New', monospace;
+  background: #0f1419;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  word-break: break-all;
+}
+
+.flagDescription {
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.flagMeta {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.flagPoints {
+  color: #22c55e;
+}
+
+.flagCreated {
+  color: #94a3b8;
+}
+
+.flagStatus {
+  color: #f1f5f9;
 }
 
 /* Responsive */

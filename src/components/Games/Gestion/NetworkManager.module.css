@@ -563,24 +563,27 @@
 }
 
 .modal {
-  background: rgba(255, 255, 255, 0.95); /* fondo blanco semi-transparente */
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* fondo oscuro con degradado */
   padding: 24px;
   border-radius: 12px;
   max-width: 520px;
   width: 90%;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  border: 1px solid rgba(59, 130, 246, 0.3); /* borde azul sutil */
   z-index: 20100; /* Por encima del backdrop */
-  color: #2c3e50; /* texto oscuro para contraste */
+  color: #e2e8f0; /* texto claro para contraste */
 }
 
 .modal h4 {
   margin: 0 0 8px 0;
-  color: #2c3e50; /* título oscuro para contraste con fondo claro */
+  color: #fbbf24; /* título amarillo/dorado para destacar */
+  font-weight: 600;
 }
 
 .modal p {
   margin: 0 0 12px 0;
-  color: #d6dbe0;
+  color: #e2e8f0; /* texto claro */
+  line-height: 1.6;
 }
 
 .gameOver {

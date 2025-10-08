@@ -563,19 +563,22 @@
 }
 
 .modal {
-  background: rgba(255, 255, 255, 0.95); /* fondo blanco semi-transparente */
+  background: rgba(17, 18, 23, 0.85); /* fondo oscuro semi-transparente */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 24px;
   border-radius: 12px;
   max-width: 520px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
   z-index: 20100; /* Por encima del backdrop */
-  color: #2c3e50; /* texto oscuro para contraste */
+  color: #eef2f7; /* texto claro para contraste */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .modal h4 {
   margin: 0 0 8px 0;
-  color: #2c3e50; /* título oscuro para contraste con fondo claro */
+  color: #ffffff; /* título blanco para contraste con fondo oscuro */
 }
 
 .modal p {
@@ -1041,7 +1044,7 @@
 /* Mascota */
 .mascotContainer {
   position: fixed;
-  right: 18px;
+  left: 18px;
   bottom: 18px; /* moved to bottom so no longer covers top buttons */
   /* put the mascot above the welcome hero/backdrop so it's clickable even during welcome */
   z-index: 13060; /* above welcomeHero (12550) and backdrop (12000) */
@@ -1331,5 +1334,50 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Estilos para la pantalla de fin de juego (integrada) */
+.gameEndScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.gameEndContent h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.gameEndContent p {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 1.5rem;
+}
+
+.gameEndContent .finalStats {
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.gameEndContent .finalStats p {
+  margin: 0.5rem 0;
+  color: #fff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 

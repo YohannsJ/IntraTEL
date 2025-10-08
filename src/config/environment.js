@@ -13,7 +13,7 @@ const config = {
   CLIENT_PORT: import.meta.env.VITE_CLIENT_PORT || 5174,
   
   // Application Settings
-  APP_NAME: 'IntraTEL',
+  APP_NAME: 'Didactic-Tel',
   APP_VERSION: '1.0.0',
   
   // Game Settings
@@ -57,13 +57,13 @@ export const getAuthHeaders = () => {
 
 export const log = (...args) => {
   if (config.ENABLE_LOGGING) {
-    console.log('[IntraTEL]', ...args);
+    console.log('[Didactic-Tel]', ...args);
   }
 };
 
 export const logError = (...args) => {
   if (config.ENABLE_LOGGING) {
-    console.error('[IntraTEL Error]', ...args);
+    console.error('[Didactic-Tel Error]', ...args);
   }
 };
 

@@ -61,8 +61,8 @@ const AuthPage = () => {
             </h1>
             <p className={styles.authSubtitle}>
               {isLogin 
-                ? 'Bienvenido de vuelta a IntraTEL' 
-                : 'Únete a la comunidad IntraTEL'
+                ? 'Bienvenido de vuelta a Didactic-Tel' 
+                : 'Únete a la comunidad Didactic-Tel'
               }
             </p>
           </div>

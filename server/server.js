@@ -53,7 +53,7 @@ app.use('/api/flags', flagRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'Servidor IntraTEL funcionando correctamente',
+    message: 'Servidor Didactic-Tel funcionando correctamente',
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
@@ -64,9 +64,9 @@ app.get('/api/info', (req, res) => {
   res.json({
     success: true,
     data: {
-      name: 'IntraTEL Backend',
+      name: 'Didactic-Tel Backend',
       version: '1.0.0',
-      description: 'Sistema de gestión de progreso para IntraTEL',
+      description: 'Sistema de gestión de progreso para Didactic-Tel',
       features: [
         'Autenticación JWT',
         'Gestión de usuarios',
@@ -153,7 +153,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
-║                      🚀 IntraTEL Backend                      ║
+║                      🚀 Didactic-Tel Backend                  ║
 ║                                                               ║
 ║  Servidor iniciado exitosamente                              ║
 ║  Puerto: ${PORT}                                               ║

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './NetworkManager.module.css';
+import telixImage from '../../../assets/telix.png';
 
 const NetworkManager = () => {
   const [stability, setStability] = useState(100);
@@ -223,7 +224,7 @@ const NetworkManager = () => {
   const [mascotMood, setMascotMood] = useState('idle'); // idle, happy, sad, cheer, thinking
   const [mascotHighlight, setMascotHighlight] = useState(false); // para el borde azul al interactuar
   // Nombre fijo de la mascota (no editable)
-  const [mascotName] = useState('Teli');
+  const [mascotName] = useState('Telix');
   const [popupSuccessCount, setPopupSuccessCount] = useState(0);
   const [popupFlagObtained, setPopupFlagObtained] = useState(false); // Flag especial por 5 popups
   const [popupsDisabled, setPopupsDisabled] = useState(false); // Desactivar popups después de 5
@@ -308,7 +309,7 @@ const NetworkManager = () => {
       mascotTipRef.current = setTimeout(() => {
         if (showWelcome) {
           // En la pantalla de bienvenida, cambiamos directamente al mensaje original
-          setMascotTip({ visible: true, text: '¡Hola! Soy Teli, te ayudaré a mantener la red escolar estable con consejos y alertas sencillas.' });
+          setMascotTip({ visible: true, text: '¡Hola! Soy Telix, te ayudaré a mantener la red escolar estable con consejos y alertas sencillas.' });
         } else {
           setMascotTip({ visible: false, text: '' });
         }
@@ -385,7 +386,7 @@ const NetworkManager = () => {
 
   // show the mascot tip persistently while the welcome hero is visible
   useEffect(() => {
-  const greetText = '¡Hola, soy Teli! Te ayudaré a mantener la red escolar estable con consejos y alertas sencillas.';
+  const greetText = '¡Hola, soy Telix! Te ayudaré a mantener la red escolar estable con consejos y alertas sencillas.';
     if (showWelcome) {
       setMascotTip({ visible: true, text: greetText });
       setMascotMood('happy');
@@ -498,25 +499,32 @@ const NetworkManager = () => {
       return;
     }
 
-  // Si es correcta, avanzamos
-  setMascotMood('happy');
-  setCorrectStreak(prev => {
-    const next = prev + 1;
-    // recompensa: cada 3 respuestas correctas consecutivas gana 1 pista
-    if (next > 0 && next % 3 === 0) {
-      setHintCount(h => h + 1);
-    }
-    return next;
-  });
+    // Si es correcta, avanzamos
+    setMascotMood('happy');
+    setCorrectStreak(prev => {
+      const next = prev + 1;
+      // recompensa: cada 3 respuestas correctas consecutivas gana 1 pista
+      if (next > 0 && next % 3 === 0) {
+        setHintCount(h => h + 1);
+      }
+      return next;
+    });
 
-  // Mantener la selección visible por un momento para mostrar el icono ✓/✖
-  const delay = correct ? 600 : 300;
-  setTimeout(() => {
-    advanceToNextProblem();
-  }, delay);
-};
-
-  // Problemas tipo 'popup malicioso' para hacer el juego más entretenido
+    // Mantener la selección visible por un momento para mostrar el icono ✓/✖
+    const delay = correct ? 600 : 300;
+    setTimeout(() => {
+      if (round >= totalRounds) {
+        setGameOver(true);
+        setGameWon(stability > 0);
+      } else {
+        setRound(prev => prev + 1);
+        setCurrentProblem(null);
+        setIsAnswering(false);
+        setSelectedIndex(null);
+        setHintUsed(false);
+      }
+    }, delay);
+  };  // Problemas tipo 'popup malicioso' para hacer el juego más entretenido
   const malwareProblems = [
     {
       id: 'm1',
@@ -621,7 +629,7 @@ const NetworkManager = () => {
       // cerrar popup inmediatamente en respuestas correctas
       setMalwareActive(false);
       lastPopupClosedRef.current = Date.now(); // Registrar cuando se cerró
-      // Ocultar cualquier explicación de Teli que esté visible del popup anterior
+      // Ocultar cualquier explicación de Telix que esté visible del popup anterior
       setPopupMascotExplain({ visible: false, text: '', side: 'right' });
       return;
     }
@@ -633,8 +641,8 @@ const NetworkManager = () => {
   // const penalty = Math.round(basePenalty * scale);
   // NO restar estabilidad por respuestas incorrectas en popups
   // setStability(prev => Math.max(5, prev - penalty)); // Comentado para eliminar penalización
-  // NO cambiar el mood de Teli por respuestas del popup malicioso
-  // setMascotMood('sad'); // Comentado para que Teli no reaccione
+  // NO cambiar el mood de Telix por respuestas del popup malicioso
+  // setMascotMood('sad'); // Comentado para que Telix no reaccione
     // En lugar de abrir el modal principal, mostramos la burbuja de la mascota junto al popup
     const chosenWrong = malwareCurrent && malwareCurrent.options[optionIndex];
   const explanation = (chosenWrong && chosenWrong.explanation) || (malwareCurrent && malwareCurrent.options.find(o => !o.correct)?.explanation) || 'Eso no fue seguro, mejor la próxima vez cerrar la ventana.';
@@ -731,24 +739,6 @@ const NetworkManager = () => {
     // Si la explicación vino del juego normal (advance=true) avanzamos la ronda.
     if (!advance) return; // por ejemplo: explicaciones de popups no avanzan la ronda
 
-    // Verificamos si estamos en la última ronda (15)
-    if (round === totalRounds) {
-      setGameOver(true);
-      setGameWon(stability > 75); // Victoria solo si la estabilidad es mayor a 75%
-      setIsAnswering(false);
-      return;
-    }
-
-    // Si no es la última ronda, avanzamos a la siguiente
-    setRound(prev => prev + 1);
-    // Avanzar a la siguiente pregunta
-    setCurrentProblem(null);
-    setIsAnswering(false);
-    setSelectedIndex(null);
-    setHintUsed(false);
-  };
-
-  const advanceToNextProblem = () => {
     // Verificamos si estamos en la última ronda (15)
     if (round === totalRounds) {
       setGameOver(true);
@@ -988,7 +978,7 @@ const NetworkManager = () => {
                 <h1 style={{ margin: 0, color: '#fff', fontSize: '2.2rem', lineHeight: 1.05, letterSpacing: '-0.02em' }}>¡Bienvenid@ al Desafío de Análisis!</h1>
                 <p style={{ margin: '12px 0 0 0', color: 'rgba(255,255,255,0.95)', fontSize: '1.2rem', lineHeight: 1.4 }}>
                   ¡Ponte en acción y aprende a resolver problemas usando información! 
-                  Tu amigo Teli te acompañará en esta divertida aventura donde aprenderás a tomar decisiones inteligentes.
+                  Tu amigo Telix te acompañará en esta divertida aventura donde aprenderás a tomar decisiones inteligentes.
                 </p>
                 <div className={styles.welcomeFeatures}>
                   <div className={styles.featureItem}>
@@ -1110,7 +1100,7 @@ const NetworkManager = () => {
       <div className={`${styles.mascotContainer} ${showTutorial ? styles.tutorialActive : ''}`}>
         <div className={`${styles.mascot} ${styles[mascotMood]} ${mascotHighlight ? styles.highlight : ''}`} title="Mascota" onClick={showMascotTip} role="button">
           <div className={styles.mascotTop}>
-            <div className={styles.mascotFace}>👾</div>
+            <img src={telixImage} alt={mascotName} className={styles.mascotImage} />
             <div className={styles.mascotName}>{mascotName}</div>
           </div>
           <div className={styles.mascotText}>
@@ -1304,43 +1294,43 @@ const NetworkManager = () => {
               </div>
             </div>
           ) : currentProblem ? (
-            <div className={styles.problem}>
-              <div className={`${styles.alert} ${alertsStatic ? styles.noPulse : ''}`}>
-                <h3>¡Alerta en la red!</h3>
-                <p>{currentProblem.description}</p>
-              </div>
-              <div className={styles.options}>
-                {currentProblem.options.map((option, index) => {
-                  const classes = [styles.optionButton];
-                  if (selectedIndex === index) classes.push(styles.selected);
-                  if (selectedIndex !== null && index === selectedIndex) {
-                    if (option.correct) classes.push(styles.correct);
-                    else classes.push(styles.incorrect);
-                  }
-                  
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleAnswer(option.correct, index)}
-                      className={classes.join(' ')}
-                      disabled={malwareActive} // Deshabilitar el botón cuando hay popup malicioso (sin cambio visual)
-                    >
-                      <span>{option.text}</span>
-                      <span className={styles.optionIcon} aria-hidden>
-                        {selectedIndex === index ? (option.correct ? '✓' : '✖') : ''}
-                      </span>
-                    </button>
-                  );
-                })}
-  
-                {/* hint button removed from here; use the hint control next to Reboot in the top controls */}
-              </div>
+          <div className={styles.problem}>
+            <div className={`${styles.alert} ${alertsStatic ? styles.noPulse : ''}`}>
+              <h3>¡Alerta en la red!</h3>
+              <p>{currentProblem.description}</p>
             </div>
-          ) : (
-            <div className={styles.loading}>
-              {/* Empty state when there is no current problem and game hasn't started; kept intentionally blank */}
+            <div className={styles.options}>
+              {currentProblem.options.map((option, index) => {
+                const classes = [styles.optionButton];
+                if (selectedIndex === index) classes.push(styles.selected);
+                if (selectedIndex !== null && index === selectedIndex) {
+                  if (option.correct) classes.push(styles.correct);
+                  else classes.push(styles.incorrect);
+                }
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswer(option.correct, index)}
+                    className={classes.join(' ')}
+                    disabled={malwareActive} // Deshabilitar el botón cuando hay popup malicioso (sin cambio visual)
+                  >
+                    <span>{option.text}</span>
+                    <span className={styles.optionIcon} aria-hidden>
+                      {selectedIndex === index ? (option.correct ? '✓' : '✖') : ''}
+                    </span>
+                  </button>
+                );
+              })}
+
+              {/* hint button removed from here; use the hint control next to Reboot in the top controls */}
             </div>
-          )}
+          </div>
+        ) : (
+          <div className={styles.loading}>
+            {/* Empty state when there is no current problem and game hasn't started; kept intentionally blank */}
+          </div>
+        )}
       </div>
     </div>
 
@@ -1430,7 +1420,7 @@ const NetworkManager = () => {
           {popupMascotExplain.visible && !showWelcome && (
             <div className={`${styles.popupMascotBubble} ${styles.belowPopup}`}>
               <div className={styles.bubbleHeader}>
-                <div className={styles.mascotFace}>👾</div>
+                <img src={telixImage} alt={mascotName} className={styles.mascotImage} />
                 <div style={{ fontWeight: 700, color: '#0b2340' }}>{mascotName}</div>
                 {/* thinkingDots intentionally not shown for popup explanations to avoid 'loading' look */}
                 <button className={styles.bubbleClose} onClick={closePopupMascotExplain}>✖</button>

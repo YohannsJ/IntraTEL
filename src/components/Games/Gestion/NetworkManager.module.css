@@ -31,12 +31,12 @@
   gap: 16px;
   margin-top: 28px;
 }
-.startTitle { color: #d6dbe0; font-size: 0.95rem; }
+.startTitle { color: var(--theme-text-secondary); font-size: 0.95rem; }
 .roundPills { display: flex; gap: 8px; }
 .roundPill {
-  background: rgba(255,255,255,0.04);
-  color: #eef2f7;
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--theme-pill-background);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-pill-border);
   padding: 8px 14px;
   border-radius: 20px;
   cursor: pointer;
@@ -45,17 +45,17 @@
   font-weight: 600;
   transition: transform 0.12s ease, background 0.12s ease;
 }
-.roundPill:hover { background: rgba(255,255,255,0.08); transform: translateY(-3px); }
+.roundPill:hover { background: var(--theme-pill-hover); transform: translateY(-3px); }
 .selectedPill {
-  background: linear-gradient(90deg,#1976d2,#1565c0);
+  background: var(--theme-primary-gradient);
   color: white;
   border: none;
-  box-shadow: 0 6px 18px rgba(21,101,192,0.18);
+  box-shadow: 0 6px 18px var(--theme-primary-shadow);
 }
 .startControls { margin-left: auto; display: flex; gap: 10px; align-items: center; }
 .alwaysUseLabel { display: flex; align-items: center; gap: 8px; margin-left: 8px; }
 .alwaysUseLabel input { width: 14px; height: 14px; }
-.alwaysUseLabel span { color: #d6dbe0; font-size: 0.9rem; }
+.alwaysUseLabel span { color: var(--theme-text-secondary); font-size: 0.9rem; }
 
 .smallPrimaryButton {
   /* make the button visually shorter (less vertical space) */
@@ -82,24 +82,24 @@
 
 .stabilityFill {
   height: 100%;
-  background: linear-gradient(90deg,#1976d2,#1565c0);
+  background: var(--theme-primary-gradient);
   color: white;
   border: none;
-  box-shadow: 0 6px 18px rgba(21,101,192,0.18);
+  box-shadow: 0 6px 18px var(--theme-primary-shadow);
 }
 
 .stats {
   display: flex;
   gap: 18px;
   align-items: center;
-  color: var(--text-primary);
+  color: var(--theme-text);
   flex-wrap: wrap;
 }
 .stats span {
   display: inline-flex;
   gap: 8px;
   padding: 4px 6px;
-  background: rgba(255,255,255,0.02);
+  background: var(--theme-stats-background);
   border-radius: 6px;
   font-weight: 600;
 }
@@ -114,7 +114,7 @@
   width: 100%;
   max-width: 3000px;
   height: 14px;
-  background: rgba(255,255,255,0.06);
+  background: var(--theme-stability-background);
   border-radius: 8px;
   overflow: hidden;
   margin-right: 12px;
@@ -127,9 +127,9 @@
   transition: width 0.35s ease, background-color 0.35s ease;
 }
 
-.stabilityFill.low { background: #F44336; }
-.stabilityFill.medium { background: #FFA726; }
-.stabilityFill.high { background: #4CAF50; }
+.stabilityFill.low { background: var(--theme-error); }
+.stabilityFill.medium { background: var(--theme-warning); }
+.stabilityFill.high { background: var(--theme-success); }
 
 .mainContent {
   background-color: var(--background-secondary);
@@ -146,13 +146,13 @@
   max-width: 800px;
   margin: 20px auto;
   padding: 24px;
-  background: #1e293b;
+  background: var(--theme-card-background);
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .setupTitle {
-  color: #e6eef8;
+  color: var(--theme-text);
   font-size: 1.5rem;
   margin-bottom: 20px;
   text-align: center;
@@ -172,9 +172,9 @@
 }
 
 .roundPill {
-  background: rgba(255, 255, 255, 0.06);
-  color: #e6eef8;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--theme-pill-background);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-pill-border);
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
@@ -184,15 +184,15 @@
 }
 
 .roundPill:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--theme-pill-hover);
   transform: translateY(-2px);
 }
 
 .selectedPill {
-  background: #3b82f6;
+  background: var(--theme-primary);
   color: white;
   border: none;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px var(--theme-primary-shadow);
 }
 
 .setupControls {
@@ -203,19 +203,19 @@
   gap: 16px;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--theme-border-light);
 }
 
 .alwaysUseLabel {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #e6eef8;
+  color: var(--theme-text);
   font-size: 0.9rem;
 }
 
 .startGameButton {
-  background: #22c55e;
+  background: var(--theme-success);
   color: white;
   padding: 10px 20px;
   border: none;
@@ -224,13 +224,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+  box-shadow: 0 4px 12px var(--theme-success-shadow);
 }
 
 .startGameButton:hover {
-  background: #16a34a;
+  background: var(--theme-success-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 6px 16px var(--theme-success-hover-shadow);
 }
 
 /* Responsive: stack on small screens */
@@ -251,16 +251,16 @@
 
 .alert {
   /* stronger, more visible alert card */
-  background: linear-gradient(180deg, rgba(255,183,77,0.03), rgba(0,0,0,0.06));
+  background: var(--theme-alert-background);
   padding: 18px 20px;
   border-radius: 12px;
   margin-bottom: 18px;
-  border-left: 8px solid #FFB74D; /* thicker accent */
+  border-left: 8px solid var(--theme-warning); /* thicker accent */
   box-shadow: 0 12px 30px rgba(255,167,38,0.08), inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
 .alert h3 {
-  color: #fff;
+  color: var(--theme-text);
   margin: 0 0 8px 0;
   font-size: 1.05rem;
   font-weight: 800;
@@ -276,7 +276,7 @@
 }
 
 .alert p {
-  color: #fff;
+  color: var(--theme-text);
   margin: 0;
   font-size: 0.98rem;
   line-height: 1.35;
@@ -295,21 +295,21 @@
   padding: 14px 16px;
   border-radius: 8px;
   /* slightly lighter surface so border is visible on dark background */
-  background-color: rgba(255,255,255,0.02);
-  color: var(--text-primary);
+  background-color: var(--theme-option-background);
+  color: var(--theme-text);
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
   text-align: left;
   font-size: 1rem;
-  border: 1.25px solid rgba(255,255,255,0.08); /* more noticeable by default */
+  border: 1.25px solid var(--theme-option-border); /* more noticeable by default */
   box-shadow: 0 10px 22px rgba(2,6,23,0.06);
 }
 
 .optionButton:hover {
-  background-color: var(--background-hover);
+  background-color: var(--theme-option-hover);
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(2,6,23,0.10);
-  border-color: rgba(33,150,243,0.18);
+  border-color: var(--theme-primary-transparent);
 }
 
 .optionButton:focus {
@@ -318,14 +318,14 @@
 }
 
 .optionButton.selected {
-  outline: 2px solid #2196F3;
+  outline: 2px solid var(--theme-primary);
 }
 
 .optionButton.correct {
-  border: 1.5px solid rgba(46,125,50,0.7);
-  background-color: #C8E6C9;
-  color: #1B5E20;
-  box-shadow: 0 12px 28px rgba(76,175,80,0.12);
+  border: 1.5px solid var(--theme-success-border);
+  background-color: var(--theme-success-background);
+  color: var(--theme-success-text);
+  box-shadow: 0 12px 28px var(--theme-success-shadow);
 }
 
 /* make option layout support right-side icon */
@@ -512,10 +512,10 @@
 }
 
 .optionButton.incorrect {
-  border: 1.5px solid rgba(211,47,47,0.7);
-  background-color: #FFCDD2;
-  color: #B71C1C;
-  box-shadow: 0 12px 28px rgba(244,67,54,0.12);
+  border: 1.5px solid var(--theme-error-border);
+  background-color: var(--theme-error-background);
+  color: var(--theme-error-text);
+  box-shadow: 0 12px 28px var(--theme-error-shadow);
 }
 
 
@@ -563,24 +563,27 @@
 }
 
 .modal {
-  background: rgba(255, 255, 255, 0.95); /* fondo blanco semi-transparente */
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* fondo oscuro con degradado */
   padding: 24px;
   border-radius: 12px;
   max-width: 520px;
   width: 90%;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  border: 1px solid rgba(59, 130, 246, 0.3); /* borde azul sutil */
   z-index: 20100; /* Por encima del backdrop */
-  color: #2c3e50; /* texto oscuro para contraste */
+  color: #e2e8f0; /* texto claro para contraste */
 }
 
 .modal h4 {
   margin: 0 0 8px 0;
-  color: #2c3e50; /* título oscuro para contraste con fondo claro */
+  color: #fbbf24; /* título amarillo/dorado para destacar */
+  font-weight: 600;
 }
 
 .modal p {
   margin: 0 0 12px 0;
-  color: #d6dbe0;
+  color: #e2e8f0; /* texto claro */
+  line-height: 1.6;
 }
 
 .gameOver {
@@ -607,13 +610,13 @@
   font-size: 0.9rem;
   border-radius: 6px;
   border: 1px solid rgba(0,0,0,0.12);
-  background: white;
-  color: #111; /* texto oscuro para que sea legible sobre fondo blanco */
+  background: var(--theme-input-background);
+  color: var(--theme-input-text); /* texto oscuro para que sea legible sobre fondo blanco */
 }
 
 .roundControl option {
-  background: #fff;
-  color: #111;
+  background: var(--theme-option-dropdown-background);
+  color: var(--theme-option-dropdown-text);
 }
 
 .roundControl:focus {
@@ -724,7 +727,7 @@
 
 .malwarePopup {
   width: 360px;
-  background: #fff;
+  background: var(--theme-input-background);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   padding: 0;
@@ -739,8 +742,8 @@
   /* más ancho para permitir explicaciones más largas, pero responsivo */
   max-width: 420px;
   width: min(420px, 92vw);
-  background: rgba(255,255,255,0.95); /* mismo fondo claro que mascotTipInline */
-  color: #111; /* mismo texto oscuro que mascotTipInline */
+  background: var(--theme-input-background); /* mismo fondo claro que mascotTipInline */
+  color: var(--theme-input-text); /* mismo texto oscuro que mascotTipInline */
   padding: 12px 14px;
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.10); /* mismo shadow que mascotTipInline */
@@ -848,7 +851,7 @@
 .mascotTipInline .mascotNameHeader {
   font-weight: 900;
   margin-bottom: 6px;
-  color: #0b2340; /* slightly darker text on the white bubble */
+  color: #f5f7fa; /* slightly darker text on the white bubble */
   font-size: 0.98rem;
   text-align: left; /* align name to the left like a chat header */
 }
@@ -879,7 +882,7 @@
 .mascotNameHeader {
   font-weight: 800;
   margin-bottom: 6px;
-  color: #0b2340;
+  color: #f5f7fa;
   text-align: left;
   font-size: 0.95rem;
 }
@@ -929,14 +932,14 @@
 /* Style for the mascot name next to emoji */
 .mascotName {
   font-weight: 800;
-  color: #0b2340;
+  color: #f5f7fa;
   font-size: 0.95rem;
 }
 
 /* Old mascot name style preserved for compatibility */
 .mascotNameOuter {
   font-weight: 800;
-  color: #0b2340;
+  color: #f5f7fa;
   text-align: left;
   font-size: 0.95rem;
 }
@@ -1007,7 +1010,7 @@
   display: flex;
   gap: 8px;
   padding: 12px;
-  background: #fff;
+  background: var(--theme-input-background);
   justify-content: space-between;
 }
 
@@ -1016,10 +1019,10 @@
   padding: 10px 12px;
   border-radius: 6px;
   border: 1px solid #bdbdbd;
-  background: #fff;
+  background: var(--theme-input-background);
   cursor: pointer;
   font-size: 0.95rem;
-  color: #111;
+  color: var(--theme-input-text);
   text-align: center;
 }
 
@@ -1059,7 +1062,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(180deg,#ffffff,#f1f8ff);
+  background: var(--theme-input-background);
   padding: 8px 10px;
   border-radius: 18px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.15);

@@ -4,8 +4,8 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 100px 2rem 2rem; /* Ajustado para navbar fija */
-  /* background: #0f1419; */
-  color: #f1f5f9;
+  background: var(--theme-background);
+  color: var(--theme-text);
   min-height: 100vh;
 }
 
@@ -21,8 +21,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #334155;
-  border-top: 4px solid #3b82f6;
+  border: 4px solid var(--theme-border);
+  border-top: 4px solid var(--theme-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -42,23 +42,24 @@
 .title {
   font-size: 2rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin: 0;
 }
 
 .refreshButton {
   padding: 10px;
   border: none;
-  background: #1e293b;
-  color: #f1f5f9;
+  background: var(--theme-surface);
+  color: var(--theme-text);
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.2rem;
   transition: all 0.2s ease;
+  border: 1px solid var(--theme-border);
 }
 
 .refreshButton:hover {
-  background: #334155;
+  background: var(--theme-background-secondary);
   transform: rotate(180deg);
 }
 
@@ -70,8 +71,8 @@
 }
 
 .statCard {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
   border-radius: 12px;
   padding: 1.5rem 1rem;
   text-align: center;
@@ -80,27 +81,27 @@
 
 .statCard:hover {
   transform: translateY(-2px);
-  border-color: #3b82f6;
+  border-color: var(--theme-primary);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
 }
 
 .statValue {
   font-size: 2rem;
   font-weight: 700;
-  color: #3b82f6;
+  color: var(--theme-primary);
   margin-bottom: 0.5rem;
 }
 
 .statLabel {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .tabs {
   display: flex;
-  background: #1e293b;
+  background: var(--theme-surface);
   border-radius: 10px;
   padding: 4px;
   gap: 4px;
@@ -112,7 +113,7 @@
   padding: 12px 20px;
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
@@ -121,12 +122,12 @@
 }
 
 .tab:hover {
-  color: #f1f5f9;
-  background: #334155;
+  color: var(--theme-text);
+  background: var(--theme-background-secondary);
 }
 
 .activeTab {
-  background: #3b82f6 !important;
+  background: var(--theme-primary) !important;
   color: white !important;
 }
 
@@ -141,8 +142,8 @@
 }
 
 .flagCard {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border);
   border-radius: 12px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -156,7 +157,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(90deg, var(--theme-primary), var(--theme-primary-hover));
   border-radius: 12px 12px 0 0;
   transform: scaleX(0);
   transition: transform 0.3s ease;
@@ -164,7 +165,7 @@
 
 .flagCard:hover {
   transform: translateY(-2px);
-  border-color: #3b82f6;
+  border-color: var(--theme-primary);
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.1);
 }
 
@@ -173,16 +174,16 @@
 }
 
 .ownFlag {
-  border-color: #22c55e;
-  background: rgba(34, 197, 94, 0.05);
+  border-color: var(--theme-success);
+  background: var(--theme-success-light);
 }
 
 .ownFlag::before {
-  background: linear-gradient(90deg, #22c55e, #16a34a) !important;
+  background: linear-gradient(90deg, var(--theme-success), var(--theme-success-hover)) !important;
 }
 
 .ownFlag:hover {
-  border-color: #22c55e;
+  border-color: var(--theme-success);
   box-shadow: 0 8px 25px rgba(34, 197, 94, 0.1);
 }
 
@@ -201,12 +202,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #334155;
+  background: var(--theme-background-secondary);
   border-radius: 50%;
 }
 
 .ownFlag .flagIcon {
-  background: #22c55e;
+  background: var(--theme-success);
 }
 
 .flagInfo {
@@ -216,29 +217,29 @@
 .flagName {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin: 0 0 0.5rem 0;
 }
 
 .flagDescription {
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   margin: 0 0 0.5rem 0;
   line-height: 1.4;
 }
 
 .flagSubmitter {
-  color: #64748b;
+  color: var(--theme-text-muted);
   margin: 0;
   font-size: 0.9rem;
 }
 
 .flagSubmitter strong {
-  color: #3b82f6;
+  color: var(--theme-primary);
 }
 
 .flagPoints {
-  background: #22c55e;
-  color: #1f2937;
+  background: var(--theme-success);
+  color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 700;
@@ -253,7 +254,7 @@
   align-items: center;
   gap: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--theme-border);
 }
 
 .flagValue {
@@ -261,13 +262,13 @@
 }
 
 .flagValue code {
-  background: #0f172a;
-  color: #3b82f6;
+  background: var(--theme-background);
+  color: var(--theme-primary);
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
-  border: 1px solid #334155;
+  border: 1px solid var(--theme-border);
   word-break: break-all;
 }
 
@@ -280,19 +281,19 @@
 
 .timeAgo {
   font-weight: 600;
-  color: #3b82f6;
+  color: var(--theme-primary);
   font-size: 0.9rem;
 }
 
 .datetime {
-  color: #64748b;
+  color: var(--theme-text-muted);
   font-size: 0.8rem;
 }
 
 .emptyState {
   text-align: center;
   padding: 4rem 2rem;
-  color: #64748b;
+  color: var(--theme-text-muted);
 }
 
 .emptyState p {
@@ -302,7 +303,7 @@
 
 .emptyState p:first-child {
   font-size: 1.1rem;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   font-weight: 600;
 }
 

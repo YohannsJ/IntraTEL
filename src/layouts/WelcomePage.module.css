@@ -2,8 +2,8 @@
 
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f1419 0%, #1e293b 50%, #0f172a 100%);
-  color: #e2e8f0;
+  background: linear-gradient(135deg, var(--theme-background) 0%, var(--theme-background-secondary) 50%, var(--theme-surface) 100%);
+  color: var(--theme-text);
   padding: 100px 20px 40px;
 }
 
@@ -18,10 +18,10 @@
   text-align: center;
   margin-bottom: 60px;
   padding: 40px 20px;
-  background: rgba(30, 41, 59, 0.5);
+  background: var(--theme-background-secondary);
   border-radius: 20px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid var(--theme-border);
 }
 
 .welcomeIcon {
@@ -34,7 +34,7 @@
   font-size: 3rem;
   font-weight: 800;
   margin-bottom: 15px;
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -42,7 +42,7 @@
 
 .subtitle {
   font-size: 1.4rem;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   font-weight: 300;
 }
 
@@ -56,22 +56,22 @@
   font-weight: 700;
   margin-bottom: 30px;
   text-align: center;
-  color: #f1f5f9;
+  color: var(--theme-text);
 }
 
 .loading {
   text-align: center;
   padding: 40px;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
 }
 
 .errorMessage {
   text-align: center;
   padding: 20px;
-  color: #f87171;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--theme-error);
+  background: var(--theme-surface-secondary);
   border-radius: 10px;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--theme-border);
 }
 
 .statsGrid {
@@ -82,18 +82,18 @@
 }
 
 .statCard {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+  background: linear-gradient(135deg, var(--theme-background-secondary) 0%, var(--theme-surface) 100%);
   padding: 30px;
   border-radius: 15px;
   text-align: center;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid var(--theme-border);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
 .statCard:hover {
   transform: translateY(-5px);
-  border-color: rgba(59, 130, 246, 0.6);
+  border-color: var(--theme-primary);
   box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
 }
 
@@ -105,13 +105,13 @@
 .statValue {
   font-size: 3rem;
   font-weight: 800;
-  color: #60a5fa;
+  color: var(--theme-primary);
   margin-bottom: 10px;
 }
 
 .statLabel {
   font-size: 1rem;
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 500;
@@ -125,7 +125,7 @@
 .sectionDescription {
   text-align: center;
   font-size: 1.1rem;
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   max-width: 800px;
   margin: 0 auto 40px;
   line-height: 1.6;
@@ -138,10 +138,10 @@
 }
 
 .gameCard {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+  background: linear-gradient(135deg, var(--theme-background-secondary) 0%, var(--theme-surface) 100%);
   padding: 30px;
   border-radius: 15px;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: 1px solid var(--theme-border);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   display: flex;
@@ -150,7 +150,7 @@
 
 .gameCard:hover {
   transform: translateY(-8px);
-  border-color: rgba(139, 92, 246, 0.5);
+  border-color: var(--theme-secondary);
   box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3);
 }
 
@@ -158,11 +158,11 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 15px;
-  color: #f1f5f9;
+  color: var(--theme-text);
 }
 
 .gameDescription {
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   margin-bottom: 20px;
   line-height: 1.6;
   flex-grow: 1;
@@ -171,13 +171,13 @@
 .skillsList {
   margin-bottom: 20px;
   padding: 15px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--theme-surface);
   border-radius: 10px;
-  border-left: 3px solid #8b5cf6;
+  border-left: 3px solid var(--theme-secondary);
 }
 
 .skillsList strong {
-  color: #a78bfa;
+  color: var(--theme-secondary);
   display: block;
   margin-bottom: 10px;
 }
@@ -189,7 +189,7 @@
 }
 
 .skillsList li {
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   padding: 5px 0;
   padding-left: 20px;
   position: relative;
@@ -199,14 +199,14 @@
   content: "✓";
   position: absolute;
   left: 0;
-  color: #8b5cf6;
+  color: var(--theme-secondary);
   font-weight: bold;
 }
 
 .gameButton {
   display: inline-block;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, var(--theme-secondary) 0%, var(--theme-primary) 100%);
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -232,17 +232,17 @@
 }
 
 .infoCard {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+  background: linear-gradient(135deg, var(--theme-background-secondary) 0%, var(--theme-surface) 100%);
   padding: 30px;
   border-radius: 15px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid var(--theme-border);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
 .infoCard:hover {
   transform: translateY(-5px);
-  border-color: rgba(59, 130, 246, 0.5);
+  border-color: var(--theme-primary);
   box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
 }
 
@@ -255,11 +255,11 @@
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 15px;
-  color: #60a5fa;
+  color: var(--theme-primary);
 }
 
 .infoCard p {
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   line-height: 1.6;
 }
 
@@ -269,16 +269,16 @@
 }
 
 .careerCard {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+  background: linear-gradient(135deg, var(--theme-background-secondary) 0%, var(--theme-surface) 100%);
   padding: 40px;
   border-radius: 20px;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid var(--theme-border);
   backdrop-filter: blur(10px);
 }
 
 .careerText {
   font-size: 1.1rem;
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   line-height: 1.8;
   margin-bottom: 30px;
   text-align: center;
@@ -295,14 +295,14 @@
   align-items: flex-start;
   gap: 15px;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--theme-surface);
   border-radius: 12px;
-  border-left: 3px solid #60a5fa;
+  border-left: 3px solid var(--theme-primary);
   transition: all 0.3s ease;
 }
 
 .benefit:hover {
-  background: rgba(15, 23, 42, 0.8);
+  background: var(--theme-surface-secondary);
   transform: translateX(5px);
 }
 
@@ -313,13 +313,13 @@
 
 .benefit strong {
   display: block;
-  color: #60a5fa;
+  color: var(--theme-primary);
   font-size: 1.1rem;
   margin-bottom: 8px;
 }
 
 .benefit p {
-  color: #94a3b8;
+  color: var(--theme-text-muted);
   font-size: 0.95rem;
   line-height: 1.5;
   margin: 0;
@@ -329,16 +329,16 @@
 .ctaSection {
   text-align: center;
   padding: 60px 20px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  background: linear-gradient(135deg, var(--theme-background-secondary) 0%, var(--theme-surface) 100%);
   border-radius: 20px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid var(--theme-border);
 }
 
 .ctaTitle {
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 20px;
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -346,7 +346,7 @@
 
 .ctaText {
   font-size: 1.2rem;
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   margin-bottom: 40px;
   max-width: 700px;
   margin-left: auto;
@@ -373,7 +373,7 @@
 }
 
 .primaryButton {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
@@ -385,12 +385,12 @@
 
 .secondaryButton {
   background: transparent;
-  color: #60a5fa;
-  border: 2px solid #60a5fa;
+  color: var(--theme-primary);
+  border: 2px solid var(--theme-primary);
 }
 
 .secondaryButton:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: var(--theme-background-secondary);
   transform: translateY(-3px);
 }
 

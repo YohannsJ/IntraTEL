@@ -262,40 +262,41 @@ function createRouterEngine(ctx){
     } else if (state.mode === 'enable') {
       return [
         'Comandos disponibles en modo PRIVILEGIADO:',
-        '  configure terminal (conf t) - Entrar al modo configuración',
-        '  show ?                     - Ver opciones del comando show',
-        '  show ip int brief          - Mostrar estado de interfaces',
-        '  show ip route              - Mostrar tabla de enrutamiento',
-        '  show running-config        - Mostrar configuración actual',
-        '  show interfaces            - Mostrar detalles de interfaces',
-        '  show version               - Mostrar información del sistema',
-        '  ping <ip>                  - Hacer ping a una dirección IP',
-        '  traceroute <ip>            - Hacer traceroute a una IP',
-        '  refresh                    - Verificar conexión de red',
-        '  disable                    - Volver al modo usuario',
-        '  ?                          - Mostrar esta ayuda',
-        '  help                       - Mostrar esta ayuda'
+        '  configure terminal (conf t, config, conf) - Entrar al modo configuración',
+        '  show ? (sh ?)                           - Ver opciones del comando show',
+        '  show ip int brief (sh ip int br)        - Mostrar estado de interfaces',
+        '  show ip route (sh ip ro)                - Mostrar tabla de enrutamiento',
+        '  show running-config (sh run)            - Mostrar configuración actual',
+        '  show interfaces (sh int)                - Mostrar detalles de interfaces',
+        '  show version (sh ver)                   - Mostrar información del sistema',
+        '  ping <ip>                               - Hacer ping a una dirección IP',
+        '  traceroute (tracert, trace) <ip>        - Hacer traceroute a una IP',
+        '  copy run start (write, wr)              - Guardar configuración',
+        '  refresh                                 - Verificar conexión de red',
+        '  disable (dis)                           - Volver al modo usuario',
+        '  ?                                       - Mostrar esta ayuda',
+        '  help                                    - Mostrar esta ayuda'
       ];
     } else if (state.mode === 'config') {
       return [
         'Comandos disponibles en modo CONFIGURACIÓN:',
-        '  hostname <name>     - Cambiar nombre del router',
-        '  interface <name>    - Configurar interfaz (fa0/0, fa0/1)',
-        '  end                 - Volver al modo privilegiado',
-        '  exit                - Volver al modo privilegiado',
-        '  ?                   - Mostrar esta ayuda',
-        '  help                - Mostrar esta ayuda'
+        '  hostname (host) <name>     - Cambiar nombre del router',
+        '  interface (int) <name>     - Configurar interfaz (fa0/0, fa0/1)',
+        '  end                        - Volver al modo privilegiado',
+        '  exit (ex)                  - Volver al modo privilegiado',
+        '  ?                          - Mostrar esta ayuda',
+        '  help                       - Mostrar esta ayuda'
       ];
     } else if (state.mode === 'int') {
       return [
         'Comandos disponibles en modo INTERFAZ:',
-        '  ip address <ip> <mask> - Asignar dirección IP',
-        '  no shutdown            - Activar interfaz',
-        '  shutdown               - Desactivar interfaz',
-        '  end                    - Volver al modo privilegiado',
-        '  exit                   - Volver al modo configuración',
-        '  ?                      - Mostrar esta ayuda',
-        '  help                   - Mostrar esta ayuda'
+        '  ip address (ip addr) <ip> <mask> - Asignar dirección IP',
+        '  no shutdown                      - Activar interfaz',
+        '  shutdown (shut)                  - Desactivar interfaz',
+        '  end                              - Volver al modo privilegiado',
+        '  exit (ex)                        - Volver al modo configuración',
+        '  ?                                - Mostrar esta ayuda',
+        '  help                             - Mostrar esta ayuda'
       ];
     }
     return ['Ayuda no disponible para este modo'];
@@ -304,11 +305,11 @@ function createRouterEngine(ctx){
   function getShowHelp(){
     return [
       'Comandos show disponibles:',
-      '  show interfaces         - Información detallada de interfaces',
-      '  show ip interface brief - Resumen del estado de interfaces IP',
-      '  show ip route          - Tabla de enrutamiento IP',
-      '  show running-config    - Configuración activa actual',
-      '  show version           - Información del sistema y hardware'
+      '  show interfaces (sh int)         - Información detallada de interfaces',
+      '  show ip interface brief (sh ip int br) - Resumen del estado de interfaces IP',
+      '  show ip route (sh ip ro)         - Tabla de enrutamiento IP',
+      '  show running-config (sh run)     - Configuración activa actual',
+      '  show version (sh ver)            - Información del sistema y hardware'
     ];
   }
 
@@ -384,16 +385,26 @@ function createRouterEngine(ctx){
 
     // modos / navegación
     'enable':           () => { if (state.mode==='user'){ state.mode='enable'; return null } return '% Invalid input'; },
+    'en':               () => handlers['enable'](),
     'disable':          () => { state.mode='user'; return null },
+    'dis':              () => handlers['disable'](),
     'end':              () => { state.mode='enable'; state.currentInt=null; return null },
     'exit':             () => { if (state.mode==='int'){ state.mode='config'; state.currentInt=null; } else if (state.mode==='config'){ state.mode='enable' } else if (state.mode==='enable'){ state.mode='user' } return null },
+    'ex':               () => handlers['exit'](),
 
     // configuración
     'configure terminal': () => { if (state.mode!=='enable') return '% Enter privileged mode'; state.mode='config'; return null },
-    'conf t':              () => handlers['configure terminal'](),
-    'hostname':            (args) => { if (state.mode!=='config') return '% Enter configuration mode'; state.hostname = args || 'Router'; return null },
-    'interface':           (args) => { if (state.mode!=='config') return '% Enter configuration mode'; if (!state.routerIf[args]) return '% Invalid interface (use fa0/0 or fa0/1)'; state.currentInt=args; state.mode='int'; return null },
-    'ip address':          (args) => { if (state.mode!=='int') return '% Enter interface config mode'; const [ip,mask]=args.split(/\s+/); if (!ip||!mask) return '% Usage: ip address <ip> <mask>'; state.routerIf[state.currentInt].ip=ip; state.routerIf[state.currentInt].mask=mask; printStatus(); syncToTopology(); return `Assigned ${ip} ${mask} to ${state.currentInt}` },
+    'configure':          () => handlers['configure terminal'](),
+    'config terminal':    () => handlers['configure terminal'](),
+    'config':             () => handlers['configure terminal'](),
+    'conf terminal':      () => handlers['configure terminal'](),
+    'conf t':             () => handlers['configure terminal'](),
+    'hostname':           (args) => { if (state.mode!=='config') return '% Enter configuration mode'; state.hostname = args || 'Router'; return null },
+    'host':               (args) => handlers['hostname'](args),
+    'interface':          (args) => { if (state.mode!=='config') return '% Enter configuration mode'; if (!state.routerIf[args]) return '% Invalid interface (use fa0/0 or fa0/1)'; state.currentInt=args; state.mode='int'; return null },
+    'int':                (args) => handlers['interface'](args),
+    'ip address':         (args) => { if (state.mode!=='int') return '% Enter interface config mode'; const [ip,mask]=args.split(/\s+/); if (!ip||!mask) return '% Usage: ip address <ip> <mask>'; state.routerIf[state.currentInt].ip=ip; state.routerIf[state.currentInt].mask=mask; printStatus(); syncToTopology(); return `Assigned ${ip} ${mask} to ${state.currentInt}` },
+    'ip addr':            (args) => handlers['ip address'](args),
     'no shutdown':         () => { 
       if (state.mode!=='int') return '% Enter interface config mode'; 
       state.routerIf[state.currentInt].up=true; 
@@ -422,18 +433,43 @@ function createRouterEngine(ctx){
       return `${state.currentInt} changed state to up`;
     },
     'shutdown':            () => { if (state.mode!=='int') return '% Enter interface config mode'; state.routerIf[state.currentInt].up=false; printStatus(); syncToTopology(); return `${state.currentInt} changed state to down` },
+    'shut':                () => handlers['shutdown'](),
 
     // show commands
     'show ?':              () => getShowHelp(),
+    'sh ?':                () => getShowHelp(),
+    'show ip interface brief': () => showIpIntBrief(),
     'show ip int brief':   () => showIpIntBrief(),
+    'sh ip int brief':     () => showIpIntBrief(),
+    'sh ip int br':        () => showIpIntBrief(),
     'show ip route':       () => showIpRoute(),
+    'sh ip route':         () => showIpRoute(),
+    'sh ip ro':            () => showIpRoute(),
     'show running-config': () => runningConfig(),
+    'show run':            () => runningConfig(),
+    'sh run':              () => runningConfig(),
     'show interfaces':     () => showInterfaces(),
+    'show int':            () => showInterfaces(),
+    'sh int':              () => showInterfaces(),
     'show version':        () => showVersion(),
+    'show ver':            () => showVersion(),
+    'sh ver':              () => showVersion(),
 
     // pruebas
     'ping':                (args, callback) => { const ip = (args||'').trim()||'192.168.1.10'; return ping(ip, callback) },
     'traceroute':          (args) => { const ip = (args||'').trim()||'192.168.1.10'; return traceroute(ip) },
+    'tracert':             (args) => handlers['traceroute'](args),
+    'trace':               (args) => handlers['traceroute'](args),
+    
+    // comandos adicionales útiles
+    'clear':               () => '% Use Ctrl+L to clear screen',
+    'cls':                 () => handlers['clear'](),
+    'reload':              () => '% Reload functionality not implemented in simulation',
+    'copy run start':      () => 'Building configuration...\n[OK]',
+    'copy running-config startup-config': () => handlers['copy run start'](),
+    'write memory':        () => handlers['copy run start'](),
+    'write':               () => handlers['copy run start'](),
+    'wr':                  () => handlers['copy run start'](),
   };
 
   function handle(line, callback = null){

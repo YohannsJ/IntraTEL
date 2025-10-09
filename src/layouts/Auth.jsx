@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useTheme } from '../context/ThemeContext';
 import styles from './Auth.module.css';
 
 const Auth = () => {
@@ -15,6 +16,7 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { login, register } = useData();
+  const { currentTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {

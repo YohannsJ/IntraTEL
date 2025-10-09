@@ -2,8 +2,8 @@
 
 .cssCodeGame {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--theme-background-secondary) 0%, var(--theme-background-tertiary) 100%);
+  color: var(--theme-text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   padding: 80px 1rem 1rem;
 }
@@ -20,9 +20,9 @@
 .leftPanel,
 .centerPanel,
 .rightPanel {
-  background: rgba(30, 41, 59, 0.8);
+  background: var(--theme-background-secondary);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--theme-border);
   backdrop-filter: blur(10px);
   overflow: hidden;
   display: flex;
@@ -49,7 +49,7 @@
   right: 20px;
   padding: 1rem 1.5rem;
   border-radius: 8px;
-  color: white;
+  color: var(--theme-text);
   font-weight: 500;
   z-index: 1000;
   max-width: 400px;
@@ -58,18 +58,21 @@
 }
 
 .notification.info {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: var(--theme-info);
+  border: 1px solid var(--theme-primary-transparent);
+  color: white;
 }
 
 .notification.success {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--theme-success);
+  border: 1px solid var(--theme-success-border);
+  color: white;
 }
 
 .notification.error {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--theme-error);
+  border: 1px solid var(--theme-error-border);
+  color: white;
 }
 
 .notification.flag {
@@ -100,12 +103,14 @@
   .gameContent {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto 1fr;
-    height: auto;
+    /* height: auto; */
     gap: 1rem;
+    height: fit-content;
   }
   
   .leftPanel {
     order: 1;
+    min-height: 10000px;
   }
   
   .rightPanel {

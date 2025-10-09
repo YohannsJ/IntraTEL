@@ -1,10 +1,4 @@
-:root {
-    --panel: #111a2f;
-    --muted: #9fb0d0;
-    --text: #e9f0ff;
-    --ok: #3bd389;
-    --err: #ff6b6b;
-}
+
 
 .networkWrapper {
     min-height: 100vh;
@@ -33,12 +27,12 @@
     flex-wrap: wrap;
     padding: 1rem 1.25rem;
     margin: 0 16px 12px;
-    background: rgba(10, 15, 20, 0.4);
+    background: var(--theme-card-background);
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1.5px solid rgba(59, 130, 246, 0.3);
+    border: 1.5px solid var(--theme-primary-transparent);
     border-radius: 12px;
-    color: var(--text);
+    color: var(--theme-text);
     gap: 1rem;
     box-shadow: 
         0 4px 20px rgba(0, 0, 0, 0.3),
@@ -54,33 +48,33 @@
     margin: 0;
     font-size: 1rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--theme-text-secondary);
 }
 
 /* Destacar palabras clave */
 .highlight {
-    color: #3b82f6;
+    color: var(--theme-primary);
     font-weight: 600;
-    text-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+    text-shadow: 0 0 8px var(--theme-primary-glow);
 }
 
 /* Destacar código */
 .codeHighlight {
-    background: rgba(16, 185, 129, 0.2);
-    border: 1px solid rgba(16, 185, 129, 0.4);
+    background: var(--theme-success-background);
+    border: 1px solid var(--theme-success-border);
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
-    color: #10b981;
+    color: var(--theme-success);
     font-weight: 600;
 }
 
 /* Botón Reiniciar mejorado */
 .btnReset {
-    background: rgba(239, 68, 68, 0.2);
-    border: 1.5px solid rgba(239, 68, 68, 0.5);
-    color: #f87171;
+    background: var(--theme-error-background);
+    border: 1.5px solid var(--theme-error-border);
+    color: var(--theme-error);
     padding: 0.6rem 1.2rem;
     border-radius: 8px;
     cursor: pointer;
@@ -91,12 +85,12 @@
 }
 
 .btnReset:hover {
-    background: rgba(239, 68, 68, 0.3);
-    border-color: rgba(239, 68, 68, 0.7);
+    background: var(--theme-error-hover);
+    border-color: var(--theme-error-hover-border);
     transform: translateY(-2px);
     box-shadow: 
         0 4px 12px rgba(0, 0, 0, 0.3),
-        0 0 15px rgba(239, 68, 68, 0.3);
+        0 0 15px var(--theme-error-glow);
 }
 
 .actions {
@@ -169,8 +163,8 @@
 }
 
 .panel {
-    background: var(--panel);
-    border: 1px solid #223;
+    background: var(--theme-panel-background);
+    border: 1px solid var(--theme-border);
     border-radius: 14px;
     padding: 12px;
     text-align: left;
@@ -184,8 +178,8 @@
 
 .canvas {
     height: 400px;
-    background: #0a1327;
-    border-color: #1d2b52;
+    background: var(--theme-canvas-background);
+    border-color: var(--theme-border-secondary);
     overflow: hidden
 }
 
@@ -200,7 +194,7 @@
     margin-top: 8px;
     display: flex;
     gap: 18px;
-    color: #c8d7f7
+    color: var(--theme-text-muted)
 }
 
 .dot {
@@ -212,21 +206,21 @@
 }
 
 .ok {
-    background: var(--ok)
+    background: var(--theme-success)
 }
 
 .err {
-    background: var(--err)
+    background: var(--theme-error)
 }
 
 .status {
     margin: 0;
-    background: #0a1325;
-    border: 1px solid #223;
+    background: var(--theme-status-background);
+    border: 1px solid var(--theme-border);
     border-radius: 8px;
     padding: 8px;
     white-space: pre;
-    color: var(--text)
+    color: var(--theme-text)
 }
 
 .objectives {
@@ -235,21 +229,21 @@
 }
 
 .success {
-    color: var(--ok);
+    color: var(--theme-success);
     font-weight: 600;
     margin: 0.5rem 0;
 }
 
 .successPanel {
-    background: rgba(59, 211, 137, 0.1);
-    border: 1px solid var(--ok);
+    background: var(--theme-success-background);
+    border: 1px solid var(--theme-success);
     border-radius: 8px;
     padding: 12px;
     margin-top: 12px;
 }
 
 .flagMessage {
-    color: #ffd700;
+    color: var(--theme-warning);
     font-weight: 600;
     margin: 0.3rem 0 0 0;
     font-size: 0.9rem;
@@ -257,8 +251,8 @@
 
 /* Flags panel */
 .flagsPanel {
-    background: rgba(255, 215, 0, 0.05);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background: var(--theme-warning-background);
+    border: 1px solid var(--theme-warning-border);
     border-radius: 8px;
     padding: 12px;
     margin-top: 16px;
@@ -266,7 +260,7 @@
 
 .flagsPanel h4 {
     margin: 0 0 12px 0;
-    color: #ffd700;
+    color: var(--theme-warning);
     font-size: 1rem;
 }
 
@@ -275,8 +269,8 @@
     align-items: flex-start;
     gap: 12px;
     padding: 10px;
-    background: rgba(255, 215, 0, 0.08);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: var(--theme-warning-item-background);
+    border: 1px solid var(--theme-warning-item-border);
     border-radius: 6px;
     margin-bottom: 8px;
 }
@@ -298,16 +292,16 @@
 }
 
 .flagContent strong {
-    color: #ffd700;
+    color: var(--theme-warning);
     font-size: 0.95rem;
 }
 
 .flagCode {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background: var(--theme-code-background);
+    border: 1px solid var(--theme-warning-border);
     padding: 6px 10px;
     border-radius: 4px;
-    color: #00ff88;
+    color: var(--theme-success);
     font-family: 'Courier New', monospace;
     font-size: 0.85rem;
     display: inline-block;
@@ -329,10 +323,10 @@
 }
 
 .consoleTab {
-    background: #0a1325;
-    border: 1px solid #223;
+    background: var(--theme-status-background);
+    border: 1px solid var(--theme-border);
     border-bottom: none;
-    color: var(--muted);
+    color: var(--theme-text-muted);
     padding: 6px 12px;
     border-radius: 8px 8px 0 0;
     cursor: pointer;
@@ -349,14 +343,14 @@
 }
 
 .consoleTab:hover {
-    background: #0d1b35;
-    color: var(--text);
+    background: var(--theme-hover-background);
+    color: var(--theme-text);
 }
 
 .consoleTab.active {
-    background: #000000;
-    color: var(--text);
-    border-color: #333;
+    background: var(--theme-active-background);
+    color: var(--theme-text);
+    border-color: var(--theme-active-border);
     position: relative;
     z-index: 1;
 }
@@ -382,53 +376,68 @@
 }
 
 :global(.dev) {
-    fill: #12254d;
-    stroke: #2d468b;
+    fill: var(--theme-device-background);
+    stroke: var(--theme-device-border);
     stroke-width: 2
 }
 
 :global(.dev.router) {
-    fill: #1b2f6b
+    fill: var(--theme-router-background)
 }
 
 :global(.dev.switch) {
-    fill: #1b365f
+    fill: var(--theme-switch-background)
 }
 
 :global(.dev.pc) {
-    fill: #173656
+    fill: var(--theme-pc-background)
 }
 
 :global(.label) {
-    fill: #d7e6ff;
+    fill: var(--theme-text);
     font-size: 14px;
     font-weight: 700;
     pointer-events: none;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    text-shadow: var(--theme-text-shadow);
 }
 
 :global(.port) {
     cursor: crosshair;
-    fill: #0f1c38;
-    stroke: #35579a;
+    fill: var(--theme-port-background);
+    stroke: var(--theme-port-border);
     stroke-width: 2;
     transition: all 0.2s ease;
 }
 
 :global(.port:hover) {
-    stroke: #78a7ff;
+    stroke: var(--theme-port-hover);
     stroke-width: 2.5;
-    fill: #1a2d52;
+    fill: var(--theme-port-hover-background);
     filter: drop-shadow(0 0 6px rgba(120, 167, 255, 0.6));
 }
 
 /* Puntero de cableado tipo NandGame */
 :global(.link.ghost) {
-    stroke-dasharray: 6 6;
+    stroke-dasharray: 8 4;
+    stroke: #00ff88;
+    stroke-width: 3;
+    opacity: 0.7;
+    animation: ghostPulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes ghostPulse {
+    from {
+        opacity: 0.5;
+        stroke-width: 2.5;
+    }
+    to {
+        opacity: 0.9;
+        stroke-width: 3.5;
+    }
 }
 
 :global(.link) {
-    stroke: #7fa6ff;
+    stroke: var(--theme-link);
     stroke-width: 3;
     transition: stroke-width 0.2s ease;
     cursor: pointer;
@@ -436,15 +445,14 @@
 
 :global(.link:hover) {
     stroke-width: 4;
-    filter: drop-shadow(0 0 6px currentColor);
 }
 
 :global(.link.ok) {
-    stroke: var(--ok)
+    stroke: var(--theme-success)
 }
 
 :global(.link.bad) {
-    stroke: var(--err)
+    stroke: var(--theme-error)
 }
 
 /* Endpoints de los cables */
@@ -454,7 +462,6 @@
 
 :global(.link-group:hover .link-endpoint) {
     r: 6;
-    filter: drop-shadow(0 0 4px currentColor);
 }
 
 :global(.link-group:hover .link) {
@@ -462,13 +469,13 @@
 }
 
 :global(.console-container) {
-    background: #000000;
-    border: 1px solid #333;
+    background: var(--theme-console-background);
+    border: 1px solid var(--theme-console-border);
     border-radius: 8px;
     font-family: 'Courier New', monospace;
     font-size: 12px;
     line-height: 1.4;
-    color: #ffffff;
+    color: var(--theme-console-text);
 }
 
 @media (min-width: 768px) {
@@ -483,8 +490,9 @@
     padding: 8px;
     white-space: pre-wrap;
     margin: 0;
-    background: transparent;
-    border: none;
+    background: var(--theme-console-box-background);
+    border: var(--theme-console-box-border);
+    border-radius: 4px;
 }
 
 @media (min-width: 768px) {
@@ -498,12 +506,12 @@
     display: flex;
     align-items: center;
     padding: 8px 12px;
-    border-top: 1px solid #333;
+    border-top: 1px solid var(--theme-console-border);
     background: transparent;
 }
 
 :global(.console-prompt) {
-    color: #ffffff;
+    color: var(--theme-console-text);
     margin-right: 4px;
     white-space: nowrap;
 }
@@ -512,7 +520,7 @@
     flex: 1;
     background: transparent;
     border: none;
-    color: #00ff00;
+    color: var(--theme-console-success);
     font-family: 'Courier New', monospace;
     font-size: 14px;
     outline: none;
@@ -520,59 +528,77 @@
 }
 
 :global(.console-command) {
-    color: #00ff00;
+    color: var(--theme-console-success);
 }
 
 :global(.console-response) {
-    color: #ffffff;
+    color: var(--theme-console-text);
 }
 
 :global(.console-error) {
-    color: #ff6666;
+    color: var(--theme-console-error);
 }
 
 :global(.console-success) {
-    color: #00ff00;
+    color: var(--theme-console-success);
     font-weight: bold;
 }
 
 :global(.console-flag) {
-    color: #ffd700;
+    color: #ffff00 !important;
     font-weight: bold;
-    background: rgba(255, 215, 0, 0.1);
+    background: linear-gradient(45deg, #ff6b35, #f7931e, #ffff00);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 0, 0.6));
+    animation: flagGlow 2s ease-in-out infinite alternate;
     padding: 2px 4px;
     border-radius: 3px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    margin: 2px 0;
+    display: inline-block;
+}
+
+@keyframes flagGlow {
+    from {
+        filter: drop-shadow(0 0 5px rgba(255, 255, 0, 0.4));
+    }
+    to {
+        filter: drop-shadow(0 0 15px rgba(255, 255, 0, 0.8));
+    }
 }
 
 /* Interface info under devices */
 :global(.iface-info) {
-    fill: #e8f2ff;
+    fill: var(--theme-text);
     font-size: 18px;
     font-weight: 600;
     pointer-events: none;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    text-shadow: var(--theme-text-shadow);
 }
 
 :global(.iface-info.gw) {
-    fill: #ffe4b3;
+    fill: var(--theme-text);
     font-size: 18px;
     font-weight: 600;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    text-shadow: var(--theme-text-shadow);
 }
 
 /* Port labels (fa0/0, fa0/1) */
 :global(.port-label) {
-    fill: #ffd700;
+    fill: var(--theme-text);
     font-size: 18px;
     font-weight: 700;
     pointer-events: none;
-    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.9);
+    text-shadow: var(--theme-text-shadow);
 }
 
 /* Port jack visual */
 :global(.port-jack) {
-    fill: #1a1a1a;
-    stroke: #555;
+    fill: var(--theme-port-jack-background);
+    stroke: var(--theme-port-jack-border);
     stroke-width: 0.5;
     pointer-events: none;
 }

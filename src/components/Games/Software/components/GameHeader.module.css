@@ -1,7 +1,7 @@
 .gameHeader {
-  background: rgba(30, 41, 59, 0.95);
+  background: var(--theme-card-background);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--theme-border);
   backdrop-filter: blur(10px);
   padding: 1.5rem;
   margin-bottom: 1rem;
@@ -23,7 +23,7 @@
 }
 
 .gameSubtitle {
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   margin: 0;
   font-size: 0.9rem;
 }
@@ -36,12 +36,12 @@
 .levelTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: white;
+  color: var(--theme-text);
   margin: 0 0 0.5rem 0;
 }
 
 .levelDescription {
-  color: #cbd5e1;
+  color: var(--theme-text-secondary);
   margin: 0 0 1rem 0;
   font-size: 0.9rem;
   line-height: 1.4;
@@ -49,7 +49,7 @@
 
 .progressBar {
   position: relative;
-  background: rgba(51, 65, 85, 0.8);
+  background: var(--theme-category-button);
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
@@ -57,14 +57,14 @@
 }
 
 .progressFill {
-  background: linear-gradient(90deg, #10b981, #3b82f6);
+  background: linear-gradient(90deg, var(--theme-success), var(--theme-primary));
   height: 100%;
   transition: width 0.3s ease;
 }
 
 .progressText {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
 }
 
 .controls {
@@ -76,10 +76,10 @@
 }
 
 .levelSelect {
-  background: rgba(51, 65, 85, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: var(--theme-category-button);
+  border: 1px solid var(--theme-border);
   border-radius: 6px;
-  color: white;
+  color: var(--theme-text);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   cursor: pointer;
@@ -87,28 +87,28 @@
 }
 
 .levelSelect:hover {
-  border-color: rgba(59, 130, 246, 0.5);
-  background: rgba(51, 65, 85, 1);
+  border-color: var(--theme-primary-transparent);
+  background: var(--theme-panel-background);
 }
 
 .levelSelect:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: var(--theme-primary);
+  box-shadow: 0 0 0 2px var(--theme-primary-transparent);
 }
 
 .deviceToggle {
   display: flex;
-  background: rgba(51, 65, 85, 0.8);
+  background: var(--theme-category-button);
   border-radius: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  border: 1px solid var(--theme-border);
   overflow: hidden;
 }
 
 .deviceButton {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   padding: 0.5rem 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -117,20 +117,20 @@
 }
 
 .deviceButton:hover {
-  background: rgba(59, 130, 246, 0.1);
-  color: white;
+  background: var(--theme-primary-transparent);
+  color: var(--theme-text);
 }
 
 .deviceButton.active {
-  background: #3b82f6;
+  background: var(--theme-primary);
   color: white;
 }
 
 .controlButton {
-  background: rgba(51, 65, 85, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: var(--theme-category-button);
+  border: 1px solid var(--theme-border);
   border-radius: 6px;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   padding: 0.5rem 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -139,43 +139,43 @@
 }
 
 .controlButton:hover {
-  border-color: rgba(59, 130, 246, 0.5);
-  color: white;
+  border-color: var(--theme-primary-transparent);
+  color: var(--theme-text);
 }
 
 .controlButton.active {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: #3b82f6;
-  color: white;
+  background: var(--theme-primary-transparent);
+  border-color: var(--theme-primary);
+  color: var(--theme-text);
 }
 
 .validateButton {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-color: rgba(16, 185, 129, 0.5);
+  background: var(--theme-success);
+  border-color: var(--theme-success-border);
   color: white;
 }
 
 .validateButton:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  border-color: #10b981;
+  background: var(--theme-success-hover);
+  border-color: var(--theme-success);
 }
 
 .resetButton {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: var(--theme-error);
+  border-color: var(--theme-error-border);
   color: white;
 }
 
 .resetButton:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  border-color: #ef4444;
+  background: var(--theme-error-hover);
+  border-color: var(--theme-error);
 }
 
 .attemptsCounter {
-  background: rgba(139, 92, 246, 0.2);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: var(--theme-primary-transparent);
+  border: 1px solid var(--theme-primary-border);
   border-radius: 6px;
-  color: #c4b5fd;
+  color: var(--theme-primary-text);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;

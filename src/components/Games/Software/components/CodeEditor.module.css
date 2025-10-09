@@ -7,18 +7,18 @@
 
 .header {
   padding: 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  border-bottom: 1px solid var(--theme-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(30, 41, 59, 0.5);
+  background: var(--theme-panel-background);
 }
 
 .title {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: white;
+  color: var(--theme-text);
 }
 
 .controls {
@@ -28,10 +28,10 @@
 }
 
 .toggleButton {
-  background: rgba(51, 65, 85, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: var(--theme-category-button);
+  border: 1px solid var(--theme-border);
   border-radius: 6px;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   padding: 0.5rem 0.75rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -40,19 +40,19 @@
 }
 
 .toggleButton:hover {
-  border-color: rgba(59, 130, 246, 0.5);
-  color: white;
+  border-color: var(--theme-primary-transparent);
+  color: var(--theme-text);
 }
 
 .toggleButton.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: var(--theme-primary);
+  border-color: var(--theme-primary);
   color: white;
 }
 
 .clearButton {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border: 1px solid rgba(239, 68, 68, 0.5);
+  background: var(--theme-error);
+  border: 1px solid var(--theme-error-border);
   border-radius: 6px;
   color: white;
   padding: 0.5rem 0.75rem;
@@ -62,13 +62,13 @@
 }
 
 .clearButton:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  background: var(--theme-error-hover);
 }
 
 .content {
   flex: 1;
   overflow: auto;
-  background: #0f172a;
+  background: var(--theme-background);
 }
 
 /* Vista de propiedades */
@@ -84,7 +84,7 @@
   justify-content: center;
   height: 200px;
   text-align: center;
-  color: #64748b;
+  color: var(--theme-text-muted);
 }
 
 .emptyIcon {
@@ -112,8 +112,8 @@
 }
 
 .selectorBlock {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--theme-card-background);
+  border: 1px solid var(--theme-border);
   border-radius: 8px;
   padding: 1rem;
   font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
@@ -127,18 +127,18 @@
 }
 
 .selectorName {
-  color: #60a5fa;
+  color: var(--theme-primary);
   font-weight: 600;
 }
 
 .selectorBrace {
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   font-weight: bold;
 }
 
 .propertiesList {
   padding-left: 1rem;
-  border-left: 2px solid rgba(59, 130, 246, 0.3);
+  border-left: 2px solid var(--theme-primary-transparent);
   margin-left: 0.5rem;
 }
 
@@ -153,24 +153,24 @@
 }
 
 .propertyRow:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: var(--theme-primary-transparent);
 }
 
 .property {
-  color: #fbbf24;
+  color: var(--theme-warning);
   font-weight: 500;
 }
 
 .value {
-  color: #34d399;
+  color: var(--theme-success);
   flex: 1;
 }
 
 .removePropertyButton {
-  background: rgba(239, 68, 68, 0.2);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--theme-error-background);
+  border: 1px solid var(--theme-error-border);
   border-radius: 4px;
-  color: #fca5a5;
+  color: var(--theme-error-text);
   padding: 0.25rem 0.5rem;
   cursor: pointer;
   font-size: 0.75rem;
@@ -183,7 +183,7 @@
 }
 
 .removePropertyButton:hover {
-  background: rgba(239, 68, 68, 0.4);
+  background: var(--theme-error-hover);
   color: white;
 }
 

@@ -25,6 +25,7 @@ export default function Topology({ topo, setTopo, ctx }) {
     let selectedPort = null // { nodeId, portIdx, element }
     let selectionIndicator = null
     let selectedLinkId = null // para borrar con tecla
+    let ghostCable = null // cable punteado que sigue el cursor
     
     // ---------- Estado local para drag de nodos ----------
     let draggingNode = null // { nodeId, offX, offY }
@@ -143,6 +144,44 @@ export default function Topology({ topo, setTopo, ctx }) {
       })
     }
 
+    // ---------- Funciones para cable fantasma ----------
+    const createGhostCable = (startX, startY) => {
+      if (ghostCable) return
+      
+      ghostCable = document.createElementNS(NS, 'path')
+      ghostCable.setAttribute('class', 'link ghost')
+      ghostCable.setAttribute('stroke-dasharray', '8 4')
+      ghostCable.setAttribute('stroke-width', '3')
+      ghostCable.setAttribute('stroke', '#00ff88')
+      ghostCable.setAttribute('fill', 'none')
+      ghostCable.setAttribute('opacity', '0.7')
+      ghostCable.style.pointerEvents = 'none'
+      
+      // Crear path curvo inicial
+      const d = `M ${startX} ${startY} Q ${startX + 50} ${startY - 30} ${startX + 100} ${startY}`
+      ghostCable.setAttribute('d', d)
+      
+      svg.appendChild(ghostCable)
+    }
+
+    const updateGhostCable = (startX, startY, endX, endY) => {
+      if (!ghostCable) return
+      
+      // Calcular punto de control para curva cuadrática
+      const midX = (startX + endX) / 2
+      const midY = (startY + endY) / 2 - Math.abs(endX - startX) * 0.2
+      
+      const d = `M ${startX} ${startY} Q ${midX} ${midY} ${endX} ${endY}`
+      ghostCable.setAttribute('d', d)
+    }
+
+    const removeGhostCable = () => {
+      if (ghostCable) {
+        ghostCable.remove()
+        ghostCable = null
+      }
+    }
+
     const successFeedback = (x, y) => {
       const flash = document.createElementNS(NS, 'circle')
       flash.setAttribute('cx', x)
@@ -167,11 +206,16 @@ export default function Topology({ topo, setTopo, ctx }) {
       linkGroup.setAttribute('id', 'link-group-' + L.id)
       linkGroup.setAttribute('class', 'link-group')
       
-      // Línea del cable
+      // Línea del cable (curva)
       const path = document.createElementNS(NS, 'path')
       path.setAttribute('id', 'link-' + L.id)
       path.setAttribute('class', 'link ' + (L.ok ? 'ok' : 'bad'))
-      path.setAttribute('d', `M ${L.a.x} ${L.a.y} L ${L.b.x} ${L.b.y}`)
+      
+      // Crear path curvo para el cable
+      const midX = (L.a.x + L.b.x) / 2
+      const midY = (L.a.y + L.b.y) / 2 - Math.abs(L.b.x - L.a.x) * 0.2
+      const d = `M ${L.a.x} ${L.a.y} Q ${midX} ${midY} ${L.b.x} ${L.b.y}`
+      path.setAttribute('d', d)
       
       // Círculo en el extremo A (origen)
       const circleA = document.createElementNS(NS, 'circle')
@@ -334,11 +378,13 @@ export default function Topology({ topo, setTopo, ctx }) {
               successFeedback(b.x, b.y)
               hideSelection()
               clearHighlights()
+              removeGhostCable()
               selectedPort = null
             } else {
               // Conexión inválida, deseleccionar
               hideSelection()
               clearHighlights()
+              removeGhostCable()
               selectedPort = null
             }
           } else {
@@ -347,6 +393,10 @@ export default function Topology({ topo, setTopo, ctx }) {
               selectedPort = { nodeId: n.id, portIdx: idx, element: c }
               showSelection(n.id, idx, c)
               highlightTargets(n.id, n.type)
+              
+              // Crear cable fantasma
+              const portPos = portAbs(n.id, idx)
+              createGhostCable(portPos.x, portPos.y)
             }
           }
         }
@@ -465,10 +515,13 @@ export default function Topology({ topo, setTopo, ctx }) {
           L.a.x = node.x + port.x
           L.a.y = node.y + port.y
           
-          // Actualizar visualmente el path del link
+          // Actualizar visualmente el path del link (curvo)
           const linkPath = document.getElementById('link-' + L.id)
           if (linkPath) {
-            linkPath.setAttribute('d', `M ${L.a.x} ${L.a.y} L ${L.b.x} ${L.b.y}`)
+            const midX = (L.a.x + L.b.x) / 2
+            const midY = (L.a.y + L.b.y) / 2 - Math.abs(L.b.x - L.a.x) * 0.2
+            const d = `M ${L.a.x} ${L.a.y} Q ${midX} ${midY} ${L.b.x} ${L.b.y}`
+            linkPath.setAttribute('d', d)
           }
           // Actualizar círculo del extremo A
           const circles = document.querySelectorAll(`#link-group-${L.id} .link-endpoint`)
@@ -482,10 +535,13 @@ export default function Topology({ topo, setTopo, ctx }) {
           L.b.x = node.x + port.x
           L.b.y = node.y + port.y
           
-          // Actualizar visualmente el path del link
+          // Actualizar visualmente el path del link (curvo)
           const linkPath = document.getElementById('link-' + L.id)
           if (linkPath) {
-            linkPath.setAttribute('d', `M ${L.a.x} ${L.a.y} L ${L.b.x} ${L.b.y}`)
+            const midX = (L.a.x + L.b.x) / 2
+            const midY = (L.a.y + L.b.y) / 2 - Math.abs(L.b.x - L.a.x) * 0.2
+            const d = `M ${L.a.x} ${L.a.y} Q ${midX} ${midY} ${L.b.x} ${L.b.y}`
+            linkPath.setAttribute('d', d)
           }
           // Actualizar círculo del extremo B
           const circles = document.querySelectorAll(`#link-group-${L.id} .link-endpoint`)
@@ -506,6 +562,16 @@ export default function Topology({ topo, setTopo, ctx }) {
     }
     
     const onMouseMove = (e) => {
+      // Actualizar cable fantasma si hay un puerto seleccionado
+      if (selectedPort && ghostCable) {
+        pt.x = e.clientX
+        pt.y = e.clientY
+        const grid = pt.matrixTransform(svg.getScreenCTM().inverse())
+        const startPos = portAbs(selectedPort.nodeId, selectedPort.portIdx)
+        updateGhostCable(startPos.x, startPos.y, grid.x, grid.y)
+      }
+      
+      // Lógica existente de drag de nodos
       if (!draggingNode) return
       e.preventDefault()
       pt.x = e.clientX
@@ -564,6 +630,7 @@ export default function Topology({ topo, setTopo, ctx }) {
       if (e.key === 'Escape') {
         hideSelection()
         clearHighlights()
+        removeGhostCable()
         selectedPort = null
       }
     }

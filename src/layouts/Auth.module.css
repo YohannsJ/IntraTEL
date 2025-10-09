@@ -1,4 +1,4 @@
-/* src/layouts/Auth.module.css - Paleta actualizada */
+/* src/layouts/Auth.module.css - Compatible con sistema de temas */
 
 .authContainer {
   display: flex;
@@ -6,12 +6,12 @@
   align-items: center;
   min-height: 100vh;
   padding: 2rem;
-  background: #0f1419;
+  background: var(--theme-background);
 }
 
 .authCard {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--theme-background-secondary);
+  border: 1px solid var(--theme-border);
   border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   padding: 2.5rem;
@@ -27,13 +27,13 @@
 .authTitle {
   font-size: 2rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin-bottom: 0.5rem;
 }
 
 .authSubtitle {
   font-size: 1rem;
-  color: #94a3b8;
+  color: var(--theme-text-muted);
   margin: 0;
   line-height: 1.5;
 }
@@ -53,32 +53,32 @@
 .formLabel {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--theme-text);
 }
 
 .formInput {
   padding: 0.875rem 1rem;
-  border: 1px solid #475569;
+  border: 1px solid var(--theme-border);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease;
-  background: #0f172a;
-  color: #f1f5f9;
+  background: var(--theme-surface);
+  color: var(--theme-text);
 }
 
 .formInput::placeholder {
-  color: #64748b;
+  color: var(--theme-text-muted);
 }
 
 .formInput:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--theme-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  background: #1e293b;
+  background: var(--theme-background-secondary);
 }
 
 .inputError {
-  border-color: #ef4444 !important;
+  border-color: var(--theme-error) !important;
 }
 
 .inputError:focus {
@@ -87,15 +87,15 @@
 
 .fieldError {
   font-size: 0.8rem;
-  color: #ef4444;
+  color: var(--theme-error);
   margin-top: 0.25rem;
   font-weight: 500;
 }
 
 .errorMessage {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  background: var(--theme-surface-secondary);
+  border: 1px solid var(--theme-border);
+  color: var(--theme-error);
   padding: 0.75rem;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -104,7 +104,7 @@
 }
 
 .submitButton {
-  background: #3b82f6;
+  background: var(--theme-primary);
   color: white;
   border: none;
   padding: 1rem;
@@ -121,13 +121,13 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: #2563eb;
+  background: var(--theme-primary-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .submitButton:disabled {
-  background: #475569;
+  background: var(--theme-border);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -148,19 +148,19 @@
   margin-top: 2rem;
   text-align: center;
   padding-top: 1rem;
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--theme-border);
 }
 
 .toggleText {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: var(--theme-text-muted);
   margin: 0;
 }
 
 .toggleButton {
   background: none;
   border: none;
-  color: #3b82f6;
+  color: var(--theme-primary);
   font-weight: 600;
   cursor: pointer;
   margin-left: 0.5rem;
@@ -170,7 +170,7 @@
 }
 
 .toggleButton:hover {
-  color: #2563eb;
+  color: var(--theme-primary-hover);
   text-decoration: underline;
 }
 

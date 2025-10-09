@@ -8,6 +8,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useData } from './context/DataContext';
 import { useAuth } from './context/AuthContext';
 import { ThemeToggle } from './components/etc/ThemeToggle';
+import LogoDidacticTel from './components/etc/LogoDidacticTel';
 import FlagSubmitter from './components/Flags/FlagSubmitter';
 import styles from './App.module.css';
 // import ThemeContext from './context/ThemeContext';
@@ -115,7 +116,9 @@ const AppLayout = () => {
   return (
     <div className={styles.appContainer} onClick={handleNavClick}>
       <nav className={`${styles.navbar} ${!navbarVisible ? styles.navbarHidden : ''}`}>
-        <Link to="/" className={styles.logo}><img src={`intratel-logo-${useTheme().currentTheme}.svg`} alt="" /></Link>
+        <Link to="/" className={styles.logo}>
+          <LogoDidacticTel width="180" height="40" />
+        </Link>
         
         {/* Mobile menu button */}
         <button 
@@ -186,14 +189,14 @@ const AppLayout = () => {
                     </Link>
                   </>
                 )}
-                {/* <div className={styles.dropdownDivider}></div>
+                <div className={styles.dropdownDivider}></div>
                 <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                    <span>Tema</span>
+                    <span>🎨 Tema</span>
                     <ThemeToggle />
                   </div>
                 </div>
-                <div className={styles.dropdownDivider}></div> */}
+                <div className={styles.dropdownDivider}></div>
                 <button 
                   onClick={() => { handleLogout(); handleUserMenuSelection(); }}
                   className={`${styles.dropdownItem} ${styles.logoutDropdownButton}`}
@@ -247,13 +250,13 @@ const AppLayout = () => {
                     </Link>
                   </>
                 )}
-                {/*<div className={styles.dropdownDivider}></div>
+                <div className={styles.dropdownDivider}></div>
                 <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
-                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
                     <span>🎨 Tema</span>
                     <ThemeToggle />
-                  </div> 
-                </div>*/}
+                  </div>
+                </div>
                 <div className={styles.dropdownDivider}></div>
                 <button 
                   onClick={() => { handleLogout(); handleUserMenuSelection(); }}
@@ -265,9 +268,12 @@ const AppLayout = () => {
             </div>
           ) : (
             location.pathname !== '/auth' && (
-              <Link to="/auth" className={styles.loginButton}>
-                Iniciar Sesión
-              </Link>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <ThemeToggle />
+                <Link to="/auth" className={styles.loginButton}>
+                  Iniciar Sesión
+                </Link>
+              </div>
             )
           )}
         </div>

@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../../context/ThemeContext';
 import styles from './Network.module.css';
 import Topology from './components/Topology.jsx';
 import ConsoleWithTabs from './components/ConsoleWithTabs.jsx';
@@ -9,6 +10,7 @@ import Footer from '../../Footer/Footer.jsx';
 
 export default function Network(){
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [topo, setTopo] = useState(createInitialTopology());
   const [status, setStatus] = useState('');
   const [flags, setFlags] = useState([]); // Array de banderas conseguidas

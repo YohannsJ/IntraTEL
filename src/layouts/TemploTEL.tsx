@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { getApiUrl, getAuthHeaders } from "../config/environment";
 import {
   TemploTelematica,
@@ -40,6 +41,7 @@ const PILLAR_REQUIREMENTS = {
 
 export default function HomeHero() {
   const { user, isAuthenticated } = useAuth();
+  const { currentTheme, theme } = useTheme();
   const [states, setStates] = useState<PillarState[]>([0, 0, 0, 0, 0]);
   const [userFlags, setUserFlags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -129,7 +131,7 @@ export default function HomeHero() {
 
   if (!isAuthenticated) {
     return (
-      <div style={{ minHeight: "100vh", backgroundColor: "#0a0f14", overflowX: "hidden" }}>
+      <div style={{ minHeight: "100vh", backgroundColor: theme.background, overflowX: "hidden" }}>
         {/* Layout de 3 columnas horizontal - Forzado con Flexbox */}
         <div style={{ 
           display: "flex", 
@@ -146,8 +148,8 @@ export default function HomeHero() {
             display: "flex",
             alignItems: "center", 
             justifyContent: "center",
-            background: "linear-gradient(to bottom, #0a0f14, #151a24)",
-            borderRight: "1px solid #374151",
+            background: `linear-gradient(to bottom, ${theme.background}, ${theme.backgroundSecondary})`,
+            borderRight: `1px solid ${theme.border}`,
             minHeight: "0",
             overflow: "hidden"
           }}>
@@ -184,12 +186,12 @@ export default function HomeHero() {
                 />
               </div>
             </div>
-            <div className="mt-4 md:mt-8 text-center text-white max-w-2xl px-4">
+            <div className="mt-4 md:mt-8 text-center max-w-2xl px-4" style={{ color: theme.text }}>
               <h2 className="text-lg md:text-2xl font-bold mb-2 md:mb-4">🏛️ Templo de Telemática Destruido</h2>
-              <p className="text-gray-400 text-sm md:text-lg mb-2">
+              <p className="text-sm md:text-lg mb-2" style={{ color: theme.textSecondary }}>
                 Los pila-res del conocimiento han caído en la oscuridad...
               </p>
-              <p className="text-gray-500 text-xs md:text-base">
+              <p className="text-xs md:text-base" style={{ color: theme.textMuted }}>
                 Inicia sesión y completa los desafíos para restaurar cada pilar y reconstruir el templo
               </p>
             </div>
@@ -201,8 +203,8 @@ export default function HomeHero() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "linear-gradient(to bottom, #0a0f14, #151a24)",
-            borderLeft: "1px solid #374151",
+            background: `linear-gradient(to bottom, ${theme.background}, ${theme.backgroundSecondary})`,
+            borderLeft: `1px solid ${theme.border}`,
             minHeight: "0",
             overflow: "hidden"
           }}>
@@ -211,15 +213,22 @@ export default function HomeHero() {
         </div>
 
         {/* Redes sociales y web móvil - Footer para usuarios no autenticados */}
-        <footer className="md:hidden border-t border-gray-800 bg-gray-900 bg-opacity-50 backdrop-blur-sm p-6">
+        <footer className="md:hidden border-t backdrop-blur-sm p-6" style={{ 
+          borderColor: theme.border,
+          backgroundColor: theme.backgroundSecondary,
+          opacity: 0.9
+        }}>
           <div className="max-w-md mx-auto">
-            <h3 className="text-white font-bold text-center mb-4">Visita Telemática USM</h3>
+            <h3 className="font-bold text-center mb-4" style={{ color: theme.text }}>Visita Telemática USM</h3>
             <div className="flex flex-col gap-4 mb-6">
               <a 
                 href="https://telematica.usm.cl/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg"
+                className="flex items-center justify-center gap-3 text-white px-6 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+                style={{ 
+                  background: `linear-gradient(to right, ${theme.primary}, ${theme.primaryHover})`
+                }}
               >
                 <span className="text-xl">🌐</span>
                 <span className="font-semibold">Página Web Telemática</span>
@@ -228,7 +237,10 @@ export default function HomeHero() {
                 href="https://www.instagram.com/telematicausm/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-pink-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
+                className="flex items-center justify-center gap-3 text-white px-6 py-3 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+                style={{ 
+                  background: `linear-gradient(to right, ${theme.secondary}, ${theme.secondaryHover})`
+                }}
               >
                 <span className="text-xl">📱</span>
                 <span className="font-semibold">Instagram @telematicausm</span>
@@ -293,14 +305,14 @@ export default function HomeHero() {
 
   if (loading) {
     return (
-      <div className="min-h-screen grid place-items-center bg-[#0a0f14] p-8">
-        <div className="text-white">Cargando tu progreso...</div>
+      <div className="min-h-screen grid place-items-center p-8" style={{ backgroundColor: theme.background }}>
+        <div style={{ color: theme.text }}>Cargando tu progreso...</div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0a0f14", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: theme.background, overflowX: "hidden" }}>
       {/* Layout de 3 columnas horizontal - Forzado con Flexbox */}
       <div style={{ 
         display: "flex", 
@@ -316,7 +328,7 @@ export default function HomeHero() {
           alignItems: "center", 
           justifyContent: "center",
           // background: "linear-gradient(to bottom, #0a0f14, #151a24)",
-          borderRight: "1px solid #374151",
+          borderRight: `1px solid ${theme.border}`,
           minHeight: "0",
           overflow: "hidden"
         }}>
@@ -385,7 +397,7 @@ export default function HomeHero() {
                   >
                     {showProgress && (
                       <div className="text-center">
-                        <span className="text-sm text-red-400 font-semibold">
+                        <span className="text-sm font-semibold" style={{ color: theme.error }}>
                           {completedFlags}/{totalFlags} flags
                         </span>
                       </div>
@@ -398,9 +410,9 @@ export default function HomeHero() {
           </div>
 
           {/* Leyenda */}
-          <div className="mt-4 md:mt-8 text-center text-gray-400 text-sm max-w-2xl mx-auto px-4">
+          <div className="mt-4 md:mt-8 text-center text-sm max-w-2xl mx-auto px-4" style={{ color: theme.textSecondary }}>
             <p className="mb-2">Los pilares se encienden automáticamente al completar sus flags requeridas</p>
-            <p className="text-xs text-gray-500">Completa desafíos en cada juego para restaurar el Templo de Telemática</p>
+            <p className="text-xs" style={{ color: theme.textMuted }}>Completa desafíos en cada juego para restaurar el Templo de Telemática</p>
           </div>
         </div>
 
@@ -411,7 +423,7 @@ export default function HomeHero() {
           alignItems: "center",
           justifyContent: "center",
           // background: "linear-gradient(to bottom, #0a0f14, #151a24)",
-          borderLeft: "1px solid #374151",
+          borderLeft: `1px solid ${theme.border}`,
           minHeight: "0",
           overflow: "hidden"
         }}>
@@ -420,9 +432,13 @@ export default function HomeHero() {
       </div>
 
       {/* Redes sociales y web móvil - Footer */}
-      <footer className="md:hidden border-t border-gray-800 bg-gray-900 bg-opacity-50 backdrop-blur-sm p-6">
+      <footer className="md:hidden border-t backdrop-blur-sm p-6" style={{ 
+        borderColor: theme.border,
+        backgroundColor: theme.backgroundSecondary,
+        opacity: 0.9
+      }}>
         <div className="max-w-md mx-auto">
-          <h3 className="text-white font-bold text-center mb-4">Visita Telemática USM</h3>
+          <h3 className="font-bold text-center mb-4" style={{ color: theme.text }}>Visita Telemática USM</h3>
           <div className="flex flex-col gap-4 mb-6">
             <a 
               href="https://telematica.usm.cl/" 

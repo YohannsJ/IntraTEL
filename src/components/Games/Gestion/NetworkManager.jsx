@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import styles from './NetworkManager.module.css';
 import telixImage from '../../../assets/telix.png';
 import { getApiUrl, getAuthHeaders } from '../../../config/environment';
+import { useTheme } from '../../../context/ThemeContext';
 
 const NetworkManager = () => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [stability, setStability] = useState(100);
   const [score, setScore] = useState(0);
   const [currentProblem, setCurrentProblem] = useState(null);

@@ -64,8 +64,16 @@
 }
 
 .logo{
-  /* height: -5x; */
+  height: 40px;
   width: auto;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
 }
 
 .navBrand:hover {
@@ -226,7 +234,8 @@
 .dropdownItem {
   display: block;
   padding: 0.75rem 1rem;
-  color: rgba(255, 255, 255, 0.95);
+  /* color: rgba(255, 255, 255, 0.95); */
+  color:var(--theme-text);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
@@ -656,7 +665,7 @@
   }
   
   .logo {
-    height: 30px;
+    height: 35px;
   }
   
   .navLinks {
@@ -807,7 +816,7 @@
   }
   
   .logo {
-    height: 25px;
+    height: 30px;
   }
   
   .navLink {

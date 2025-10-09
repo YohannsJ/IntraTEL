@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer/Footer';
 import styles from './LandingPage.module.css';
 
 const LandingPage = () => {
   const { isAuthenticated } = useAuth();
+  const { currentTheme } = useTheme();
   const navigate = useNavigate();
   const [currentFeature, setCurrentFeature] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -90,7 +92,8 @@ const LandingPage = () => {
             className={styles.parallaxLayer}
             style={{ 
               transform: reduceMotion ? 'none' : `translateY(${scrollY * 0.5}px)`,
-              backgroundImage: `url('/BackgroundTEL.png')`
+              backgroundImage: currentTheme === 'dark' ? `url('/BackgroundTELDark.png')` : `url('/BackgroundTELLight.png')`,
+              // filter: currentTheme === 'light' ? 'invert(100%)' : 'none'
             }}
           />
           <div 

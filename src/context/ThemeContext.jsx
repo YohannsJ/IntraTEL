@@ -62,27 +62,27 @@ const themes = {
   },
   
   light: {
-    // Colores principales
-    primary: '#2563eb',
-    primaryHover: '#1d4ed8',
-    secondary: '#059669',
-    secondaryHover: '#047857',
+    // Colores principales - mejorados para mejor contraste
+    primary: '#1d4ed8',
+    primaryHover: '#1e40af',
+    secondary: '#047857',
+    secondaryHover: '#065f46',
     
-    // Fondos
+    // Fondos - tonos más claros y contrastantes
     background: '#ffffff',
     backgroundSecondary: '#f8fafc',
     backgroundTertiary: '#e2e8f0',
-    surface: '#ffffff',
-    surfaceSecondary: '#f1f5f9',
+    surface: '#f1f5f9',
+    surfaceSecondary: '#e2e8f0',
     
-    // Textos
+    // Textos - mejor contraste
     text: '#0f172a',
-    textSecondary: '#475569',
+    textSecondary: '#334155',
     textMuted: '#64748b',
     
-    // Bordes
-    border: '#d1d5db',
-    borderSecondary: '#e5e7eb',
+    // Bordes - más visibles
+    border: '#cbd5e1',
+    borderSecondary: '#e2e8f0',
     borderAccent: '#94a3b8',
     
     // Estados
@@ -91,7 +91,7 @@ const themes = {
     successDark: '#166534',
     warning: '#d97706',
     error: '#dc2626',
-    info: '#2563eb',
+    info: '#1d4ed8',
     
     // Componentes específicos
     circuit: {
@@ -197,6 +197,43 @@ export const ThemeProvider = ({ children }) => {
     root.style.setProperty('--theme-table-highlight-high', theme.table.highlightHigh);
     root.style.setProperty('--theme-table-highlight-low', theme.table.highlightLow);
     root.style.setProperty('--theme-table-highlight-undefined', theme.table.highlightUndefined);
+    
+    // Variables específicas del NetworkManager (Gestión)
+    root.style.setProperty('--theme-option-background', currentTheme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)');
+    root.style.setProperty('--theme-option-border', currentTheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)');
+    root.style.setProperty('--theme-option-hover', currentTheme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)');
+    root.style.setProperty('--theme-success-background', currentTheme === 'dark' ? '#064e3b' : '#C8E6C9');
+    root.style.setProperty('--theme-success-text', currentTheme === 'dark' ? '#10b981' : '#1B5E20');
+    root.style.setProperty('--theme-success-border', currentTheme === 'dark' ? 'rgba(16,185,129,0.7)' : 'rgba(46,125,50,0.7)');
+    root.style.setProperty('--theme-success-shadow', currentTheme === 'dark' ? 'rgba(16,185,129,0.12)' : 'rgba(76,175,80,0.12)');
+    root.style.setProperty('--theme-error-background', currentTheme === 'dark' ? '#7f1d1d' : '#FFCDD2');
+    root.style.setProperty('--theme-error-text', currentTheme === 'dark' ? '#ef4444' : '#B71C1C');
+    root.style.setProperty('--theme-error-border', currentTheme === 'dark' ? 'rgba(239,68,68,0.7)' : 'rgba(211,47,47,0.7)');
+    root.style.setProperty('--theme-error-shadow', currentTheme === 'dark' ? 'rgba(239,68,68,0.12)' : 'rgba(244,67,54,0.12)');
+    root.style.setProperty('--theme-input-background', currentTheme === 'dark' ? '#1e293b' : '#ffffff');
+    root.style.setProperty('--theme-input-text', currentTheme === 'dark' ? '#f1f5f9' : '#0f172a');
+    root.style.setProperty('--theme-option-dropdown-background', currentTheme === 'dark' ? '#1e293b' : '#ffffff');
+    root.style.setProperty('--theme-option-dropdown-text', currentTheme === 'dark' ? '#f1f5f9' : '#0f172a');
+    
+    // Variables específicas del Software (CSS Game)
+    root.style.setProperty('--theme-card-background', currentTheme === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(248, 250, 252, 0.9)');
+    root.style.setProperty('--theme-panel-background', currentTheme === 'dark' ? 'rgba(30, 41, 59, 0.5)' : 'rgba(241, 245, 249, 0.8)');
+    root.style.setProperty('--theme-category-button', currentTheme === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(226, 232, 240, 0.8)');
+    root.style.setProperty('--theme-primary-transparent', currentTheme === 'dark' ? 'rgba(59, 130, 246, 0.5)' : 'rgba(29, 78, 216, 0.5)');
+    root.style.setProperty('--theme-error-hover', currentTheme === 'dark' ? '#dc2626' : '#b91c1c');
+    root.style.setProperty('--theme-success-hover', currentTheme === 'dark' ? '#059669' : '#047857');
+    root.style.setProperty('--theme-success-border', currentTheme === 'dark' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(5, 150, 105, 0.5)');
+    root.style.setProperty('--theme-error-border', currentTheme === 'dark' ? 'rgba(239, 68, 68, 0.5)' : 'rgba(220, 38, 38, 0.5)');
+    root.style.setProperty('--theme-primary-border', currentTheme === 'dark' ? 'rgba(139, 92, 246, 0.3)' : 'rgba(99, 102, 241, 0.3)');
+    root.style.setProperty('--theme-primary-text', currentTheme === 'dark' ? '#c4b5fd' : '#6366f1');
+    root.style.setProperty('--theme-text-muted', currentTheme === 'dark' ? '#64748b' : '#9ca3af');
+    
+    // Variables para el juego de Network - sombras de texto dinámicas
+    root.style.setProperty('--theme-text-shadow', currentTheme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.8)' : 'none');
+    
+    // Variables para consola del juego de Network
+    root.style.setProperty('--theme-console-box-background', currentTheme === 'dark' ? '#000000' : '#ffffff');
+    root.style.setProperty('--theme-console-box-border', currentTheme === 'dark' ? '1px solid #404040' : '1px solid #e5e7eb');
     
   }, [currentTheme]);
   

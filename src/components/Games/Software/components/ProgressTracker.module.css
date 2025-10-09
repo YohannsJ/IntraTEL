@@ -1,22 +1,23 @@
 .progressTracker {
-  background: rgba(30, 41, 59, 0.8);
+  background: var(--theme-card-background);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--theme-border);
   overflow: hidden;
   height: fit-content;
+  min-height: 200px; /* Reducida ya que no tenemos logros */
 }
 
 .header {
   padding: 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(30, 41, 59, 0.5);
+  border-bottom: 1px solid var(--theme-border);
+  background: var(--theme-panel-background);
 }
 
 .title {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: white;
+  color: var(--theme-text);
 }
 
 .stats {
@@ -33,12 +34,12 @@
 }
 
 .statLabel {
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   font-size: 0.875rem;
 }
 
 .statValue {
-  color: white;
+  color: var(--theme-text);
   font-weight: 600;
   font-size: 0.875rem;
   display: flex;
@@ -52,7 +53,7 @@
 
 .progressBar {
   position: relative;
-  background: rgba(51, 65, 85, 0.8);
+  background: var(--theme-category-button);
   height: 8px;
   margin: 0 1rem 1rem 1rem;
   border-radius: 4px;
@@ -60,7 +61,7 @@
 }
 
 .progressFill {
-  background: linear-gradient(90deg, #10b981, #3b82f6);
+  background: linear-gradient(90deg, var(--theme-success), var(--theme-primary));
   height: 100%;
   transition: width 0.5s ease;
 }
@@ -70,7 +71,7 @@
   top: -20px;
   right: 0;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   font-weight: 600;
 }
 
@@ -79,92 +80,43 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
   padding: 1rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(15, 23, 42, 0.5);
+  border-top: 1px solid var(--theme-border);
+  background: var(--theme-panel-background);
 }
 
 .levelDot {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(51, 65, 85, 0.8);
-  border: 2px solid rgba(148, 163, 184, 0.3);
+  background: var(--theme-category-button);
+  border: 2px solid var(--theme-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .levelDot:hover {
-  border-color: rgba(59, 130, 246, 0.5);
-  background: rgba(59, 130, 246, 0.1);
-  color: white;
+  border-color: var(--theme-primary-transparent);
+  background: var(--theme-primary-transparent);
+  color: var(--theme-text);
 }
 
 .levelDot.completed {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-color: #10b981;
+  background: linear-gradient(135deg, var(--theme-success), var(--theme-success-hover));
+  border-color: var(--theme-success);
   color: white;
 }
 
 .levelDot.current {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-primary));
+  border-color: var(--theme-primary);
   color: white;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-}
-
-.achievements {
-  border-top: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(139, 92, 246, 0.05);
-  padding: 1rem;
-}
-
-.achievementHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.achievementIcon {
-  font-size: 1.125rem;
-}
-
-.achievementTitle {
-  font-weight: 600;
-  color: #a78bfa;
-  font-size: 0.875rem;
-}
-
-.achievementsList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.achievement {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background: rgba(139, 92, 246, 0.1);
-  border-radius: 6px;
-  border: 1px solid rgba(139, 92, 246, 0.2);
-}
-
-.achievementEmoji {
-  font-size: 1rem;
-}
-
-.achievementText {
-  color: #cbd5e1;
-  font-size: 0.75rem;
-  font-weight: 500;
+  box-shadow: 0 0 0 2px var(--theme-primary-transparent);
 }
 
 /* Responsive */

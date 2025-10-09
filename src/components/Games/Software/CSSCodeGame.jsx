@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../../../context/ThemeContext';
 import { CodeEditor } from './components/CodeEditor.jsx';
 import { DevicePreview } from './components/DevicePreview.jsx';
 import { ElementLibrary } from './components/ElementLibrary.jsx';
@@ -42,6 +43,7 @@ const createInitialState = () => ({
 
 export default function CSSCodeGame() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   // Cargar estado guardado o crear inicial
   const [gameState, setGameState] = useState(() => {
     const savedState = loadGameState();
@@ -215,6 +217,7 @@ export default function CSSCodeGame() {
             completedLevels={completedLevels}
             totalLevels={LEVELS.length}
             attempts={attempts}
+            onLevelSelect={changeLevel}
           />
         </div>
 
@@ -248,7 +251,7 @@ export default function CSSCodeGame() {
         borderTop: '1px solid rgba(0,0,0,0.1)'
       }}>
         <button 
-          onClick={() => navigate('/Gestion')}
+          onClick={() => navigate('/Datos')}
           style={{
             padding: '10px 20px',
             backgroundColor: '#2196F3',

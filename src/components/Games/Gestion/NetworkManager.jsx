@@ -579,8 +579,8 @@ const NetworkManager = () => {
       title: '¡Mensaje urgente!',
       body: "Tu archivo está en peligro. Haz click aquí para arreglarlo.",
       options: [
-  { text: 'Cerrar la ventana', correct: true },
-        { text: 'Abrir el archivo', correct: false, explanation: 'Abrir archivos raros puede traer virus. Mejor cerrarlo y avisar.' }
+        { text: 'Cerrar ventana', correct: true },
+        { text: 'Abrir el archivo', correct: false, explanation: 'Abrir archivos raros puede traer virus. Mejor cerrarlo y analizar el equipo.' }
       ]
     },
     {
@@ -588,20 +588,19 @@ const NetworkManager = () => {
       title: '¡Actualización urgente!',
       body: 'Haz click para instalar un parche ahora mismo.',
       options: [
-  { text: 'Ignorar y cerrar', correct: true },
-        { text: 'Instalar ahora', correct: false, explanation: 'Instalar sin permiso puede infectar el equipo.' },
-        { text: 'Preguntar en chat', correct: false, explanation: 'El chat no es seguro para esto; mejor avisar a un técnico.' }
+        { text: 'Buscar actualizaciones desde el sistema operativo', correct: true, explanation: 'Correcto. Las actualizaciones siempre deben gestionarse desde el panel de control o la configuración del sistema, nunca desde un popup sospechoso.' },
+        { text: 'Instalar ahora', correct: false, explanation: 'Pulsar "Instalar" en un popup desconocido puede instalar malware. Es una trampa común.' },
+        { text: 'Ignorar y cerrar', correct: false, explanation: 'Aunque cerrar es mejor que instalar, lo ideal es verificar por tu cuenta si hay actualizaciones reales.' }
       ]
-    }
-    ,
+    },
     {
       id: 'm3',
       title: '¡Sorpresa gratis!',
       body: 'Has ganado un premio. Haz click para reclamar.',
       options: [
-  { text: 'Cerrar', correct: true },
-        { text: 'Reclamar ahora', correct: false, explanation: 'Reclamar puede descargar software malicioso.' },
-        { text: 'Compartir enlace', correct: false, explanation: 'Compartir enlaces sospechosos propaga el problema.' }
+        { text: 'Cerrar', correct: true },
+        { text: 'Reclamar ahora', correct: false, explanation: 'Reclamar premios inesperados puede descargar software malicioso o robar tus datos.' },
+        { text: 'Compartir enlace', correct: false, explanation: 'Compartir enlaces sospechosos solo ayuda a que la estafa se propague a más personas.' }
       ]
     },
     {
@@ -609,26 +608,15 @@ const NetworkManager = () => {
       title: '¡Alarma del sistema!',
       body: 'Tu equipo tiene problemas, haz click para arreglar.',
       options: [
-  { text: 'Cerrar y avisar', correct: true },
-        { text: 'Seguir las instrucciones', correct: false, explanation: 'Seguir instrucciones de popups puede ser peligroso.' },
-        { text: 'Ignorar', correct: false, explanation: 'Ignorar sin avisar puede empeorar el problema.' }
+        { text: 'Cerrar y ejecutar análisis de antivirus', correct: true, explanation: '¡Bien hecho! Las alarmas falsas son una táctica para asustarte. Lo mejor es cerrar y usar tu propio antivirus para verificar.' },
+        { text: 'Seguir instrucciones', correct: false, explanation: 'Nunca sigas las instrucciones de un popup de alarma. Suelen guiarte para que instales malware.' },
+        { text: 'Reiniciar', correct: false, explanation: 'Reiniciar no elimina el posible malware y podrías perder la oportunidad de analizar qué causó la alerta.' }
       ]
     }
   ];
 
-  // Añadir más variedad: popups legítimos que requieren distinta respuesta
-  const mixedPopupPool = malwareProblems.map(p => ({ ...p, type: 'malicious' })).concat([
-    {
-      id: 'l1',
-      title: 'Recordatorio del profesor',
-      body: 'Se ha publicado el material de clase. ¿Quieres abrirlo?',
-      options: [
-        { text: 'Abrir material', correct: true },
-        { text: 'Ignorar', correct: false, explanation: 'Podrías perder información importante.' }
-      ],
-      type: 'legit'
-    }
-  ]);
+  // Pool de popups: ahora solo contiene los maliciosos.
+  const mixedPopupPool = malwareProblems.map(p => ({ ...p, type: 'malicious' }));
 
   const showMalware = () => {
     if (!gameStarted || malwareActive || gameOver || showExplanation) return;
@@ -1538,7 +1526,7 @@ const NetworkManager = () => {
             <div className={`${styles.popupMascotBubble} ${styles.belowPopup}`}>
               <div className={styles.bubbleHeader}>
                 <img src={telixImage} alt={mascotName} className={styles.mascotImage} />
-                <div style={{ fontWeight: 700, color: '#0b2340' }}>{mascotName}</div>
+                <div style={{ fontWeight: 700, color: '#f5f7fa' }}>{mascotName}</div>
                 {/* thinkingDots intentionally not shown for popup explanations to avoid 'loading' look */}
                 <button className={styles.bubbleClose} onClick={closePopupMascotExplain}>✖</button>
               </div>

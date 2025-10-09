@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './NetworkManager.module.css';
 import telixImage from '../../../assets/telix.png';
+import { getApiUrl, getAuthHeaders } from '../../../config/environment';
+import { useTheme } from '../../../context/ThemeContext';
 
 const NetworkManager = () => {
+  const navigate = useNavigate();
+  const { theme } = useTheme();
   const [stability, setStability] = useState(100);
   const [score, setScore] = useState(0);
   const [currentProblem, setCurrentProblem] = useState(null);
@@ -15,6 +20,10 @@ const NetworkManager = () => {
   // Las pistas ofrecen un consejo específico por pregunta y NO penalizan estabilidad.
   const [hintCount, setHintCount] = useState(1);
   const [explanationIsHint, setExplanationIsHint] = useState(false);
+  
+  // Estado para verificar si el usuario ya tiene una bandera del juego de gestión
+  const [hasGestionFlag, setHasGestionFlag] = useState(false);
+  const [checkingFlags, setCheckingFlags] = useState(true);
 
   // Problemas del juego definidos localmente
   const gameProblems = [
@@ -130,14 +139,14 @@ const NetworkManager = () => {
   },
     {
       id: 12,
-      description: "Los métricas de red muestran pérdida de paquetes del 2% en enlaces críticos durante horas pico. ¿Cuál es la estrategia óptima?",
-      options: [
-        { text: "Reducir el tamaño de todos los paquetes a la mitad", correct: false, explanation: "Reducir tamaño de paquetes aumenta overhead sin resolver la congestión." },
-        { text: "Implementar buffer dinámico y reenvío adaptativo", correct: true },
-        { text: "Eliminar el tráfico de menor prioridad permanentemente", correct: false, explanation: "Eliminar tráfico permanentemente afecta funcionalidades del sistema." }
-      ],
-      explanation: "Los buffers dinámicos y reenvío adaptativo manejan eficientemente la congestión temporal."
-    },
+      description: "Estás jugando en línea y un desconocido te ofrece 'monedas gratis' si le das tu usuario y contraseña. ¿Qué deberías hacer?",
+  options: [
+    { text: "Confiar y darle los datos rápido antes de que se acabe la oferta", correct: false, explanation: "Es una estafa común para robar cuentas o información personal." },
+    { text: "No compartir tus datos y reportar la cuenta sospechosa", correct: true },
+    { text: "Compartir la contraseña solo si promete más monedas después", correct: false, explanation: "Ningún juego legítimo pedirá tus credenciales fuera de su sistema oficial." }
+  ],
+  explanation: "Las estafas dentro de juegos son comunes. Nunca compartas tu contraseña ni datos personales, ni siquiera por recompensas."
+},
     {
       id: 13,
       description: "Si una aplicación comienza a pedir acceso a datos que no necesita, ¿qué deberías hacer?",
@@ -163,7 +172,7 @@ const NetworkManager = () => {
       description: "Alguien doxea tu IP privada (192.168.x.x). ¿Qué deberías hacer?",
       options: [
         { text: "Apago el internet de mi casa, ya que me pueden hackear en cualquier momento", correct: false, explanation: "No es necesario desconectar el internet, ya que la IP privada no es accesible desde fuera." },
-        { text: "Nada, por que la ip privada no se muestra en internet, es no es accesible desde afuera", correct: true },
+        { text: "Nada, porque la IP privada no se muestra en internet, no es accesible desde afuera", correct: true },
         { text: "Llamar a la policia o a la PDI", correct: false, explanation: "Llamar a la policía no es necesario, ya que no hay un delito en curso." }
       ],
       explanation: "La IP privada no es accesible desde internet, por lo que no hay riesgo inmediato."
@@ -406,6 +415,45 @@ const NetworkManager = () => {
     return undefined;
   }, [showWelcome]);
 
+  // Verificar si el usuario ya tiene una bandera del juego de gestión
+  useEffect(() => {
+    const checkUserFlags = async () => {
+      try {
+        const response = await fetch(getApiUrl('/flags/user'), {
+          headers: getAuthHeaders()
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const userFlags = data.data || [];
+          
+          // Códigos de las 3 banderas del juego de gestión
+          const gestionFlagCodes = [
+            'D1FT3L{G3ST10N_M43STR0_D3_R3D_0R0}',       // Oro
+            'D1FT3L{G3ST10N_3XP3RT0_3N_R3D_PL4T4}',     // Plata
+            'D1FT3L{G3ST10N_4N4L1ST4_D3_R3D_BR0NC3}'    // Bronce
+          ];
+          
+          // Verificar si el usuario tiene alguna de estas banderas
+          const hasAnyGestionFlag = userFlags.some(flag => 
+            gestionFlagCodes.includes(flag.code)
+          );
+          
+          if (hasAnyGestionFlag) {
+            setHasGestionFlag(true);
+            setHintCount(0); // Bloquear pistas
+          }
+        }
+      } catch (error) {
+        console.error('Error verificando flags del usuario:', error);
+      } finally {
+        setCheckingFlags(false);
+      }
+    };
+
+    checkUserFlags();
+  }, []);
+
   // disable page scroll while tutorial panel is visible and show a tutorial-specific mascot tip
   useEffect(() => {
     if (showTutorial) {
@@ -531,8 +579,8 @@ const NetworkManager = () => {
       title: '¡Mensaje urgente!',
       body: "Tu archivo está en peligro. Haz click aquí para arreglarlo.",
       options: [
-  { text: 'Cerrar la ventana', correct: true },
-        { text: 'Abrir el archivo', correct: false, explanation: 'Abrir archivos raros puede traer virus. Mejor cerrarlo y avisar.' }
+        { text: 'Cerrar ventana', correct: true },
+        { text: 'Abrir el archivo', correct: false, explanation: 'Abrir archivos raros puede traer virus. Mejor cerrarlo y analizar el equipo.' }
       ]
     },
     {
@@ -540,20 +588,19 @@ const NetworkManager = () => {
       title: '¡Actualización urgente!',
       body: 'Haz click para instalar un parche ahora mismo.',
       options: [
-  { text: 'Ignorar y cerrar', correct: true },
-        { text: 'Instalar ahora', correct: false, explanation: 'Instalar sin permiso puede infectar el equipo.' },
-        { text: 'Preguntar en chat', correct: false, explanation: 'El chat no es seguro para esto; mejor avisar a un técnico.' }
+        { text: 'Buscar actualizaciones desde el sistema operativo', correct: true, explanation: 'Correcto. Las actualizaciones siempre deben gestionarse desde el panel de control o la configuración del sistema, nunca desde un popup sospechoso.' },
+        { text: 'Instalar ahora', correct: false, explanation: 'Pulsar "Instalar" en un popup desconocido puede instalar malware. Es una trampa común.' },
+        { text: 'Ignorar y cerrar', correct: false, explanation: 'Aunque cerrar es mejor que instalar, lo ideal es verificar por tu cuenta si hay actualizaciones reales.' }
       ]
-    }
-    ,
+    },
     {
       id: 'm3',
       title: '¡Sorpresa gratis!',
       body: 'Has ganado un premio. Haz click para reclamar.',
       options: [
-  { text: 'Cerrar', correct: true },
-        { text: 'Reclamar ahora', correct: false, explanation: 'Reclamar puede descargar software malicioso.' },
-        { text: 'Compartir enlace', correct: false, explanation: 'Compartir enlaces sospechosos propaga el problema.' }
+        { text: 'Cerrar', correct: true },
+        { text: 'Reclamar ahora', correct: false, explanation: 'Reclamar premios inesperados puede descargar software malicioso o robar tus datos.' },
+        { text: 'Compartir enlace', correct: false, explanation: 'Compartir enlaces sospechosos solo ayuda a que la estafa se propague a más personas.' }
       ]
     },
     {
@@ -561,26 +608,15 @@ const NetworkManager = () => {
       title: '¡Alarma del sistema!',
       body: 'Tu equipo tiene problemas, haz click para arreglar.',
       options: [
-  { text: 'Cerrar y avisar', correct: true },
-        { text: 'Seguir las instrucciones', correct: false, explanation: 'Seguir instrucciones de popups puede ser peligroso.' },
-        { text: 'Ignorar', correct: false, explanation: 'Ignorar sin avisar puede empeorar el problema.' }
+        { text: 'Cerrar y ejecutar análisis de antivirus', correct: true, explanation: '¡Bien hecho! Las alarmas falsas son una táctica para asustarte. Lo mejor es cerrar y usar tu propio antivirus para verificar.' },
+        { text: 'Seguir instrucciones', correct: false, explanation: 'Nunca sigas las instrucciones de un popup de alarma. Suelen guiarte para que instales malware.' },
+        { text: 'Reiniciar', correct: false, explanation: 'Reiniciar no elimina el posible malware y podrías perder la oportunidad de analizar qué causó la alerta.' }
       ]
     }
   ];
 
-  // Añadir más variedad: popups legítimos que requieren distinta respuesta
-  const mixedPopupPool = malwareProblems.map(p => ({ ...p, type: 'malicious' })).concat([
-    {
-      id: 'l1',
-      title: 'Recordatorio del profesor',
-      body: 'Se ha publicado el material de clase. ¿Quieres abrirlo?',
-      options: [
-        { text: 'Abrir material', correct: true },
-        { text: 'Ignorar', correct: false, explanation: 'Podrías perder información importante.' }
-      ],
-      type: 'legit'
-    }
-  ]);
+  // Pool de popups: ahora solo contiene los maliciosos.
+  const mixedPopupPool = malwareProblems.map(p => ({ ...p, type: 'malicious' }));
 
   const showMalware = () => {
     if (!gameStarted || malwareActive || gameOver || showExplanation) return;
@@ -757,6 +793,24 @@ const NetworkManager = () => {
   };
 
   const useHint = () => {
+    // Si ya tiene una bandera del juego de gestión, no permitir usar pistas
+    if (hasGestionFlag) {
+      setMascotTip({ 
+        visible: true, 
+        text: '¡Ya completaste este juego antes y obtuviste una bandera! Las pistas están bloqueadas para quienes ya ganaron.' 
+      });
+      setMascotMood('thinking');
+      if (mascotTipRef.current) {
+        clearTimeout(mascotTipRef.current);
+      }
+      mascotTipRef.current = setTimeout(() => {
+        setMascotTip({ visible: false, text: '' });
+        setMascotMood('idle');
+        mascotTipRef.current = null;
+      }, 5000);
+      return;
+    }
+    
     if (!currentProblem || hintUsed || hintCount <= 0) return;
     // consumir pista
     setHintCount(h => Math.max(0, h - 1));
@@ -774,9 +828,9 @@ const NetworkManager = () => {
     // 3 niveles de banderas basadas en puntaje
     // Bronce: 0-150 pts (30 pts)
     // Plata: 151-250 pts (60 pts)
-    // Oro: 251+ pts (100 pts)
+    // Oro: 200+ pts (100 pts)
     
-    if (finalScore >= 251) {
+    if (finalScore >= 201) {
       return {
         name: 'Gestión Oro - Maestro de Red',
         value: 'D1FT3L{G3ST10N_M43STR0_D3_R3D_0R0}',
@@ -994,6 +1048,42 @@ const NetworkManager = () => {
                     <span>¡Aprende jugando!</span>
                   </div>
                 </div>
+                
+                {/* Mensaje si ya tiene una bandera del juego */}
+                {hasGestionFlag && !checkingFlags && (
+                  <div style={{ 
+                    marginTop: 16, 
+                    padding: '12px 16px', 
+                    backgroundColor: 'rgba(251, 191, 36, 0.15)', 
+                    border: '2px solid rgba(251, 191, 36, 0.5)',
+                    borderRadius: '8px',
+                    maxWidth: '500px',
+                    margin: '16px auto 0 auto'
+                  }}>
+                    <p style={{ 
+                      margin: 0, 
+                      color: '#fbbf24', 
+                      fontSize: '0.95rem', 
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      justifyContent: 'center'
+                    }}>
+                      <span>🏆</span>
+                      <span>¡Ya completaste este juego!</span>
+                    </p>
+                    <p style={{ 
+                      margin: '8px 0 0 0', 
+                      color: 'rgba(255,255,255,0.9)', 
+                      fontSize: '0.85rem',
+                      lineHeight: 1.4
+                    }}>
+                      Puedes volver a jugar, pero las pistas estarán bloqueadas. ¡Demuestra tu habilidad sin ayuda!
+                    </p>
+                  </div>
+                )}
+                
                 <div style={{ marginTop: 24, display: 'flex', gap: '12px', justifyContent: 'center' }}>
                   <button className={`${styles.welcomeButton} ${styles.primaryButton}`} onClick={() => {
                     const shouldShowTutorial = !localStorage.getItem('nm_dontShowTutorial');
@@ -1067,15 +1157,30 @@ const NetworkManager = () => {
                 <button
                   className={styles.hintButton}
                   onClick={useHint}
-                  disabled={!currentProblem || hintUsed || hintCount <= 0}
-                  title={hintCount > 0 ? `Pistas disponibles: ${hintCount}` : 'No hay pistas disponibles'}
+                  disabled={!currentProblem || hintUsed || hintCount <= 0 || hasGestionFlag}
+                  title={
+                    hasGestionFlag 
+                      ? '🔒 Pistas bloqueadas - Ya obtuviste una bandera de este juego' 
+                      : hintCount > 0 
+                        ? `Pistas disponibles: ${hintCount}` 
+                        : 'No hay pistas disponibles'
+                  }
+                  style={hasGestionFlag ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                 >
-                  {hintCount > 0 ? `Pista (${hintCount})` : 'Sin pistas'}
+                  {hasGestionFlag ? '🔒 Pistas bloqueadas' : hintCount > 0 ? `Pista (${hintCount})` : 'Sin pistas'}
                 </button>
               </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <button className={styles.hintButton} onClick={resetGame}>Reiniciar partida</button>
                 <button className={styles.hintButton} style={{ padding: '6px 8px', fontSize: '0.85rem' }} onClick={() => setShowTutorial(true)}>Ver tutorial</button>
+                <button 
+                  className={styles.hintButton} 
+                  style={{ padding: '6px 12px', fontSize: '0.85rem', backgroundColor: '#2196F3', color: 'white' }} 
+                  onClick={() => navigate('/Software')}
+                  title="Ir al siguiente juego: Código (Software)"
+                >
+                  Siguiente juego →
+                </button>
               </div>
             </div>
           )}
@@ -1421,7 +1526,7 @@ const NetworkManager = () => {
             <div className={`${styles.popupMascotBubble} ${styles.belowPopup}`}>
               <div className={styles.bubbleHeader}>
                 <img src={telixImage} alt={mascotName} className={styles.mascotImage} />
-                <div style={{ fontWeight: 700, color: '#0b2340' }}>{mascotName}</div>
+                <div style={{ fontWeight: 700, color: '#f5f7fa' }}>{mascotName}</div>
                 {/* thinkingDots intentionally not shown for popup explanations to avoid 'loading' look */}
                 <button className={styles.bubbleClose} onClick={closePopupMascotExplain}>✖</button>
               </div>

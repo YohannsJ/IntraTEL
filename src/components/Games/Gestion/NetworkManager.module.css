@@ -851,7 +851,7 @@
 .mascotTipInline .mascotNameHeader {
   font-weight: 900;
   margin-bottom: 6px;
-  color: #0b2340; /* slightly darker text on the white bubble */
+  color: #f5f7fa; /* slightly darker text on the white bubble */
   font-size: 0.98rem;
   text-align: left; /* align name to the left like a chat header */
 }
@@ -882,7 +882,7 @@
 .mascotNameHeader {
   font-weight: 800;
   margin-bottom: 6px;
-  color: #0b2340;
+  color: #f5f7fa;
   text-align: left;
   font-size: 0.95rem;
 }
@@ -932,14 +932,14 @@
 /* Style for the mascot name next to emoji */
 .mascotName {
   font-weight: 800;
-  color: #0b2340;
+  color: #f5f7fa;
   font-size: 0.95rem;
 }
 
 /* Old mascot name style preserved for compatibility */
 .mascotNameOuter {
   font-weight: 800;
-  color: #0b2340;
+  color: #f5f7fa;
   text-align: left;
   font-size: 0.95rem;
 }

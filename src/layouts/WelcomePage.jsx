@@ -177,7 +177,7 @@ const WelcomePage = () => {
             <Link to="/Templo" className={styles.primaryButton}>
               🏛️ Visitar el Templo
             </Link>
-            <Link to="/NandGame" className={styles.secondaryButton}>
+            <Link to="/Datos" className={styles.secondaryButton}>
               🎮 Comenzar a Jugar
             </Link>
           </div>

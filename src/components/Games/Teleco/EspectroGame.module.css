@@ -22,13 +22,14 @@
 .leftPanel,
 .centerPanel,
 .rightPanel {
-  background: var(--theme-background-secondary);
+  background: var(--theme-surface);
   border-radius: 12px;
   border: 1px solid var(--theme-border);
   backdrop-filter: blur(10px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .leftPanel {
@@ -53,11 +54,12 @@
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, var(--theme-primary-transparent) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, var(--theme-secondary-hover) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, var(--theme-info) 0%, transparent 50%);
   animation: backgroundShift 20s ease-in-out infinite alternate;
   z-index: -1;
+  opacity: 0.15;
 }
 
 @keyframes backgroundShift {
@@ -70,15 +72,21 @@
   margin-bottom: 1rem;
   position: relative;
   z-index: 1;
-  background: rgba(30, 41, 59, 0.95);
+  background: var(--theme-surface);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--theme-border);
   backdrop-filter: blur(10px);
   padding: 1.5rem;
   max-width: 1400px;
   margin: 0 auto 1rem auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
-
+.header h4{
+  /* margin: 0;
+  font-size: 1rem; */
+  color: var(--theme-text-secondary);
+  /* margin-bottom: 10px; */
+}
 .header h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
@@ -95,7 +103,7 @@
 }
 
 .titleText {
-  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
+  background: linear-gradient(45deg, var(--theme-primary), var(--theme-secondary), var(--theme-info));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -109,7 +117,7 @@
     transform: scale(1);
   }
   100% { 
-    text-shadow: 2px 2px 20px rgba(59,130,246,0.4), 0 0 30px rgba(139,92,246,0.3);
+    text-shadow: 2px 2px 20px var(--theme-primary-transparent), 0 0 30px var(--theme-secondary-hover);
     transform: scale(1.02);
   }
 }
@@ -146,9 +154,9 @@
 .gameStatsGrid .stat {
   margin: 0;
   padding: 0.6rem;
-  background: rgba(15, 23, 42, 0.8);
+  background: var(--theme-background-secondary);
   border-radius: 6px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--theme-border);
   font-size: 0.85rem;
 }
 
@@ -164,15 +172,15 @@
 
 .controlsHeader {
   padding: 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(30, 41, 59, 0.5);
+  border-bottom: 1px solid var(--theme-border);
+  background: var(--theme-background-secondary);
 }
 
 .controlsTitle {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: white;
+  color: var(--theme-text);
 }
 
 .controlsContent {
@@ -189,15 +197,15 @@
 
 .spectrumHeader {
   padding: 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(30, 41, 59, 0.5);
+  border-bottom: 1px solid var(--theme-border);
+  background: var(--theme-background-secondary);
 }
 
 .spectrumTitle {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: white;
+  color: var(--theme-text);
 }
 
 .spectrumContent {
@@ -220,17 +228,17 @@
 }
 
 .stat {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--theme-surface-secondary);
   padding: 15px 25px;
   border-radius: 15px;
-  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border);
   text-align: center;
   min-width: 120px;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .stat::before {
@@ -240,14 +248,14 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, var(--theme-primary-transparent), transparent);
   transition: left 0.5s ease;
 }
 
 .stat:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  border-color: rgba(168, 237, 234, 0.5);
+  border-color: var(--theme-primary);
 }
 
 .stat:hover::before {
@@ -261,6 +269,7 @@
   margin-bottom: 5px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  color: var(--theme-text-secondary);
 }
 
 .stat span {
@@ -268,14 +277,52 @@
   font-weight: bold;
   display: block;
   transition: all 0.3s ease;
+  color: var(--theme-text);
 }
 
+/* Mejoras específicas para modo claro y mejor accesibilidad */
+@media (prefers-color-scheme: light) {
+  .gameContainer::before {
+    opacity: 0.08;
+  }
+}
+
+/* Asegurar buen contraste en texto */
 .good {
-  color: #4ade80 !important;
+  color: var(--theme-success) !important;
+  font-weight: 600;
 }
 
 .bad {
-  color: #f87171 !important;
+  color: var(--theme-error) !important;
+  font-weight: 600;
+}
+
+.patternHint {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--theme-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.levelInfo {
+  color: var(--theme-success);
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.rangeInfo {
+  color: var(--theme-info);
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+/* Mejoras en contraste para modo claro */
+.instructions {
+  color: var(--theme-text-secondary);
+  line-height: 1.6;
+  margin-top: 20px;
 }
 
 .startScreen {
@@ -284,7 +331,7 @@
 }
 
 .startButton {
-  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  background: linear-gradient(45deg, var(--theme-primary), var(--theme-primary-hover));
   color: white;
   border: none;
   padding: 20px 40px;
@@ -314,7 +361,7 @@
 .startButton:hover {
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-  background: linear-gradient(45deg, #ff5252, #d84315);
+  background: linear-gradient(45deg, var(--theme-primary-hover), var(--theme-secondary));
 }
 
 .startButton:hover::before {
@@ -333,19 +380,19 @@
 .patternHint {
   text-align: center;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--theme-text-secondary);
   margin: 0;
   line-height: 1.4;
 }
 
 .levelInfo {
-  color: #4ade80;
+  color: var(--theme-success);
   font-weight: 500;
   margin-top: 5px;
 }
 
 .rangeInfo {
-  color: #22d3ee;
+  color: var(--theme-info);
   font-weight: 500;
   margin-top: 5px;
 }
@@ -354,13 +401,16 @@
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--theme-surface-secondary);
   border-radius: 15px;
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .targetInfo h3 {
   margin-bottom: 10px;
   font-size: 1.5rem;
+  color: var(--theme-text);
 }
 
 .controls {
@@ -379,6 +429,7 @@
 .control label {
   min-width: 200px;
   font-weight: 500;
+  color: var(--theme-text);
 }
 
 .slider {
@@ -386,10 +437,11 @@
   min-width: 200px;
   height: 8px;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-background-tertiary);
   outline: none;
   -webkit-appearance: none;
   appearance: none;
+  border: 1px solid var(--theme-border);
 }
 
 .slider::-webkit-slider-thumb {
@@ -397,25 +449,26 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #4ade80;
+  background: var(--theme-primary);
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  border: 2px solid var(--theme-surface);
 }
 
 .slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #4ade80;
+  background: var(--theme-primary);
   cursor: pointer;
-  border: none;
+  border: 2px solid var(--theme-surface);
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 .value {
   min-width: 100px;
   font-weight: bold;
-  color: #4ade80;
+  color: var(--theme-primary);
   text-align: right;
 }
 
@@ -432,20 +485,22 @@
 .spectrumDisplay {
   position: relative;
   height: 150px;
-  background: linear-gradient(to bottom, #0f172a, #1e293b);
+  background: linear-gradient(to bottom, var(--theme-background), var(--theme-background-secondary));
   border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid var(--theme-border);
   overflow: hidden;
   margin-bottom: 10px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .signal {
   position: absolute;
   bottom: 0;
-  background: linear-gradient(to top, #4ade80, #22d3ee);
+  background: linear-gradient(to top, var(--theme-success), var(--theme-info));
   border-radius: 3px 3px 0 0;
   transition: all 0.3s ease;
   opacity: 0.8;
+  box-shadow: 0 0 10px var(--theme-success-hover);
 }
 
 .target {
@@ -453,8 +508,8 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: #ff6b6b;
-  box-shadow: 0 0 10px #ff6b6b;
+  background: var(--theme-error);
+  box-shadow: 0 0 10px var(--theme-error);
 }
 
 .frequencyLabels {
@@ -462,6 +517,7 @@
   justify-content: space-between;
   font-size: 0.9rem;
   opacity: 0.8;
+  color: var(--theme-text-secondary);
 }
 
 .actions {
@@ -484,8 +540,8 @@
 }
 
 .checkButton {
-  background: linear-gradient(45deg, #4ade80, #22d3ee);
-  color: #1a1a2e;
+  background: linear-gradient(45deg, var(--theme-success), var(--theme-success-hover));
+  color: white;
 }
 
 .checkButton:hover:not(:disabled) {
@@ -499,7 +555,7 @@
 }
 
 .resetButton {
-  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  background: linear-gradient(45deg, var(--theme-error), var(--theme-error-hover));
   color: white;
 }
 
@@ -509,14 +565,14 @@
 }
 
 .theory {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--theme-surface-secondary);
   border-radius: 15px;
   padding: 25px;
-  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--theme-border);
   max-width: 1400px;
   margin: 1rem auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Design */
@@ -584,6 +640,7 @@
   margin-bottom: 15px;
   font-size: 1.3rem;
   text-align: center;
+  color: var(--theme-text);
 }
 
 .theory ul {
@@ -594,13 +651,13 @@
 .theory li {
   margin-bottom: 10px;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--theme-surface);
   border-radius: 8px;
-  border-left: 4px solid #4ade80;
+  border-left: 4px solid var(--theme-success);
 }
 
 .theory strong {
-  color: #4ade80;
+  color: var(--theme-primary);
 }
 
 /* Nuevos estilos para mejoras */
@@ -608,8 +665,7 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.9);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--theme-surface);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 20px;
@@ -617,19 +673,19 @@
   z-index: 1000;
   transform: translateX(320px);
   transition: transform 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .achievementsPanel h3 {
   margin: 0 0 15px 0;
-  color: #4ade80;
+  color: var(--theme-success);
   text-align: center;
 }
 
 .toggleButton {
-  background: linear-gradient(45deg, #4ade80, #22d3ee);
-  color: #000;
+  background: linear-gradient(45deg, var(--theme-success), var(--theme-info));
+  color: white;
   border: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -642,7 +698,7 @@
 
 .toggleButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+  box-shadow: 0 4px 12px var(--theme-success-light);
 }
 
 .spectrogramControls {
@@ -660,14 +716,15 @@
   gap: 10px;
   padding: 10px;
   margin: 5px 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--theme-surface-secondary);
   border-radius: 8px;
   transition: all 0.3s ease;
+  border: 1px solid var(--theme-border);
 }
 
 .achievementItem.unlocked {
-  background: linear-gradient(45deg, #4ade80, #22d3ee);
-  color: #000;
+  background: linear-gradient(45deg, var(--theme-success), var(--theme-info));
+  color: white;
   animation: achievementPulse 0.6s ease;
 }
 
@@ -757,23 +814,24 @@
 .progressBar {
   width: 100%;
   height: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--theme-background-tertiary);
   border-radius: 4px;
   margin: 10px 0;
   overflow: hidden;
+  border: 1px solid var(--theme-border);
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(45deg, #4ade80, #22d3ee);
+  background: linear-gradient(45deg, var(--theme-success), var(--theme-info));
   border-radius: 4px;
   transition: width 0.3s ease;
   animation: progressGlow 2s ease-in-out infinite alternate;
 }
 
 @keyframes progressGlow {
-  0% { box-shadow: 0 0 5px #4ade80; }
-  100% { box-shadow: 0 0 20px #4ade80, 0 0 30px #22d3ee; }
+  0% { box-shadow: 0 0 5px var(--theme-success); }
+  100% { box-shadow: 0 0 20px var(--theme-success), 0 0 30px var(--theme-info); }
 }
 
 @keyframes pulse {
@@ -802,13 +860,13 @@
 }
 
 .successModal {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, var(--theme-background) 0%, var(--theme-background-secondary) 100%);
   border-radius: 20px;
   padding: 30px;
   max-width: 500px;
   width: 90%;
   text-align: center;
-  border: 2px solid #4ade80;
+  border: 2px solid var(--theme-success);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: modalSlideIn 0.5s ease;
   position: relative;
@@ -823,19 +881,19 @@
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(74, 222, 128, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(34, 211, 238, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 20%, var(--theme-success-light) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, var(--theme-primary-transparent) 0%, transparent 50%);
   pointer-events: none;
 }
 
 .completionModal {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--theme-background) 0%, var(--theme-background-secondary) 100%);
   border-radius: 20px;
   padding: 40px;
   max-width: 600px;
   width: 90%;
   text-align: center;
-  border: 3px solid #ffd700;
+  border: 3px solid var(--theme-warning);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: modalSlideIn 0.5s ease;
   position: relative;
@@ -850,18 +908,19 @@
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 70% 70%, rgba(255, 105, 180, 0.15) 0%, transparent 50%);
+    radial-gradient(circle at 30% 30%, var(--theme-warning) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, var(--theme-primary-transparent) 0%, transparent 50%);
   pointer-events: none;
+  opacity: 0.1;
 }
 
 .hintModal {
-  background: rgba(0, 0, 0, 0.95);
+  background: var(--theme-surface);
   border-radius: 15px;
   padding: 25px;
   max-width: 450px;
   width: 90%;
-  border: 2px solid #ff6b6b;
+  border: 2px solid var(--theme-error);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   animation: modalSlideIn 0.4s ease;
 }
@@ -880,7 +939,7 @@
 .modalTitle {
   font-size: 2rem;
   margin-bottom: 15px;
-  color: #fff;
+  color: var(--theme-text);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
@@ -889,19 +948,19 @@
 .modalContent {
   position: relative;
   z-index: 1;
-  color: white;
+  color: var(--theme-text);
 }
 
 .flagDisplay {
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid #4ade80;
+  background: var(--theme-background-secondary);
+  border: 2px solid var(--theme-success);
   border-radius: 10px;
   padding: 15px;
   margin: 20px 0;
   font-family: 'Courier New', monospace;
   font-size: 1rem;
   font-weight: bold;
-  color: #4ade80;
+  color: var(--theme-success);
   letter-spacing: 1px;
   animation: flagGlow 2s ease-in-out infinite alternate;
   word-wrap: break-word;
@@ -913,8 +972,8 @@
 }
 
 @keyframes flagGlow {
-  0% { box-shadow: 0 0 10px #4ade80; }
-  100% { box-shadow: 0 0 25px #4ade80, inset 0 0 15px rgba(74, 222, 128, 0.2); }
+  0% { box-shadow: 0 0 10px var(--theme-success); }
+  100% { box-shadow: 0 0 25px var(--theme-success), inset 0 0 15px var(--theme-success-light); }
 }
 
 .statsGrid {
@@ -925,15 +984,16 @@
 }
 
 .statCard {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--theme-surface-secondary);
   border-radius: 8px;
   padding: 10px;
   text-align: center;
+  border: 1px solid var(--theme-border);
 }
 
 .statCard h4 {
   margin: 0 0 5px 0;
-  color: #22d3ee;
+  color: var(--theme-primary);
   font-size: 0.9rem;
 }
 
@@ -941,6 +1001,7 @@
   margin: 0;
   font-size: 1.1rem;
   font-weight: bold;
+  color: var(--theme-text);
 }
 
 .achievementsList {
@@ -955,9 +1016,9 @@
   gap: 10px;
   padding: 8px 12px;
   margin: 5px 0;
-  background: rgba(74, 222, 128, 0.2);
+  background: var(--theme-success-light);
   border-radius: 8px;
-  border-left: 4px solid #4ade80;
+  border-left: 4px solid var(--theme-success);
   animation: achievementSlide 0.5s ease;
 }
 
@@ -992,18 +1053,18 @@
 }
 
 .modalButtonPrimary {
-  background: linear-gradient(45deg, #4ade80, #22d3ee);
-  color: #000;
+  background: linear-gradient(45deg, var(--theme-success), var(--theme-success-hover));
+  color: white;
 }
 
 .modalButtonSecondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--theme-surface-secondary);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
 }
 
 .modalButtonDanger {
-  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  background: linear-gradient(45deg, var(--theme-error), var(--theme-error-hover));
   color: white;
 }
 
@@ -1037,7 +1098,7 @@
 .hintContent p {
   margin: 0;
   font-size: 0.9rem;
-  color: #ccc;
+  color: var(--theme-text-secondary);
 }
 
 .hintContent .current {
@@ -1118,17 +1179,22 @@
 }
 
 .bandButton.selected {
-  border: 2px solid #3b82f6;
-  background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
+  border: 2px solid var(--theme-primary);
+  background: var(--theme-primary-transparent);
+  color: var(--theme-primary);
   font-weight: 600;
 }
 
 .bandButton:not(.selected) {
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border: 1px solid var(--theme-border);
+  background: var(--theme-surface-secondary);
+  color: var(--theme-text);
   font-weight: 400;
+}
+
+.bandButton:not(.selected):hover {
+  background: var(--theme-background-tertiary);
+  border-color: var(--theme-border-accent);
 }
 
 .bandName {

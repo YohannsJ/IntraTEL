@@ -17,6 +17,15 @@
   padding: 2.5rem;
   width: 100%;
   max-width: 600px;
+  position: relative;
+}
+
+/* Contenedor para el botón de cambio de tema */
+.themeToggleContainer {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
 }
 
 .authHeader {
@@ -190,5 +199,11 @@
   
   .authSubtitle {
     font-size: 0.9rem;
+  }
+  
+  /* Ajustar posición del botón de tema en móvil */
+  .themeToggleContainer {
+    top: 0.75rem;
+    right: 0.75rem;
   }
 }

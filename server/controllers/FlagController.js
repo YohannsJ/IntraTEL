@@ -104,8 +104,22 @@ class FlagController {
   // Obtener tabla de líderes individual
   static async getLeaderboard(req, res) {
     try {
-      const { limit = 10 } = req.query;
-      const leaderboard = await Flag.getLeaderboard(parseInt(limit));
+      const { limit = 50, date } = req.query;
+      
+      let leaderboard;
+      if (date) {
+        // Validar formato de fecha
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(date)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Formato de fecha inválido. Use YYYY-MM-DD'
+          });
+        }
+        leaderboard = await Flag.getLeaderboardByDate(date, parseInt(limit));
+      } else {
+        leaderboard = await Flag.getLeaderboard(parseInt(limit));
+      }
 
       res.json({
         success: true,
@@ -193,6 +207,25 @@ class FlagController {
 
     } catch (error) {
       console.error('Error obteniendo estadísticas del sistema:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor'
+      });
+    }
+  }
+
+  // Obtener información pública de flags disponibles (para usuarios autenticados)
+  static async getPublicAvailableFlags(req, res) {
+    try {
+      const flags = await Flag.getPublicAvailableFlags();
+
+      res.json({
+        success: true,
+        data: flags
+      });
+
+    } catch (error) {
+      console.error('Error obteniendo flags públicas:', error);
       res.status(500).json({
         success: false,
         message: 'Error interno del servidor'

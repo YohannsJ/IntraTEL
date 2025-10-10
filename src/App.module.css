@@ -40,6 +40,13 @@
   opacity: 1;
 }
 
+.navbarTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 /* Efecto hover en toda la navbar para darle más presencia cuando se interactúa */
 .navbar:hover {
   background: rgba(15, 20, 25, 0.15);
@@ -200,7 +207,7 @@
   top: calc(100% + 0.5rem);
   left: 0;
   /* Fondo semi-transparente para glassmorphism */
-  background: rgba(10, 15, 20, 0.4);
+  /* background: rgba(10, 15, 20, 0.4); */
   /* Múltiples capas de backdrop-filter para mejor efecto */
   backdrop-filter: blur(24px) saturate(200%) contrast(120%);
   -webkit-backdrop-filter: blur(24px) saturate(200%) contrast(120%);
@@ -497,9 +504,14 @@
 @media (min-width: 769px) {
   /* Estilos específicos para desktop */
   .navbar {
-    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     height: 60px;
+    min-height: 60px;
+  }
+  
+  .navbarTop {
+    display: none; /* No usar navbarTop en desktop */
   }
   
   .navLinks {
@@ -609,6 +621,17 @@
   }
   
   /* Auth section en desktop */
+  .authSection {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: auto;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
   .authSection.desktopOnly {
     display: flex;
     flex-direction: row;
@@ -619,6 +642,7 @@
     align-items: center;
     gap: 0.75rem;
   }
+  
   .mobileOnly {
     display: none !important;
   }
@@ -649,6 +673,24 @@
     padding: 0.5rem 0.75rem;
     flex-direction: column; /* Cambiar a columna */
     align-items: center; /* Centrar todo */
+  }
+  
+  .navbarTop {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* AuthSection en móvil - visible y centrada */
+  .authSection.mobileOnly {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    width: auto;
+    justify-content: center;
   }
   
   /* Header de la navbar con logo y botón */
@@ -769,16 +811,18 @@
     background: var(--theme-background-secondary);
   }
   
-  /* Sección de autenticación centrada */
-  .authSection.mobileOnly {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--theme-border);
-    gap: 0.5rem;
-    align-items: center;
-    width: 100%;
+  /* Sección de autenticación responsive */
+  .authSection {
+    display: none; /* Ocultar en móvil por defecto */
+  }
+  
+  /* User dropdown responsive en mobile */
+  .userDropdown.mobileOnly {
+    width: auto;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    margin: 0.25rem 0;
   }
   
   .userInfo {

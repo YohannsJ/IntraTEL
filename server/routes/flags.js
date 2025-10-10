@@ -14,6 +14,7 @@ router.use(authenticateToken);
 router.post('/submit', FlagController.submitFlag);
 router.get('/user', FlagController.getUserFlags);
 router.get('/user/stats', FlagController.getUserFlagStats);
+router.get('/available', FlagController.getPublicAvailableFlags);
 router.get('/leaderboard', FlagController.getLeaderboard);
 router.get('/groups/leaderboard', FlagController.getGroupLeaderboard);
 router.get('/recent', FlagController.getRecentFlags);

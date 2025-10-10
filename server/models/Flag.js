@@ -493,6 +493,85 @@ class Flag {
       throw new Error(`Error obteniendo progreso de usuarios: ${error.message}`);
     }
   }
+
+  // Obtener todas las flags disponibles (para admin)
+  static async getAllAvailableFlags() {
+    try {
+      const flags = await database.all(
+        `SELECT 
+           id,
+           flag_name,
+           flag_value,
+           description,
+           points,
+           created_at,
+           is_active
+         FROM available_flags
+         ORDER BY created_at DESC`
+      );
+
+      return flags;
+    } catch (error) {
+      throw new Error(`Error obteniendo flags disponibles: ${error.message}`);
+    }
+  }
+
+  // Obtener todas las flags disponibles (información pública para usuarios)
+  static async getPublicAvailableFlags() {
+    try {
+      const flags = await database.all(
+        `SELECT 
+           id,
+           flag_name,
+           description,
+           points,
+           created_at
+         FROM available_flags
+         WHERE is_active = 1
+         ORDER BY created_at DESC`
+      );
+
+      return flags;
+    } catch (error) {
+      throw new Error(`Error obteniendo flags públicas: ${error.message}`);
+    }
+  }
+
+  // Obtener leaderboard por fecha específica con ordenamiento por tiempo de última flag (quien lleva más tiempo con el puntaje gana)
+  static async getLeaderboardByDate(date, limit = 50) {
+    try {
+      const leaderboard = await database.all(
+        `SELECT 
+           u.id,
+           u.username,
+           u.first_name,
+           u.last_name,
+           g.name as group_name,
+           COUNT(uf.id) as total_flags,
+           SUM(af.points) as total_points,
+           MIN(uf.obtained_at) as first_flag_date,
+           MAX(uf.obtained_at) as last_flag_date
+         FROM users u
+         INNER JOIN user_flags uf ON u.id = uf.user_id
+         INNER JOIN available_flags af ON uf.flag_id = af.id
+         LEFT JOIN groups g ON u.group_id = g.id
+         WHERE u.is_active = 1 
+           AND DATE(uf.obtained_at) = ?
+         GROUP BY u.id
+         ORDER BY total_points DESC, last_flag_date ASC
+         LIMIT ?`,
+        [date, limit]
+      );
+
+      return leaderboard.map(entry => ({
+        ...entry,
+        total_flags: entry.total_flags || 0,
+        total_points: entry.total_points || 0
+      }));
+    } catch (error) {
+      throw new Error(`Error obteniendo leaderboard por fecha: ${error.message}`);
+    }
+  }
 }
 
 export default Flag;

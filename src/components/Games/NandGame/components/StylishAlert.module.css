@@ -28,8 +28,8 @@
   border: 1px solid var(--border-color);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
-  width: 90%;
+  max-width: 700px; /* Aumentado de 500px a 700px */
+  width: 95%; /* Aumentado de 90% a 95% */
   position: relative;
   overflow: hidden;
   animation: slideUp 0.3s ease-out;
@@ -158,19 +158,23 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  min-width: 0; /* Permitir que el contenedor se encoja */
 }
 
 .flagCode {
   font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
-  font-size: 1.1rem;
+  font-size: 1rem; /* Reducido de 1.1rem a 1rem para texto más largo */
   font-weight: 600;
   color: var(--accent-color);
   background: rgba(var(--accent-color-rgb), 0.1);
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem; /* Aumentado el padding para mejor legibilidad */
   border-radius: 6px;
   flex: 1;
   text-align: center;
   border: 1px solid rgba(var(--accent-color-rgb), 0.2);
+  word-break: break-all; /* Permitir que el texto se rompa si es muy largo */
+  overflow-wrap: break-word; /* Asegurar que las palabras largas se rompan */
+  min-width: 0; /* Permitir que el elemento se encoja */
 }
 
 .copyButton {
@@ -263,8 +267,9 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .alert {
-    width: 95%;
-    margin: 1rem;
+    width: 98%; /* Aumentado para aprovechar mejor el espacio en móvil */
+    margin: 0.5rem;
+    max-width: none; /* Eliminar max-width en móvil para aprovechar todo el ancho */
   }
   
   .content {
@@ -279,6 +284,12 @@
   .flagValue {
     flex-direction: column;
     gap: 0.75rem;
+  }
+  
+  .flagCode {
+    font-size: 0.9rem; /* Ligeramente más pequeño en móvil */
+    word-break: break-all;
+    overflow-wrap: break-word;
   }
   
   .copyButton {
@@ -311,4 +322,6 @@
   color: #8b5cf6;
   background: rgba(139, 92, 246, 0.1);
   border-color: rgba(139, 92, 246, 0.2);
+  word-break: break-all;
+  overflow-wrap: break-word;
 }

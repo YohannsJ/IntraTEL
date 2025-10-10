@@ -1258,16 +1258,16 @@ const EspectroGame = () => {
                   {/* Objetivos comunes */}
                   <div style={{marginBottom:'1rem'}}>
                     {gameState.level === 1 && (
-                      <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                    <span style={{color:'var(--theme-text)', fontWeight:600, display:'block'}}>
                         📡 Frecuencia objetivo: <span style={{color:'#9af59a'}}>{gameState.targetFrequency.toFixed(1)} MHz</span>
                       </span>
                     )}
                     {gameState.level !== 3 && (
                       <>
-                        <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                        <span style={{color:'var(--theme-text)', fontWeight:600, display:'block'}}>
                           📶 Ancho objetivo: <span style={{color:'#9af59a'}}>{currentTargets.bandwidth} MHz</span>
                         </span>
-                        <span style={{color:'#e6f2ff', fontWeight:600, display:'block'}}>
+                        <span style={{color:'var(--theme-text)', fontWeight:600, display:'block'}}>
                           ⚡ Potencia objetivo: <span style={{color:'#9af59a'}}>{currentTargets.power} dBm</span>
                         </span>
                       </>

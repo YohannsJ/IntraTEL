@@ -116,6 +116,7 @@ const AppLayout = () => {
   return (
     <div className={styles.appContainer} onClick={handleNavClick}>
       <nav className={`${styles.navbar} ${!navbarVisible ? styles.navbarHidden : ''}`}>
+        {/* Logo a la izquierda */}
         <Link to="/" className={styles.logo}>
           <LogoDidacticTel width="180" height="40" />
         </Link>
@@ -129,9 +130,8 @@ const AppLayout = () => {
           {mobileMenuOpen ? '✕' : '☰'}
         </button>
 
+        {/* Navegación central - Juegos y Templo */}
         <div className={`${styles.navLinks} ${mobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
-          {/* <Link to="/" className={styles.navLink} onClick={closeMobileMenu}>Inicio</Link> */}
-          
           {/* Dropdown de Juegos */}
           <div className={styles.gamesDropdown}>
             <button 
@@ -192,7 +192,7 @@ const AppLayout = () => {
                 <div className={styles.dropdownDivider}></div>
                 <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                    <span>🎨 Tema</span>
+                    <span>🎨</span>
                     <ThemeToggle />
                   </div>
                 </div>
@@ -208,75 +208,72 @@ const AppLayout = () => {
           )}
           
           {isRefreshing && <div className={styles.refreshIndicator}>🔄️</div>}
-          
-          {/* Sección de auth para usuarios no autenticados en mobile */}
-          {!isAuthenticated && location.pathname !== '/auth' && (
-            <div className={`${styles.authSection} ${styles.mobileOnly}`} style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--theme-border)' }}>
+        </div>
+        
+        {/* Sección de usuario a la derecha - Desktop */}
+        {isAuthenticated ? (
+          <div className={`${styles.userDropdown} ${styles.desktopOnly}`}>
+            <button 
+              className={`${styles.navLink} ${styles.dropdownToggle}`}
+              onClick={toggleUserDropdown}
+              aria-expanded={userDropdownOpen}
+            >
+              Hola, {user?.first_name || user?.username} {user?.role === 'admin' ? '👑' : user?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'} {userDropdownOpen ? '▲' : '▼'}
+            </button>
+            <div className={`${styles.dropdownMenu} ${styles.userDropdownMenu} ${userDropdownOpen ? styles.dropdownOpen : ''}`}>
+              <Link to="/perfil" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                👤 Perfil
+              </Link>
+              <Link to="/mis-flags" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                🏁 Mis Flags
+              </Link>
+              {user?.role === 'admin' && (
+                <>
+                  <Link to="/admin" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                    👑 Admin
+                  </Link>
+                  <Link to="/admin/flags" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
+                    📊 Flags Admin
+                  </Link>
+                </>
+              )}
+              <div className={styles.dropdownDivider}></div>
+              <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                  {/* <span>🎨 </span> */}
+                  <ThemeToggle />
+                </div>
+              </div>
+              <div className={styles.dropdownDivider}></div>
+              <button 
+                onClick={() => { handleLogout(); handleUserMenuSelection(); }}
+                className={`${styles.dropdownItem} ${styles.logoutDropdownButton}`}
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Sección para usuarios NO autenticados - Desktop */
+          location.pathname !== '/auth' && (
+            <div className={`${styles.authSection} ${styles.desktopOnly}`}>
+              <ThemeToggle />
               <Link to="/auth" className={styles.loginButton}>
                 Iniciar Sesión
               </Link>
-              <div style={{ padding: '0.5rem' }}>
-                <ThemeToggle />
-              </div>
             </div>
-          )}
-        </div>
-
-        {/* Desktop auth section - Dropdown de usuario a la derecha */}
-        <div className={`${styles.authSection} ${styles.desktopOnly}`}>
-          {isAuthenticated ? (
-            <div className={styles.userDropdown}>
-              <button 
-                className={`${styles.navLink} ${styles.dropdownToggle}`}
-                onClick={toggleUserDropdown}
-                aria-expanded={userDropdownOpen}
-              >
-                Hola, {user?.first_name || user?.username} {user?.role === 'admin' ? '👑' : user?.role === 'teacher' ? '👨‍🏫' : '👨‍🎓'} {userDropdownOpen ? '▲' : '▼'}
-              </button>
-              <div className={`${styles.dropdownMenu} ${styles.userDropdownMenu} ${userDropdownOpen ? styles.dropdownOpen : ''}`}>
-                <Link to="/perfil" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
-                  👤 Perfil
-                </Link>
-                <Link to="/mis-flags" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
-                  🏁 Mis Flags
-                </Link>
-                {user?.role === 'admin' && (
-                  <>
-                    <Link to="/admin" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
-                      👑 Admin
-                    </Link>
-                    <Link to="/admin/flags" className={styles.dropdownItem} onClick={handleUserMenuSelection}>
-                      📊 Flags Admin
-                    </Link>
-                  </>
-                )}
-                <div className={styles.dropdownDivider}></div>
-                <div className={styles.dropdownItem} style={{ padding: '0.6rem 0.9rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                    <span>🎨 Tema</span>
-                    <ThemeToggle />
-                  </div>
-                </div>
-                <div className={styles.dropdownDivider}></div>
-                <button 
-                  onClick={() => { handleLogout(); handleUserMenuSelection(); }}
-                  className={`${styles.dropdownItem} ${styles.logoutDropdownButton}`}
-                >
-                  Cerrar Sesión
-                </button>
-              </div>
-            </div>
-          ) : (
-            location.pathname !== '/auth' && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <ThemeToggle />
-                <Link to="/auth" className={styles.loginButton}>
-                  Iniciar Sesión
-                </Link>
-              </div>
-            )
-          )}
-        </div>
+          )
+        )}
+        
+        {/* Auth section móvil - Fuera del menú hamburguesa */}
+        {!isAuthenticated && location.pathname !== '/auth' && (
+          <div className={`${styles.authSection} ${styles.mobileOnly}`}>
+            <ThemeToggle />
+            <Link to="/auth" className={styles.loginButton} onClick={closeMobileMenu}>
+              Iniciar Sesión
+            </Link>
+          </div>
+        )}
       </nav>
       <main className={styles.content}>
         <Outlet />

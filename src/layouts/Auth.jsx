@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useTheme } from '../context/ThemeContext';
+import { ThemeToggle } from '../components/etc/ThemeToggle';
 import styles from './Auth.module.css';
 
 const Auth = () => {
@@ -124,6 +125,11 @@ const Auth = () => {
   return (
     <div className={styles.authContainer}>
       <div className={styles.authCard}>
+        {/* Botón de cambio de tema */}
+        <div className={styles.themeToggleContainer}>
+          <ThemeToggle />
+        </div>
+        
         <div className={styles.authHeader}>
           <h1 className={styles.authTitle}>
             {isLoginMode ? 'Iniciar Sesión' : 'Registrarse'}

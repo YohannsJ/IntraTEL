@@ -3,15 +3,15 @@
 /* New Auth Page Layout - Paleta actualizada */
 .authPage {
   min-height: 100vh;
-  background: #0f1419;
+  background: var(--theme-background);
   display: flex;
   flex-direction: column;
 }
 
 .authHeader {
   padding: 20px;
-  background: #1e293b;
-  border-bottom: 1px solid #334155;
+  background: var(--theme-background-secondary);
+  border-bottom: 1px solid var(--theme-border);
 }
 
 .authNav {
@@ -26,14 +26,14 @@
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: #f1f5f9;
+  color: var(--theme-text);
   font-weight: 600;
   font-size: 1.5rem;
   transition: color 0.2s ease;
 }
 
 .logoLink:hover {
-  color: #3b82f6;
+  color: var(--theme-accent);
 }
 
 .logo {
@@ -46,7 +46,7 @@
 }
 
 .backToHome {
-  color: #cbd5e1;
+  color: var(--theme-text-muted);
   text-decoration: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -55,8 +55,8 @@
 }
 
 .backToHome:hover {
-  background: #334155;
-  color: #f1f5f9;
+  background: var(--theme-background-secondary);
+  color: var(--theme-text);
 }
 
 .authMain {
@@ -66,7 +66,7 @@
   justify-content: center;
   padding: 30px 20px;
   min-height: calc(100vh - 120px);
-  background: linear-gradient(135deg, #0f1419 0%, #1e293b 50%, #0f172a 100%);
+  background: var(--theme-background-pattern);
 }
 
 .authContainer {
@@ -79,12 +79,12 @@
 }
 
 .authCard {
-  background: linear-gradient(145deg, #1e293b, #334155);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: var(--theme-background-secondary);
+  border: 1px solid var(--theme-border);
   border-radius: 20px;
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(59, 130, 246, 0.1),
+    0 0 0 1px var(--theme-border),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   overflow: hidden;
   width: 100%;
@@ -94,6 +94,14 @@
   position: relative;
 }
 
+/* Contenedor para el botón de cambio de tema */
+.themeToggleContainer {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}
+
 .authCard::before {
   content: '';
   position: absolute;
@@ -101,7 +109,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
+  background: linear-gradient(90deg, var(--theme-primary), var(--theme-secondary), var(--theme-primary));
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
@@ -114,8 +122,8 @@
 .authCardHeader {
   padding: 35px 40px 25px;
   text-align: center;
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  background: var(--theme-background-secondary);
+  border-bottom: 1px solid var(--theme-border);
   position: relative;
 }
 
@@ -126,15 +134,15 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+  background: linear-gradient(90deg, transparent, var(--theme-accent), transparent);
 }
 
 .authTitle {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin: 0 0 10px 0;
-  background: linear-gradient(135deg, #f8fafc 0%, #3b82f6 50%, #8b5cf6 100%);
+  background: linear-gradient(135deg, var(--theme-text) 0%, var(--theme-primary) 50%, var(--theme-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -144,7 +152,7 @@
 
 .authSubtitle {
   font-size: 1.1rem;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   margin: 0;
   line-height: 1.6;
   font-weight: 400;
@@ -162,21 +170,21 @@
 
 .message.success {
   background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.1));
-  color: #22c55e;
+  color: var(--theme-success);
   border: 2px solid rgba(34, 197, 94, 0.3);
   box-shadow: 0 8px 25px rgba(34, 197, 94, 0.15);
 }
 
 .message.error {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.1));
-  color: #ef4444;
+  color: var(--theme-error);
   border: 2px solid rgba(239, 68, 68, 0.3);
   box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15);
 }
 
 .authFormContainer {
   padding: 30px 40px 40px;
-  background: linear-gradient(145deg, #1e293b, #334155);
+  background: var(--theme-background-secondary);
 }
 
 /* Form Styles */
@@ -204,34 +212,34 @@
 .label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin-bottom: 0.75rem;
   letter-spacing: 0.025em;
 }
 
 .input {
   padding: 0.875rem 1rem;
-  border: 2px solid #475569;
+  border: 2px solid var(--theme-border);
   border-radius: 10px;
-  background: #0f172a;
-  color: #f1f5f9;
+  background: var(--theme-background);
+  color: var(--theme-text);
   font-size: 1rem;
   transition: all 0.3s ease;
   position: relative;
 }
 
 .input::placeholder {
-  color: #64748b;
+  color: var(--theme-text-muted);
   font-weight: 400;
 }
 
 .input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--theme-primary);
   box-shadow: 
     0 0 0 3px rgba(59, 130, 246, 0.15),
     0 6px 20px rgba(59, 130, 246, 0.1);
-  background: #1e293b;
+  background: var(--theme-background-secondary);
   transform: translateY(-1px);
 }
 
@@ -241,7 +249,7 @@
 }
 
 .inputError {
-  border-color: #ef4444;
+  border-color: var(--theme-error);
   box-shadow: 
     0 0 0 4px rgba(239, 68, 68, 0.15),
     0 8px 25px rgba(239, 68, 68, 0.1);
@@ -249,14 +257,14 @@
 
 .fieldError {
   font-size: 0.8rem;
-  color: #ef4444;
+  color: var(--theme-error);
   margin-top: 0.5rem;
   font-weight: 500;
 }
 
 .submitButton {
   padding: 1rem 1.75rem;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-primary-hover));
   color: white;
   border: none;
   border-radius: 10px;
@@ -287,7 +295,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--theme-primary-hover), var(--theme-primary-hover));
   transform: translateY(-2px);
   box-shadow: 
     0 8px 25px rgba(59, 130, 246, 0.3),
@@ -315,7 +323,7 @@
 }
 
 .switchForm p {
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   font-size: 1rem;
   margin: 0 0 0.5rem 0;
   font-weight: 400;
@@ -324,7 +332,7 @@
 .linkButton {
   background: none;
   border: none;
-  color: #3b82f6;
+  color: var(--theme-primary);
   cursor: pointer;
   font-size: 1rem;
   font-weight: 700;
@@ -352,7 +360,7 @@
 }
 
 .linkButton:hover:not(:disabled) {
-  color: #2563eb;
+  color: var(--theme-primary-hover);
   background: rgba(59, 130, 246, 0.1);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
@@ -365,8 +373,8 @@
 
 .groupCodeSection {
   padding: 1.5rem;
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: var(--theme-background);
+  border: 1px solid var(--theme-border);
   border-radius: 12px;
   margin-top: 1rem;
 }
@@ -374,11 +382,11 @@
 .groupOptionsTitle {
   font-size: 1rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin: 0 0 1rem 0;
   text-align: center;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--theme-border);
 }
 
 .groupOptionsGrid {
@@ -390,8 +398,8 @@
 
 .groupOptionCard {
   padding: 1rem;
-  background: #1e293b;
-  border: 2px solid #334155;
+  background: var(--theme-background-secondary);
+  border: 2px solid var(--theme-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -400,14 +408,14 @@
 }
 
 .groupOptionCard:hover {
-  border-color: #3b82f6;
-  background: #2563eb08;
+  border-color: var(--theme-primary);
+  background: rgba(59, 130, 246, 0.08);
   transform: translateY(-2px);
 }
 
 .groupOptionCard.active {
-  border-color: #3b82f6;
-  background: #2563eb15;
+  border-color: var(--theme-primary);
+  background: rgba(59, 130, 246, 0.15);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
@@ -420,13 +428,13 @@
 .groupOptionTitle {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin: 0 0 0.25rem 0;
 }
 
 .groupOptionDescription {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--theme-text-secondary);
   margin: 0;
   line-height: 1.3;
 }
@@ -438,12 +446,12 @@
 .checkbox {
   width: 1rem;
   height: 1rem;
-  accent-color: #3b82f6;
+  accent-color: var(--theme-primary);
 }
 
 .checkboxLabel {
   font-size: 0.875rem;
-  color: #f1f5f9;
+  color: var(--theme-text);
   margin: 0;
   cursor: pointer;
 }
@@ -565,5 +573,11 @@
   
   .form {
     gap: 1.5rem;
+  }
+  
+  /* Ajustar posición del botón de tema en móvil */
+  .themeToggleContainer {
+    top: 1rem;
+    right: 1rem;
   }
 }

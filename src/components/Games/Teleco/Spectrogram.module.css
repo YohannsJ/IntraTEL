@@ -18,7 +18,7 @@
 .header h4 {
   margin: 0;
   font-size: 1.3rem;
-  color: #fff;
+  color:var(--theme-text);
 }
 
 .clearButton {
@@ -82,14 +82,15 @@
   justify-content: space-around;
   gap: 15px;
   flex-wrap: wrap;
+  color: var(--theme-text);
 }
 
 .infoItem {
-  background: rgba(255, 255, 255, 0.05);
+  /* background: rgba(255, 255, 255, 0.05); */
   padding: 8px 12px;
   border-radius: 8px;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--theme-text);
   border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   min-width: 120px;
@@ -97,6 +98,7 @@
 
 .infoItem span {
   font-weight: 500;
+  color: var(--theme-text);
 }
 
 /* Responsive design */

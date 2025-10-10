@@ -29,6 +29,10 @@
   --theme-error: #ef4444;
   --theme-info: #3b82f6;
 
+  /* Patrones de fondo para auth */
+  --theme-background-pattern: linear-gradient(135deg, var(--theme-background) 0%, var(--theme-background-secondary) 50%, var(--theme-background) 100%);
+  --theme-accent-gradient: linear-gradient(90deg, var(--theme-primary), var(--theme-secondary), var(--theme-primary));
+
   /* GitHub-style Variables for Profile */
   --bg-primary: var(--theme-background);
   --bg-secondary: var(--theme-background-secondary);

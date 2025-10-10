@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getApiUrl, getAuthHeaders, logError } from '../../config';
 import ProgressDashboard from './ProgressDashboard';
@@ -11,6 +11,7 @@ const AdminFlagsPanel = () => {
   const [recentFlags, setRecentFlags] = useState([]);
   const [groupLeaderboard, setGroupLeaderboard] = useState([]);
   const [individualLeaderboard, setIndividualLeaderboard] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Fecha actual por defecto
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -68,15 +69,24 @@ const AdminFlagsPanel = () => {
     }
   };
 
-  const fetchIndividualLeaderboard = async () => {
+  const fetchIndividualLeaderboard = async (date = null) => {
     try {
-      const response = await fetch(getApiUrl('/flags/leaderboard?limit=20'), {
+      const dateParam = date || selectedDate;
+      const response = await fetch(getApiUrl(`/flags/leaderboard?limit=50&date=${dateParam}`), {
         headers: getAuthHeaders()
       });
 
       if (response.ok) {
         const data = await response.json();
-        setIndividualLeaderboard(data.data);
+        // Ordenar por puntos descendente, luego por tiempo de última flag (quien lleva más tiempo con el puntaje gana)
+        const sortedData = data.data.sort((a, b) => {
+          if (b.total_points !== a.total_points) {
+            return b.total_points - a.total_points; // Mayor puntuación primero
+          }
+          // En caso de empate en puntos, quien obtuvo su última flag hace más tiempo gana
+          return new Date(a.last_flag_date || a.obtained_at) - new Date(b.last_flag_date || b.obtained_at);
+        });
+        setIndividualLeaderboard(sortedData);
       }
     } catch (error) {
       logError('Error fetching individual leaderboard:', error);
@@ -98,15 +108,22 @@ const AdminFlagsPanel = () => {
     }
   };
 
-  const refreshData = async () => {
-    await Promise.all([
+  const refreshData = useCallback(async () => {
+    const promises = [
       fetchAllFlags(),
       fetchRecentFlags(),
       fetchGroupLeaderboard(),
-      fetchIndividualLeaderboard(),
       fetchAvailableFlags()
-    ]);
-  };
+    ];
+    
+    // Solo actualizar el ranking individual si estamos en esa pestaña
+    // y manteniendo la fecha seleccionada
+    if (activeTab === 'individual') {
+      promises.push(fetchIndividualLeaderboard(selectedDate));
+    }
+    
+    await Promise.all(promises);
+  }, [activeTab, selectedDate]);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -126,7 +143,14 @@ const AdminFlagsPanel = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [autoRefresh]);
+  }, [autoRefresh, refreshData]);
+
+  // Recargar ranking individual cuando cambie la fecha seleccionada o se active la pestaña
+  useEffect(() => {
+    if (activeTab === 'individual' && selectedDate) {
+      fetchIndividualLeaderboard(selectedDate);
+    }
+  }, [selectedDate, activeTab]);
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
@@ -160,6 +184,20 @@ const AdminFlagsPanel = () => {
       case 2: return '🥈';
       case 3: return '🥉';
       default: return `#${position}`;
+    }
+  };
+
+  const handleDateChange = (event) => {
+    const newDate = event.target.value;
+    setSelectedDate(newDate);
+  };
+
+  const getRankColor = (position) => {
+    switch (position) {
+      case 1: return '#FFD700'; // Oro
+      case 2: return '#C0C0C0'; // Plata
+      case 3: return '#CD7F32'; // Bronce
+      default: return 'inherit';
     }
   };
 
@@ -593,33 +631,125 @@ const AdminFlagsPanel = () => {
 
         {activeTab === 'individual' && (
           <div className={styles.section}>
-            <h3 className={styles.sectionTitle}>👑 Ranking Individual</h3>
-            <div className={styles.leaderboard}>
-              {individualLeaderboard.map((user, index) => (
-                <div key={user.id} className={styles.leaderboardItem}>
-                  <div className={styles.rank}>{getRankIcon(index + 1)}</div>
-                  <div className={styles.leaderboardContent}>
-                    <div className={styles.name}>
-                      {user.first_name} {user.last_name}
-                    </div>
-                    <div className={styles.details}>
-                      @{user.username}
-                      {user.group_name && ` | Grupo: ${user.group_name}`}
-                    </div>
+            <div className={styles.rankingHeader}>
+              <h3 className={styles.sectionTitle}>👑 Ranking Individual</h3>
+              <div className={styles.dateControls}>
+                <label htmlFor="dateSelector" className={styles.dateLabel}>
+                  📅 Fecha:
+                </label>
+                <input
+                  id="dateSelector"
+                  type="date"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  max={new Date().toISOString().split('T')[0]}
+                  className={styles.dateInput}
+                />
+              </div>
+            </div>
+            
+            <div className={styles.rankingDateInfo}>
+              <h4>Ranking del {new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</h4>
+            </div>
+
+            {individualLeaderboard.length === 0 ? (
+              <div className={styles.emptyRanking}>
+                <p>No hay datos de ranking para esta fecha</p>
+              </div>
+            ) : (
+              <>
+                {/* Podio - Top 3 */}
+                {individualLeaderboard.length >= 3 && (
+                  <div className={styles.podium}>
+                    {individualLeaderboard.slice(0, 3).map((user, index) => (
+                      <div 
+                        key={user.id} 
+                        className={`${styles.podiumPlace} ${styles[`place${index + 1}`]}`}
+                      >
+                        <div className={styles.podiumIcon}>
+                          {getRankIcon(index + 1)}
+                        </div>
+                        <div className={styles.podiumPlayer}>
+                          <div className={styles.playerName}>
+                            {user.first_name} {user.last_name}
+                          </div>
+                          <div className={styles.playerUsername}>
+                            @{user.username}
+                          </div>
+                          <div className={styles.playerScore}>
+                            {user.total_points} pts
+                          </div>
+                          <div className={styles.playerFlags}>
+                            {user.total_flags} flags
+                          </div>
+                          {user.last_flag_date && (
+                            <div className={styles.playerTime}>
+                              Última: {new Date(user.last_flag_date).toLocaleTimeString('es-ES', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className={styles.stats}>
-                    <div className={styles.stat}>
-                      <span className={styles.statValue}>{user.total_flags}</span>
-                      <span className={styles.statLabel}>Flags</span>
-                    </div>
-                    <div className={styles.stat}>
-                      <span className={styles.statValue}>{user.total_points}</span>
-                      <span className={styles.statLabel}>Puntos</span>
-                    </div>
+                )}
+
+                {/* Lista completa */}
+                <div className={styles.rankingList}>
+                  <h5>Ranking Completo ({individualLeaderboard.length} participantes)</h5>
+                  <div className={styles.leaderboard}>
+                    {individualLeaderboard.map((user, index) => (
+                      <div 
+                        key={user.id} 
+                        className={`${styles.leaderboardItem} ${index < 3 ? styles.topThree : ''}`}
+                        style={{ borderColor: index < 3 ? getRankColor(index + 1) : 'transparent' }}
+                      >
+                        <div 
+                          className={styles.rank}
+                          style={{ color: getRankColor(index + 1) }}
+                        >
+                          {getRankIcon(index + 1)}
+                        </div>
+                        <div className={styles.leaderboardContent}>
+                          <div className={styles.name}>
+                            {user.first_name} {user.last_name}
+                          </div>
+                          <div className={styles.details}>
+                            @{user.username}
+                            {user.group_name && ` | Grupo: ${user.group_name}`}
+                          </div>
+                          {user.last_flag_date && (
+                            <div className={styles.timeInfo}>
+                              Última flag: {new Date(user.last_flag_date).toLocaleTimeString('es-ES', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.stats}>
+                          <div className={styles.stat}>
+                            <span className={styles.statValue}>{user.total_flags}</span>
+                            <span className={styles.statLabel}>Flags</span>
+                          </div>
+                          <div className={styles.stat}>
+                            <span className={styles.statValue}>{user.total_points}</span>
+                            <span className={styles.statLabel}>Puntos</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         )}
 

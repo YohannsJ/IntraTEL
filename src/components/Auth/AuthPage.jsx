@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { ThemeToggle } from '../etc/ThemeToggle';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import styles from './Auth.module.css';
@@ -55,6 +56,11 @@ const AuthPage = () => {
     <div className={styles.authMain}>
       <div className={styles.authContainer}>
         <div className={styles.authCard}>
+          {/* Botón de cambio de tema */}
+          <div className={styles.themeToggleContainer}>
+            <ThemeToggle />
+          </div>
+          
           <div className={styles.authCardHeader}>
             <h1 className={styles.authTitle}>
               {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}

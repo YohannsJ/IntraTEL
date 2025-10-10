@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext.jsx';
 import { getAllPuzzles } from './utils/puzzleConfig.js';
 import { uid, combinations, NODE_TYPES, relativeToPixels } from './utils/gameUtils.js';
 import { evaluateCircuit } from './utils/circuitEvaluator.js';
@@ -15,7 +16,7 @@ import styles from './styles/NandGame.module.css';
  * NandGame – Mini juego de lógica con puertas NAND
  * - 4 ejercicios: NOT, AND, OR y XOR usando sólo NAND
  * - Interfaz SVG con puertos clicables y cableado visual
- * - Botón "Probar" valida todas las combinaciones de entrada y, si es correcto, muestra alert() con FLAG
+ * - Botón "Probar" valida todas las combinaciones de entrada y, si es correcto, muestra flag para copiar manualmente
  * - Sistema de guardado automático del estado del juego
  */
 
@@ -54,6 +55,7 @@ const createInitialState = (puzzles) => ({
 
 export default function NandGame() {
   const navigate = useNavigate();
+  const { user, token } = useAuth();
   const puzzles = useMemo(() => getAllPuzzles(), []);
   
   // Cargar estado guardado o crear inicial
@@ -220,6 +222,42 @@ export default function NandGame() {
     setMode('puzzle');
     setFailedAttempts(0);
   }, [puzzles, convertRelativeToPixels]);
+
+  // Avanzar al siguiente nivel
+  const goToNextLevel = useCallback(() => {
+    const nextIndex = puzzleIndex + 1;
+    if (nextIndex < puzzles.length) {
+      resetToPuzzle(nextIndex);
+    }
+  }, [puzzleIndex, puzzles.length, resetToPuzzle]);
+
+  // Función para verificar flags obtenidas del backend
+  const getUserFlags = useCallback(async () => {
+    if (!user || !token) {
+      return [];
+    }
+
+    try {
+      const response = await fetch('/api/flags/user', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        return data.data || [];
+      } else {
+        console.warn('Error obteniendo flags del usuario:', data.message);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error obteniendo flags del backend:', error);
+      return [];
+    }
+  }, [user, token]);
 
   // Cambiar a modo sandbox
   const enterSandboxMode = useCallback(() => {
@@ -643,20 +681,6 @@ export default function NandGame() {
         showCopyButton: true,
         autoClose: false
       });
-
-      // Flag final si se completaron ambos
-      if (newSolved.NOT && newSolved.AND && newSolved.OR && newSolved.XOR) {
-        setTimeout(() => {
-          showAlert({
-            type: 'success',
-            title: '🏆 ¡Maestro NAND!',
-            message: '¡Increíble! Has completado todos los puzzles NAND. Eres un verdadero maestro de la lógica digital. Aquí tienes tu flag especial:',
-            flagValue: 'D1FT3L{NAND_TOTAL_MASTER_4_DE_4}',
-            showCopyButton: true,
-            autoClose: false
-          });
-        }, 2000);
-      }
       
       // Resetear contador de intentos fallidos al resolver
       setFailedAttempts(0);
@@ -673,7 +697,7 @@ export default function NandGame() {
         // autoCloseDelay: 4000
       });
     }
-  }, [nodes, connections, currentPuzzle, solved, mode, showAlert, failedAttempts]);
+  }, [nodes, connections, currentPuzzle, solved, mode, showAlert, failedAttempts, getUserFlags, puzzles]);
 
   // Limpiar todas las conexiones
   const clearAllConnections = useCallback(() => {
@@ -752,6 +776,65 @@ export default function NandGame() {
               >
                 ✓ Probar
               </button>
+            )}
+
+            {/* Botón Siguiente Nivel o Liberar Bandera Final */}
+            {mode === 'puzzle' && solved[currentPuzzle.key] && (
+              <>
+                {/* Si no es el último nivel, mostrar botón normal de Siguiente Nivel */}
+                {puzzleIndex < puzzles.length - 1 && (
+                  <button
+                    className={`${styles.tabButton} ${styles.nextLevelButton}`}
+                    onClick={goToNextLevel}
+                    title="Avanzar al siguiente nivel"
+                  >
+                    ➡️ Siguiente Nivel
+                  </button>
+                )}
+                
+                {/* Si es el último nivel (XOR) y tiene todos completados, mostrar botón especial */}
+                {puzzleIndex === puzzles.length - 1 && 
+                 solved.NOT && solved.AND && solved.OR && solved.XOR && (
+                  <button
+                    className={`${styles.tabButton} ${styles.finalFlagButton}`}
+                    onClick={async () => {
+                      // Verificar que el usuario tenga todas las 4 flags individuales en el backend
+                      const userFlags = await getUserFlags();
+                      const flagValues = userFlags.map(flag => flag.flag_value);
+                      
+                      // Verificar que tenga las 4 flags de niveles
+                      const hasAllLevelFlags = puzzles.every(puzzle => {
+                        const puzzleFlag = puzzle.flag || `FLAG{${puzzle.key}_COMPLETED}`;
+                        return flagValues.includes(puzzleFlag);
+                      });
+
+                      if (hasAllLevelFlags) {
+                        const finalFlag = 'D1FT3L{NAND_TOTAL_MASTER_4_DE_4}';
+                        
+                        showAlert({
+                          type: 'success',
+                          title: '🏆 ¡Maestro NAND Absoluto!',
+                          message: '¡Felicitaciones! Has demostrado ser un verdadero maestro de la lógica digital completando todos los ejercicios NAND. Como recompensa por tu dedicación y habilidad, aquí tienes la bandera final:',
+                          flagValue: finalFlag,
+                          showCopyButton: true,
+                          autoClose: false
+                        });
+                      } else {
+                        showAlert({
+                          type: 'warning',
+                          title: '🎯 Flags Requeridas',
+                          message: 'Para obtener la bandera final, necesitas tener todas las flags individuales de los 4 ejercicios en el sistema. Asegúrate de haber enviado correctamente cada flag.',
+                          autoClose: true,
+                          autoCloseDelay: 5000
+                        });
+                      }
+                    }}
+                    title="Liberar la bandera final del maestro NAND"
+                  >
+                    🏆 Liberar Bandera Final
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

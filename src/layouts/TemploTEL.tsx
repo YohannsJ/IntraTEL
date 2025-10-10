@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { getApiUrl, getAuthHeaders } from "../config/environment";
+
 import {
   TemploTelematica,
   DEFAULT_PILLAR_PALETTE,
@@ -10,6 +11,7 @@ import {
 } from "../components/Pilar/PilarTelematica";
 import WebPreview from "../components/etc/WebPreview";
 import InstagramPreview from "../components/etc/InstagramPreview";
+import Footer from "../components/Footer/Footer";
 
 // Configuración de flags requeridas para desbloquear cada pilar
 const PILLAR_REQUIREMENTS = {
@@ -432,35 +434,7 @@ export default function HomeHero() {
       </div>
 
       {/* Redes sociales y web móvil - Footer */}
-      <footer className="md:hidden border-t backdrop-blur-sm p-6" style={{ 
-        borderColor: theme.border,
-        backgroundColor: theme.backgroundSecondary,
-        opacity: 0.9
-      }}>
-        <div className="max-w-md mx-auto">
-          <h3 className="font-bold text-center mb-4" style={{ color: theme.text }}>Visita Telemática USM</h3>
-          <div className="flex flex-col gap-4 mb-6">
-            <a 
-              href="https://telematica.usm.cl/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg"
-            >
-              <span className="text-xl">🌐</span>
-              <span className="font-semibold">Página Web Telemática</span>
-            </a>
-            <a 
-              href="https://www.instagram.com/telematicausm/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-pink-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
-            >
-              <span className="text-xl">�</span>
-              <span className="font-semibold">Instagram @telematicausm</span>
-            </a>
-          </div>
-        </div>
-      </footer>
+    <Footer/>
 
       {/* CSS para responsive scaling */}
       <style>{`

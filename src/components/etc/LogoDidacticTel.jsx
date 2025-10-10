@@ -29,23 +29,21 @@ export const LogoDidacticTel = ({ className, style, width = "200", height = "45"
       aria-label="Didactic-Tel logo"
       className={className}
       style={{ 
-        width: width, 
-        height: height,
+        width: width + 'px', 
+        height: height + 'px',
+        display: 'block',
         ...style 
       }}
     >
-      {/* Fondo transparente */}
-      <rect width="100%" height="100%" fill="none"/>
-      
       {/* Texto central */}
       <text 
-        x="50%" 
-        y="55%" 
+        x="450" 
+        y="110" 
         textAnchor="middle"
-        fontFamily="Inter, Poppins, Segoe UI, Arial, sans-serif"
+        fontFamily="Inter, Poppins, 'Segoe UI', Arial, sans-serif"
         fontSize="120" 
         fontWeight="700"
-        dominantBaseline="middle"
+        dominantBaseline="central"
       >
         <tspan fill={colors.didacticColor}>Didactic-</tspan>
         <tspan fill={colors.telColor}>Tel</tspan>
@@ -53,5 +51,3 @@ export const LogoDidacticTel = ({ className, style, width = "200", height = "45"
     </svg>
   );
 };
-
-export default LogoDidacticTel;

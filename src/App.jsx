@@ -8,7 +8,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useData } from './context/DataContext';
 import { useAuth } from './context/AuthContext';
 import { ThemeToggle } from './components/etc/ThemeToggle';
-import LogoDidacticTel from './components/etc/LogoDidacticTel';
+import { LogoDidacticTel } from './components/etc/LogoDidacticTel';
 import FlagSubmitter from './components/Flags/FlagSubmitter';
 import styles from './App.module.css';
 // import ThemeContext from './context/ThemeContext';

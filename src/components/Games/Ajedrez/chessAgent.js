@@ -3,17 +3,21 @@
  * Corre los 3 modelos pre-entrenados directamente en el navegador
  * usando onnxruntime-web (WebAssembly). No necesita servidor.
  *
- * Los archivos .onnx deben estar en:
- *   public/models/level1.onnx
- *   public/models/level2.onnx
- *   public/models/level3.onnx
+ * Los modelos deben estar en public/models/ (cada .onnx con su .onnx.data):
+ *   level1.onnx + level1.onnx.data
+ *   level2.onnx + level2.onnx.data
+ *   level3.onnx + level3.onnx.data
  */
 
-import * as ort from 'onnxruntime-web'
+import * as ort from 'onnxruntime-web/wasm'
+import ortWasmUrl from 'onnxruntime-web/ort-wasm-simd-threaded.wasm?url'
+import ortMjsUrl from 'onnxruntime-web/ort-wasm-simd-threaded.mjs?url'
 import { encodeBoard, moveToIdx } from './boardEncoder.js'
 
-// Usar CDN para los archivos .wasm → no agrega nada al bundle del proyecto
-ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.18.0/dist/'
+// Archivos .wasm servidos desde el propio paquete instalado (misma versión que el JS)
+ort.env.wasm.wasmPaths = { wasm: ortWasmUrl, mjs: ortMjsUrl }
+// Un solo hilo: multihilo requiere cabeceras COOP/COEP que el sitio no envía
+ort.env.wasm.numThreads = 1
 
 // ─── Paths de los modelos ─────────────────────────────────────────────────────
 const MODEL_PATHS = {
@@ -40,11 +44,17 @@ async function getSession(level) {
 
   // Evitar cargas duplicadas paralelas
   if (!_loading[level]) {
+    // Los pesos están en un archivo externo (.onnx.data) referenciado por el modelo
+    const dataFile = `level${level}.onnx.data`
     _loading[level] = ort.InferenceSession.create(MODEL_PATHS[level], {
       executionProviders: ['wasm'],
+      externalData: [{ path: dataFile, data: `/models/${dataFile}` }],
     }).then(session => {
       _sessions[level] = session
       return session
+    }).catch(err => {
+      delete _loading[level]   // permitir reintento en la siguiente llamada
+      throw err
     })
   }
 
@@ -107,7 +117,9 @@ export async function getModelMove(game, level) {
   const tensor     = new ort.Tensor('float32', boardData, [1, 14, 8, 8])
   const results    = await session.run({ board: tensor })
   const policy     = results.policy.data   // Float32Array(4096) — logits
+  // La política no distingue piezas de promoción: solo se considera promover a dama
   const legalMoves = game.moves({ verbose: true })
+    .filter(m => !m.promotion || m.promotion === 'q')
   const temp       = TEMPERATURE[level] ?? 0.5
 
   return sampleMove(legalMoves, policy, temp)

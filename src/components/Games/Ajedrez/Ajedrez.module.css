@@ -276,6 +276,28 @@
 .check    { border-color: #e05c6b !important; background: rgba(224,92,107,.1) !important; color: #ff8a96 !important; }
 .gameover { border-color: #81b64c !important; background: rgba(129,182,76,.1)  !important; color: #81b64c  !important; font-weight: 700; }
 
+/* ── Flag ────────────────────────────────────────────────────── */
+.flagBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #d4a017;
+  background: rgba(212,160,23,.1);
+}
+.flagTitle { font-size: 13px; font-weight: 700; color: #d4a017; }
+.flagCode {
+  font-family: monospace;
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  word-break: break-all;
+  user-select: all;
+}
+.dark  .flagCode { background: #1a1a1a; color: #f0d68a; }
+.light .flagCode { background: #fff8e1; color: #7a5c00; }
+
 /* ── Botones ─────────────────────────────────────────────────── */
 .btnRow { display: flex; gap: 8px; }
 

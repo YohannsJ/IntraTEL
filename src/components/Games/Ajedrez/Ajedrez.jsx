@@ -1,12 +1,8 @@
 /**
  * Ajedrez.jsx
- * Coloca en: src/components/Games/Ajedrez/Ajedrez.jsx
- *
- * Dependencias:
- *   npm install chess.js onnxruntime-web
  *
  * Modelos necesarios en public/models/:
- *   level1.onnx, level2.onnx, level3.onnx
+ *   level1.onnx, level2.onnx, level3.onnx (+ sus .onnx.data)
  *   (generados por export_onnx.py después del entrenamiento)
  */
 
@@ -60,6 +56,9 @@ const PST = {
 }
 const FALLBACK_DEPTH = { 1: 1, 2: 2, 3: 3 }
 
+// Flag que se entrega al ganarle al agente en nivel Principiante
+const LEVEL1_FLAG = 'FLAG{CH3CKM4T3_PR1NC1P14NT3}'
+
 function pstIdx(sq, color) {
   const c = FILES.indexOf(sq[0])
   const r = 8 - parseInt(sq[1])
@@ -106,10 +105,6 @@ function minimax(game, depth, α, β, maxing) {
 
 function fallbackMove(game, level) {
   const depth = FALLBACK_DEPTH[level]
-  if (depth === 0) {
-    const ms = game.moves({ verbose: true })
-    return ms[Math.floor(Math.random() * ms.length)] || null
-  }
   const moves = [...game.moves({ verbose: true })].sort(() => Math.random() - 0.5)
   if (!moves.length) return null
   const maxing = game.turn() === 'w'
@@ -155,9 +150,10 @@ export default function AjedrezGame() {
   const gameRef  = useRef(new Chess())
   const busyRef  = useRef(false)
   const timerRef = useRef(null)
+  const gameIdRef = useRef(0)   // cambia en cada reinicio: invalida movidas del agente en curso
   const game     = gameRef.current
 
-  const [fen,          setFen]          = useState(() => game.fen())
+  const [,             setFen]          = useState(() => game.fen())
   const [selectedSq,   setSelectedSq]   = useState(null)
   const [legalDests,   setLegalDests]   = useState([])
   const [lastFrom,     setLastFrom]     = useState(null)
@@ -170,12 +166,30 @@ export default function AjedrezGame() {
   const [history,      setHistory]      = useState([])
   const [evalPct,      setEvalPct]      = useState(50)
   const [gameOver,     setGameOver]     = useState(false)
+  const [flag,         setFlag]         = useState(null)
+  const [flagCopied,   setFlagCopied]   = useState(false)
 
   // Precarga el modelo del nivel seleccionado al entrar a la página
   useEffect(() => {
     setModelLoading(true)
     preloadModel(level).finally(() => setModelLoading(false))
   }, [level])
+
+  // Cancela movidas pendientes del agente al salir de la página
+  useEffect(() => () => {
+    clearTimeout(timerRef.current)
+    gameIdRef.current++
+  }, [])
+
+  function resetGame() {
+    clearTimeout(timerRef.current)
+    gameIdRef.current++
+    game.reset(); busyRef.current = false
+    setSelectedSq(null); setLegalDests([])
+    setLastFrom(null); setLastTo(null)
+    setFlag(null); setFlagCopied(false)
+    syncBoard()
+  }
 
   function syncBoard() {
     setFen(game.fen())
@@ -206,11 +220,13 @@ export default function AjedrezGame() {
   // ── Movida del agente ────────────────────────────────────────────────────────
   async function doAgentMove(lvl = level) {
     if (game.isGameOver() || busyRef.current) return
+    const gameId = gameIdRef.current
     busyRef.current = true
     setStatusMsg('El agente está pensando...'); setStatusType('thinking')
 
     // Pequeña pausa para que la UI actualice antes del cálculo
     await sleep(200)
+    if (gameId !== gameIdRef.current) return
 
     let mv = null
     try {
@@ -220,6 +236,8 @@ export default function AjedrezGame() {
       console.warn('[Ajedrez] Modelo no disponible, usando minimax:', err)
       mv = fallbackMove(game, lvl)
     }
+    // La partida se reinició mientras el agente pensaba
+    if (gameId !== gameIdRef.current) return
 
     if (mv) {
       game.move(mv); setLastFrom(mv.from); setLastTo(mv.to)
@@ -243,7 +261,8 @@ export default function AjedrezGame() {
       setLastFrom(selectedSq); setLastTo(sqName)
       setSelectedSq(null); setLegalDests([])
       syncBoard(); applyStatus(false)
-      if (!game.isGameOver()) setTimeout(() => doAgentMove(level), 300)
+      if (game.isCheckmate() && level === 1) setFlag(LEVEL1_FLAG)
+      if (!game.isGameOver()) timerRef.current = setTimeout(() => doAgentMove(level), 300)
       return
     }
 
@@ -260,10 +279,7 @@ export default function AjedrezGame() {
   useEffect(() => {
     if (!watchMode) return
     let active = true
-    game.reset(); busyRef.current = false
-    setSelectedSq(null); setLegalDests([])
-    setLastFrom(null); setLastTo(null)
-    syncBoard()
+    resetGame()
     setStatusMsg('▶ Agente vs Agente en curso...'); setStatusType('')
 
     async function tick() {
@@ -290,36 +306,37 @@ export default function AjedrezGame() {
   function handleLevelChange(newLevel) {
     if (watchMode) return
     setLevel(newLevel)
-    handleNewGame(newLevel)
+    handleNewGame()
   }
 
-  function handleNewGame(lvl = level) {
-    clearTimeout(timerRef.current)
+  function handleNewGame() {
     if (watchMode) setWatchMode(false)
-    game.reset(); busyRef.current = false
-    setSelectedSq(null); setLegalDests([])
-    setLastFrom(null); setLastTo(null)
-    setGameOver(false)
-    syncBoard()
+    resetGame()
     setStatusMsg('Tu turno — mueve una pieza blanca.'); setStatusType('')
   }
 
   function handleResign() {
     if (watchMode || busyRef.current || game.isGameOver()) return
-    clearTimeout(timerRef.current); busyRef.current = false
+    clearTimeout(timerRef.current); gameIdRef.current++; busyRef.current = false
     setStatusMsg('Te has rendido. ¡Mejor suerte la próxima!'); setStatusType('gameover')
     setGameOver(true)
   }
 
   function handleToggleWatch() {
-    clearTimeout(timerRef.current); busyRef.current = false
     if (watchMode) {
-      setWatchMode(false); game.reset()
-      setSelectedSq(null); setLegalDests([])
-      setLastFrom(null); setLastTo(null)
-      syncBoard()
+      setWatchMode(false)
+      resetGame()
       setStatusMsg('Tu turno — mueve una pieza blanca.'); setStatusType('')
     } else { setWatchMode(true) }
+  }
+
+  async function handleCopyFlag() {
+    try {
+      await navigator.clipboard.writeText(flag)
+      setFlagCopied(true)
+    } catch {
+      setFlagCopied(false)
+    }
   }
 
   // ── Render ────────────────────────────────────────────────────────────────────
@@ -455,6 +472,17 @@ export default function AjedrezGame() {
               ? '⏳ Cargando modelo...'
               : statusMsg}
           </div>
+
+          {/* Flag por ganar en nivel Principiante */}
+          {flag && (
+            <div className={s.flagBox}>
+              <span className={s.flagTitle}>🚩 ¡Venciste al agente Principiante!</span>
+              <code className={s.flagCode}>{flag}</code>
+              <button className={`${s.btn} ${s.btnPrimary}`} onClick={handleCopyFlag}>
+                {flagCopied ? '✓ Copiada' : '📋 Copiar flag'}
+              </button>
+            </div>
+          )}
 
           {/* Botones */}
           <div className={s.btnRow}>

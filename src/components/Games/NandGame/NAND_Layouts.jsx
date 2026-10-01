@@ -828,6 +828,16 @@ export default function NandGame() {
                   <button
                     className={`${styles.tabButton} ${styles.finalFlagButton}`}
                     onClick={async () => {
+                      if (!user) {
+                        showAlert({
+                          type: 'warning',
+                          title: '🔒 Inicia sesión',
+                          message: 'La bandera final se verifica con las flags registradas en tu cuenta. Inicia sesión y envía las flags de cada ejercicio para liberarla.',
+                          autoClose: true,
+                          autoCloseDelay: 5000
+                        });
+                        return;
+                      }
                       // Verificar que el usuario tenga todas las 4 flags individuales en el backend
                       const userFlags = await getUserFlags();
                       const flagValues = userFlags.map(flag => flag.flag_value);

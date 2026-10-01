@@ -284,7 +284,7 @@ const AppLayout = () => {
         <Outlet />
       </main>
       <Footer />
-      {isAuthenticated && <FlagSubmitter />}
+      <FlagSubmitter />
       <TelixBot />
     </div>
   );

@@ -257,3 +257,8 @@
     flex: none;
   }
 }
+
+.loginLink {
+  text-align: center;
+  text-decoration: none;
+}

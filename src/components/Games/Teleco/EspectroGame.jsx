@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { apiUrl, apiHeaders } from '../../../config/index.js';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 import Spectrogram from './Spectrogram.jsx';
 import styles from './EspectroGame.module.css';
 
@@ -31,6 +32,7 @@ const LEVEL_PATTERNS = {
 };
 
 const EspectroGame = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [gameState, setGameState] = useState({
     level: 1,
@@ -111,8 +113,11 @@ const EspectroGame = () => {
     if (!hasSeenTutorial) {
       setShowTutorial(true);
     }
+  }, []);
 
-    // Intentar cargar logros del servidor (en memoria) para recordarlos hasta reinicio
+  // Intentar cargar logros del servidor (en memoria) para recordarlos hasta reinicio
+  useEffect(() => {
+    if (!isAuthenticated) return;
     (async () => {
       try {
         const res = await fetch(apiUrl('games/achievements/me'), { headers: apiHeaders(true) });
@@ -131,7 +136,7 @@ const EspectroGame = () => {
         // ignorar si no hay sesión o endpoint no disponible
       }
     })();
-  }, []);
+  }, [isAuthenticated]);
 
   // Guardar progreso y logros
   const saveProgress = useCallback(() => {
@@ -163,6 +168,7 @@ const EspectroGame = () => {
 
   // Enviar al servidor los logros actuales (se recuerdan hasta que se reinicie el servidor)
   const syncAchievementsToServer = useCallback(async () => {
+    if (!isAuthenticated) return;
     try {
       const keys = Object.entries(achievements)
         .filter((entry) => entry[1])
@@ -176,7 +182,7 @@ const EspectroGame = () => {
     } catch {
       // silencioso
     }
-  }, [achievements]);
+  }, [achievements, isAuthenticated]);
 
   // Sincronizar cuando se agregan logros en la sesión
   useEffect(() => {

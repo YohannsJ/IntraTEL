@@ -47,46 +47,11 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ) 
       },
-      { 
-        path: 'NandGame', 
-        element: (
-          <ProtectedRoute>
-            <NandGame />
-          </ProtectedRoute>
-        ) 
-      },
-      { 
-        path: 'Espectro', 
-        element: (
-          <ProtectedRoute>
-            <EspectroGame />
-          </ProtectedRoute>
-        ) 
-      },
-      { 
-        path: 'Datos', 
-        element: (
-          <ProtectedRoute>
-            <GestionWorkshop />
-          </ProtectedRoute>
-        ) 
-      },
-      { 
-        path: 'Software', 
-        element: (
-          <ProtectedRoute>
-            <CSSCodeGame />
-          </ProtectedRoute>
-        ) 
-      },
-      { 
-        path: 'Redes', 
-        element: (
-          <ProtectedRoute>
-            <Network />
-          </ProtectedRoute>
-        ) 
-      },
+      { path: 'NandGame', element: <NandGame /> },
+      { path: 'Espectro', element: <EspectroGame /> },
+      { path: 'Datos', element: <GestionWorkshop /> },
+      { path: 'Software', element: <CSSCodeGame /> },
+      { path: 'Redes', element: <Network /> },
       // SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
       // { 
       //   path: 'grupos', 
@@ -136,12 +101,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ) 
       },
-      { path: 'Ajedrez',
-        element: (
-        <ProtectedRoute>
-          <AjedrezGame />
-        </ProtectedRoute>) 
-      },
+      { path: 'Ajedrez', element: <AjedrezGame /> },
       // { path: 'Templo', element: <TemploTelematica /> },
       { path: 'Templo', element: <HomeHero /> },
       // { path: 'devices/:deviceId/trips/:tripId', element: <TripDetailPage /> },

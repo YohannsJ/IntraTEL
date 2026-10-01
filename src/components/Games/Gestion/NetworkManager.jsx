@@ -4,10 +4,12 @@ import styles from './NetworkManager.module.css';
 import telixImage from '../../../assets/telix.png';
 import { getApiUrl, getAuthHeaders } from '../../../config/environment';
 import { useTheme } from '../../../context/ThemeContext';
+import { useAuth } from '../../../context/AuthContext';
 
 const NetworkManager = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
   const [stability, setStability] = useState(100);
   const [score, setScore] = useState(0);
   const [currentProblem, setCurrentProblem] = useState(null);
@@ -418,6 +420,10 @@ const NetworkManager = () => {
   // Verificar si el usuario ya tiene una bandera del juego de gestión
   useEffect(() => {
     const checkUserFlags = async () => {
+      if (!isAuthenticated) {
+        setCheckingFlags(false);
+        return;
+      }
       try {
         const response = await fetch(getApiUrl('/flags/user'), {
           headers: getAuthHeaders()
@@ -452,7 +458,7 @@ const NetworkManager = () => {
     };
 
     checkUserFlags();
-  }, []);
+  }, [isAuthenticated]);
 
   // disable page scroll while tutorial panel is visible and show a tutorial-specific mascot tip
   useEffect(() => {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getApiUrl, getAuthHeaders, logError } from '../../config';
 import styles from './FlagSubmitter.module.css';
@@ -77,10 +78,6 @@ const FlagSubmitter = () => {
     setMessage({ type: '', text: '' });
   };
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
     <>
       {/* Botón flotante */}
@@ -106,6 +103,21 @@ const FlagSubmitter = () => {
               </button>
             </div>
 
+            {!isAuthenticated ? (
+              <>
+                <div className={`${styles.message} ${styles.warning}`}>
+                  🔒 Puedes jugar sin cuenta, pero necesitas iniciar sesión para registrar tus flags y sumar puntos.
+                </div>
+                <div className={styles.buttonGroup}>
+                  <button type="button" onClick={handleClose} className={styles.cancelButton}>
+                    Cancelar
+                  </button>
+                  <Link to="/auth" onClick={handleClose} className={`${styles.submitButton} ${styles.loginLink}`}>
+                    Iniciar Sesión
+                  </Link>
+                </div>
+              </>
+            ) : (
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.inputGroup}>
                 <label htmlFor="flag">Ingresa tu flag:</label>
@@ -145,6 +157,7 @@ const FlagSubmitter = () => {
                 </button>
               </div>
             </form>
+            )}
 
             <div className={styles.helpText}>
               <p>💡 Las flags son códigos especiales que puedes encontrar completando desafíos.</p>

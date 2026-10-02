@@ -6,10 +6,13 @@ import Topology from './components/Topology.jsx';
 import ConsoleWithTabs from './components/ConsoleWithTabs.jsx';
 import { createInitialTopology } from './lib/topologyState.js';
 import { IOSProvider } from './lib/iosEngine.jsx';
+import { useAuth } from '../../../context/AuthContext.jsx';
+import GuestFlagNotice from '../../Flags/GuestFlagNotice.jsx';
 
 export default function Network(){
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
   const [topo, setTopo] = useState(createInitialTopology());
   const [status, setStatus] = useState('');
   const [flags, setFlags] = useState([]); // Array de banderas conseguidas
@@ -22,6 +25,8 @@ export default function Network(){
   ctxRef.current.setStatus = setStatus;
   ctxRef.current.flags = flags;
   ctxRef.current.setFlags = setFlags;
+  // Los motores de consola leen esto para no entregar banderas a invitados
+  ctxRef.current.isGuest = !isAuthenticated;
   
   // ctx estable (solo se crea una vez)
   const ctx = useMemo(() => ctxRef.current, []);
@@ -54,6 +59,7 @@ export default function Network(){
             </button>
           </div>
         </header>
+        {!isAuthenticated && <GuestFlagNotice />}
 
       <main className={styles.grid}>
         <section className={styles.left}>

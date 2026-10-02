@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './InstagramPreview.module.css';
+import { publicUrl } from '../../config/environment.js';
 
 /**
  * Componente que muestra el feed de Instagram en formato móvil vertical
@@ -34,7 +35,7 @@ export default function InstagramPreview({ username = "telematicausm", className
               <div className={styles.profileHeader}>
                 <div className={styles.profilePicLarge}>
                   <img 
-                    src="/LogoTEL.png" 
+                    src={publicUrl('LogoTEL.png')} 
                     alt="Logo Telemática USM" 
                     className={styles.logoImage}
                   />

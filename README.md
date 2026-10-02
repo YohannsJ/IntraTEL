@@ -38,7 +38,7 @@ npm run dev:full
 
 3) Acceder
 
-- Frontend: http://localhost:5173
+- Frontend: http://localhost:5173/didactictel/
 - API: http://localhost:3001/api
 
 ## ⚙️ Admin por defecto 

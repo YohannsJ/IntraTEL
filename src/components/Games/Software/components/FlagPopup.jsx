@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import styles from './FlagPopup.module.css';
+import { useAuth } from '../../../../context/AuthContext.jsx';
+import GuestFlagNotice from '../../../Flags/GuestFlagNotice.jsx';
 
 const LEVEL_FLAGS = {
   0: {
@@ -35,7 +37,10 @@ const LEVEL_FLAGS = {
 };
 
 export function FlagPopup({ level, isOpen, onClose }) {
-  const flagData = LEVEL_FLAGS[level];
+  const { isAuthenticated } = useAuth();
+  const levelData = LEVEL_FLAGS[level];
+  // Invitados: mismo popup de nivel completado, pero sin bandera
+  const flagData = levelData && !isAuthenticated ? { ...levelData, flag: null } : levelData;
 
   useEffect(() => {
     if (isOpen && flagData?.flag) {
@@ -64,17 +69,21 @@ export function FlagPopup({ level, isOpen, onClose }) {
         <div className={styles.content}>
           <p className={styles.description}>{flagData.description}</p>
           
-          <div className={styles.flagContainer}>
-            <div className={styles.flagLabel}>🚩 Tu Bandera:</div>
-            <div className={styles.flag}>
-              <code>{flagData.flag}</code>
+          {flagData.flag ? (
+            <div className={styles.flagContainer}>
+              <div className={styles.flagLabel}>🚩 Tu Bandera:</div>
+              <div className={styles.flag}>
+                <code>{flagData.flag}</code>
+              </div>
             </div>
-          </div>
+          ) : (
+            <GuestFlagNotice />
+          )}
           
           {level === 4 ? (
             <div className={styles.completionMessage}>
               <p>🎉 ¡Felicitaciones! Has demostrado ser un verdadero experto en CSS.</p>
-              <p>Guarda esta bandera como prueba de tu logro supremo.</p>
+              {flagData.flag && <p>Guarda esta bandera como prueba de tu logro supremo.</p>}
             </div>
           ) : (
             <div className={styles.nextLevel}>

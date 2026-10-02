@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import styles from './LandingPage.module.css';
+import { publicUrl } from '../config/environment.js';
 
 const LandingPage = () => {
   const { isAuthenticated } = useAuth();
@@ -91,7 +92,7 @@ const LandingPage = () => {
             className={styles.parallaxLayer}
             style={{ 
               transform: reduceMotion ? 'none' : `translateY(${scrollY * 0.5}px)`,
-              backgroundImage: currentTheme === 'dark' ? `url('/BackgroundTELDark.png')` : `url('/BackgroundTELLight.png')`,
+              backgroundImage: currentTheme === 'dark' ? `url('${publicUrl('BackgroundTELDark.png')}')` : `url('${publicUrl('BackgroundTELLight.png')}')`,
               // filter: currentTheme === 'light' ? 'invert(100%)' : 'none'
             }}
           />
@@ -112,7 +113,7 @@ const LandingPage = () => {
         <div className={styles.heroContent}>
           <div className={styles.logoSection}>
             <img 
-              src="/LogoTEL.png" 
+              src={publicUrl('LogoTEL.png')} 
               alt="Logo Telemática" 
               className={styles.heroLogo}
               style={{ 

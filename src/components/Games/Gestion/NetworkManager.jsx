@@ -4,8 +4,11 @@ import styles from './NetworkManager.module.css';
 import telixImage from '../../../assets/telix.png';
 import { getApiUrl, getAuthHeaders } from '../../../config/environment';
 import { useTheme } from '../../../context/ThemeContext';
+import { useAuth } from '../../../context/AuthContext';
+import GuestFlagNotice from '../../Flags/GuestFlagNotice.jsx';
 
 const NetworkManager = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
   const [stability, setStability] = useState(100);
@@ -418,6 +421,11 @@ const NetworkManager = () => {
   // Verificar si el usuario ya tiene una bandera del juego de gestión
   useEffect(() => {
     const checkUserFlags = async () => {
+      // Invitados: no hay banderas que consultar (evita un 401)
+      if (!isAuthenticated) {
+        setCheckingFlags(false);
+        return;
+      }
       try {
         const response = await fetch(getApiUrl('/flags/user'), {
           headers: getAuthHeaders()
@@ -452,7 +460,7 @@ const NetworkManager = () => {
     };
 
     checkUserFlags();
-  }, []);
+  }, [isAuthenticated]);
 
   // disable page scroll while tutorial panel is visible and show a tutorial-specific mascot tip
   useEffect(() => {
@@ -651,7 +659,7 @@ const NetworkManager = () => {
         setScore(prev => prev + 50); // Bonus adicional por la flag especial
         // Mostrar mensaje especial
         setMascotMood('cheer');
-        setMascotTip({ visible: true, text: '🎉 ¡Increíble! Has bloqueado 5 popups maliciosos. ¡Flag especial desbloqueada!' });
+        setMascotTip({ visible: true, text: isAuthenticated ? '🎉 ¡Increíble! Has bloqueado 5 popups maliciosos. ¡Flag especial desbloqueada!' : '🎉 ¡Increíble! Has bloqueado 5 popups maliciosos.' });
         setTimeout(() => {
           setMascotTip({ visible: false, text: '' });
           setMascotMood('idle');
@@ -1214,7 +1222,8 @@ const NetworkManager = () => {
                     <p>¡La red está estable gracias a ti! ¡Buen trabajo, detective de la red!</p>
                     
                     {/* Flag principal del juego */}
-                    {(() => {
+                    {!isAuthenticated && <GuestFlagNotice />}
+                    {isAuthenticated && (() => {
                       const mainFlag = calculateFinalFlag(score);
                       return (
                         <div style={{ 
@@ -1248,7 +1257,7 @@ const NetworkManager = () => {
                     })()}
 
                     {/* Flag bonus por popups (si se obtuvo) */}
-                    {popupFlagObtained && (() => {
+                    {isAuthenticated && popupFlagObtained && (() => {
                       const bonusFlag = getPopupBonusFlag();
                       return (
                         <div style={{ 
@@ -1286,7 +1295,8 @@ const NetworkManager = () => {
                     <p>La red necesita ayuda. ¡Inténtalo otra vez!</p>
                     
                     {/* Mostrar flag incluso si perdió */}
-                    {(() => {
+                    {!isAuthenticated && <GuestFlagNotice />}
+                    {isAuthenticated && (() => {
                       const mainFlag = calculateFinalFlag(score);
                       return (
                         <div style={{ 
@@ -1315,7 +1325,7 @@ const NetworkManager = () => {
                     })()}
 
                     {/* Flag bonus por popups (si se obtuvo) */}
-                    {popupFlagObtained && (() => {
+                    {isAuthenticated && popupFlagObtained && (() => {
                       const bonusFlag = getPopupBonusFlag();
                       return (
                         <div style={{ 

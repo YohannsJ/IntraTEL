@@ -1,4 +1,6 @@
 // PC Engine - Consola simplificada para el PC
+import { GUEST_FLAG_TEXT } from '../../../Flags/guestFlagText.js';
+
 export function createPCEngine(ctx) {
   const state = {
     hostname: 'PC1',
@@ -126,7 +128,9 @@ export function createPCEngine(ctx) {
         `Approximate round trip times in milli-seconds:`,
         `    Minimum = 0ms, Maximum = 0ms, Average = 0ms`,
         ``,
-        `✅ Conexión exitosa con el router!\n\nD1ft3l{F1n4l_St4g3.N3tw0rk-4Dm1n}\n\n¡Felicidades!`
+        ctx && ctx.isGuest
+          ? `✅ Conexión exitosa con el router!\n\n${GUEST_FLAG_TEXT}\n\n¡Felicidades!`
+          : `✅ Conexión exitosa con el router!\n\nD1ft3l{F1n4l_St4g3.N3tw0rk-4Dm1n}\n\n¡Felicidades!`
       ]);
       
       // Otorgar segunda bandera si el ping fue exitoso
@@ -139,7 +143,7 @@ export function createPCEngine(ctx) {
               id: 'ping',
               title: 'Configuración Exitosa',
             //   code: 'FLAG{P1NG_SUCC3SSFUL_C0NF1G}'
-              code: 'D1ft3l{F1n4l_St4g3.N3tw0rk-4Dm1n}'
+              code: ctx.isGuest ? null : 'D1ft3l{F1n4l_St4g3.N3tw0rk-4Dm1n}'
             }
           ]);
         }

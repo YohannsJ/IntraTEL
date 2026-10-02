@@ -49,43 +49,23 @@ const router = createBrowserRouter([
       },
       { 
         path: 'NandGame', 
-        element: (
-          <ProtectedRoute>
-            <NandGame />
-          </ProtectedRoute>
-        ) 
+        element: <NandGame /> 
       },
       { 
         path: 'Espectro', 
-        element: (
-          <ProtectedRoute>
-            <EspectroGame />
-          </ProtectedRoute>
-        ) 
+        element: <EspectroGame /> 
       },
       { 
         path: 'Datos', 
-        element: (
-          <ProtectedRoute>
-            <GestionWorkshop />
-          </ProtectedRoute>
-        ) 
+        element: <GestionWorkshop /> 
       },
       { 
         path: 'Software', 
-        element: (
-          <ProtectedRoute>
-            <CSSCodeGame />
-          </ProtectedRoute>
-        ) 
+        element: <CSSCodeGame /> 
       },
       { 
         path: 'Redes', 
-        element: (
-          <ProtectedRoute>
-            <Network />
-          </ProtectedRoute>
-        ) 
+        element: <Network /> 
       },
       // SISTEMA DE GRUPOS DESHABILITADO - Juegos individuales únicamente
       // { 
@@ -137,10 +117,7 @@ const router = createBrowserRouter([
         ) 
       },
       { path: 'Ajedrez',
-        element: (
-        <ProtectedRoute>
-          <AjedrezGame />
-        </ProtectedRoute>) 
+        element: <AjedrezGame /> 
       },
       // { path: 'Templo', element: <TemploTelematica /> },
       { path: 'Templo', element: <HomeHero /> },
@@ -153,7 +130,10 @@ const router = createBrowserRouter([
     path: '/legacy-auth',
     element: <Auth />,
   },
-]);
+], {
+  // Prefijo de despliegue (Vite `base`): '/didactictel/' -> basename '/didactictel'
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/',
+});
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(

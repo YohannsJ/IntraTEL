@@ -13,6 +13,7 @@ import * as ort from 'onnxruntime-web/wasm'
 import ortWasmUrl from 'onnxruntime-web/ort-wasm-simd-threaded.wasm?url'
 import ortMjsUrl from 'onnxruntime-web/ort-wasm-simd-threaded.mjs?url'
 import { encodeBoard, moveToIdx } from './boardEncoder.js'
+import { publicUrl } from '../../../config/environment.js'
 
 // Archivos .wasm servidos desde el propio paquete instalado (misma versión que el JS)
 ort.env.wasm.wasmPaths = { wasm: ortWasmUrl, mjs: ortMjsUrl }
@@ -21,9 +22,9 @@ ort.env.wasm.numThreads = 1
 
 // ─── Paths de los modelos ─────────────────────────────────────────────────────
 const MODEL_PATHS = {
-  1: '/models/level1.onnx',
-  2: '/models/level2.onnx',
-  3: '/models/level3.onnx',
+  1: publicUrl('models/level1.onnx'),
+  2: publicUrl('models/level2.onnx'),
+  3: publicUrl('models/level3.onnx'),
 }
 
 // ─── Temperatura por nivel ────────────────────────────────────────────────────
@@ -48,7 +49,7 @@ async function getSession(level) {
     const dataFile = `level${level}.onnx.data`
     _loading[level] = ort.InferenceSession.create(MODEL_PATHS[level], {
       executionProviders: ['wasm'],
-      externalData: [{ path: dataFile, data: `/models/${dataFile}` }],
+      externalData: [{ path: dataFile, data: publicUrl(`models/${dataFile}`) }],
     }).then(session => {
       _sessions[level] = session
       return session

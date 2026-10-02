@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { apiUrl, apiHeaders } from '../../../config/index.js';
 import { useNavigate } from 'react-router-dom';
 import Spectrogram from './Spectrogram.jsx';
+import { useAuth } from '../../../context/AuthContext.jsx';
+import GuestFlagNotice from '../../Flags/GuestFlagNotice.jsx';
 import styles from './EspectroGame.module.css';
 
 // Componente memoizado del Spectrogram para optimización
@@ -31,6 +33,7 @@ const LEVEL_PATTERNS = {
 };
 
 const EspectroGame = () => {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [gameState, setGameState] = useState({
     level: 1,
@@ -112,7 +115,12 @@ const EspectroGame = () => {
       setShowTutorial(true);
     }
 
-    // Intentar cargar logros del servidor (en memoria) para recordarlos hasta reinicio
+  }, []);
+
+  // Intentar cargar logros del servidor (en memoria) para recordarlos hasta reinicio
+  // (solo con sesión iniciada: los invitados juegan sin llamar a la API)
+  useEffect(() => {
+    if (!isAuthenticated) return;
     (async () => {
       try {
         const res = await fetch(apiUrl('games/achievements/me'), { headers: apiHeaders(true) });
@@ -131,7 +139,7 @@ const EspectroGame = () => {
         // ignorar si no hay sesión o endpoint no disponible
       }
     })();
-  }, []);
+  }, [isAuthenticated]);
 
   // Guardar progreso y logros
   const saveProgress = useCallback(() => {
@@ -163,6 +171,7 @@ const EspectroGame = () => {
 
   // Enviar al servidor los logros actuales (se recuerdan hasta que se reinicie el servidor)
   const syncAchievementsToServer = useCallback(async () => {
+    if (!isAuthenticated) return;
     try {
       const keys = Object.entries(achievements)
         .filter((entry) => entry[1])
@@ -176,7 +185,7 @@ const EspectroGame = () => {
     } catch {
       // silencioso
     }
-  }, [achievements]);
+  }, [achievements, isAuthenticated]);
 
   // Sincronizar cuando se agregan logros en la sesión
   useEffect(() => {
@@ -1102,9 +1111,13 @@ const EspectroGame = () => {
                 </div>
               </div>
 
-              <div className={styles.flagDisplay}>
-                {modalData.flag}
-              </div>
+              {isAuthenticated ? (
+                <div className={styles.flagDisplay}>
+                  {modalData.flag}
+                </div>
+              ) : (
+                <GuestFlagNotice />
+              )}
 
               <p style={{ fontSize: '1rem', color: '#22d3ee', marginBottom: '20px' }}>
                 Puntuación obtenida: <strong>{modalData.score?.toFixed(0)} puntos</strong>
@@ -1150,9 +1163,13 @@ const EspectroGame = () => {
                 ¡Felicidades! Has dominado completamente el espectro electromagnético
               </p>
               
-              <div className={styles.flagDisplay}>
-                {modalData.flag}
-              </div>
+              {isAuthenticated ? (
+                <div className={styles.flagDisplay}>
+                  {modalData.flag}
+                </div>
+              ) : (
+                <GuestFlagNotice />
+              )}
 
               <div className={styles.statsGrid}>
                 <div className={styles.statCard}>

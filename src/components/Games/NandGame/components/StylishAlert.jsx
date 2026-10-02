@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './StylishAlert.module.css';
+import GuestFlagNotice from '../../../Flags/GuestFlagNotice.jsx';
 
 const StylishAlert = ({ 
   isOpen, 
@@ -8,6 +9,7 @@ const StylishAlert = ({
   title, 
   message, 
   flagValue = null,
+  guestNotice = false,
   showCopyButton = false,
   autoClose = false,
   autoCloseDelay = 5000 
@@ -75,6 +77,8 @@ const StylishAlert = ({
         <div className={styles.content}>
           <h3 className={styles.title}>{title}</h3>
           <p className={styles.message}>{message}</p>
+
+          {guestNotice && !flagValue && <GuestFlagNotice />}
           
           {flagValue && (
             <div className={styles.flagContainer}>

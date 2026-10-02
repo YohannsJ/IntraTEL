@@ -11,6 +11,8 @@ import { Chess } from 'chess.js'
 import { useTheme } from '../../../context/ThemeContext.jsx'
 import { getModelMove, preloadModel } from './chessAgent.js'
 import s from './Ajedrez.module.css'
+import { useAuth } from '../../../context/AuthContext.jsx'
+import GuestFlagNotice from '../../Flags/GuestFlagNotice.jsx'
 
 // ─── Piezas ───────────────────────────────────────────────────────────────────
 const G = {
@@ -168,6 +170,9 @@ export default function AjedrezGame() {
   const [gameOver,     setGameOver]     = useState(false)
   const [flag,         setFlag]         = useState(null)
   const [flagCopied,   setFlagCopied]   = useState(false)
+  // Invitados: pueden ganar, pero no reciben la flag
+  const { isAuthenticated } = useAuth()
+  const [guestWon,     setGuestWon]     = useState(false)
 
   // Precarga el modelo del nivel seleccionado al entrar a la página
   useEffect(() => {
@@ -187,7 +192,7 @@ export default function AjedrezGame() {
     game.reset(); busyRef.current = false
     setSelectedSq(null); setLegalDests([])
     setLastFrom(null); setLastTo(null)
-    setFlag(null); setFlagCopied(false)
+    setFlag(null); setFlagCopied(false); setGuestWon(false)
     syncBoard()
   }
 
@@ -261,7 +266,10 @@ export default function AjedrezGame() {
       setLastFrom(selectedSq); setLastTo(sqName)
       setSelectedSq(null); setLegalDests([])
       syncBoard(); applyStatus(false)
-      if (game.isCheckmate() && level === 1) setFlag(LEVEL1_FLAG)
+      if (game.isCheckmate() && level === 1) {
+        if (isAuthenticated) setFlag(LEVEL1_FLAG)
+        else setGuestWon(true)
+      }
       if (!game.isGameOver()) timerRef.current = setTimeout(() => doAgentMove(level), 300)
       return
     }
@@ -483,6 +491,8 @@ export default function AjedrezGame() {
               </button>
             </div>
           )}
+
+          {guestWon && !flag && <GuestFlagNotice />}
 
           {/* Botones */}
           <div className={s.btnRow}>

@@ -7,7 +7,7 @@ export const config = environment;
 // Helper para construir URLs de API
 export const apiUrl = (endpoint) => {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  return `${environment.API_BASE_URL}${environment.API_PREFIX}/${cleanEndpoint}`;
+  return `${environment.API_BASE_URL}/${cleanEndpoint}`;
 };
 
 // Helper para headers de API
@@ -27,6 +27,6 @@ export const apiHeaders = (includeAuth = true) => {
 };
 
 // Re-exportamos funciones útiles del environment
-export { getApiUrl, getAuthHeaders, log, logError } from './environment.js';
+export { getApiUrl, getAuthHeaders, publicUrl, log, logError } from './environment.js';
 
 export default config;

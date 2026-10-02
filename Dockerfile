@@ -4,6 +4,9 @@ ARG NODE_VERSION=22.19.0
 # ---- 1) frontend build (glibc; only ever runs in CI) ----
 FROM node:${NODE_VERSION}-bookworm-slim AS build
 ENV CYPRESS_INSTALL_BINARY=0
+# Public path the SPA is served under (nginx: /didactictel/ and /didactictel/api/)
+ARG VITE_BASE=/didactictel/
+ENV VITE_BASE=${VITE_BASE}
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci

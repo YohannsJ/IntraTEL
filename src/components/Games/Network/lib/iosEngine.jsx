@@ -1,5 +1,6 @@
 import React, { createContext, useMemo } from 'react';
 import { createPCEngine } from './pcEngine.jsx';
+import { GUEST_FLAG_TEXT } from '../../../Flags/guestFlagText.js';
 
 export const IOSEngineContext = createContext({});
 
@@ -343,7 +344,7 @@ function createRouterEngine(ctx){
         `Ping statistics for ${ip}: Packets: Sent = 4, Received = 4, Lost = 0 (0% loss) ✅`,
         ``,
         `🏆 ¡FELICITACIONES! Has completado el desafío de red.`,
-        `🚩 FLAG: ${flag}`,
+        ctx.isGuest ? GUEST_FLAG_TEXT : `🚩 FLAG: ${flag}`,
         ``,
         `Has configurado exitosamente:`,
         `✓ Conectividad Router ↔ Switch ↔ PC`,
@@ -377,7 +378,7 @@ function createRouterEngine(ctx){
 
   const handlers = {
     // comandos especiales
-    'refresh':          () => { return cablingOK() ? 'Conexión verificada correctamente. \nD1ft3l{F1rst_St3p.Ph1s1c4l_L4y3r}' : 'Error: Sin conexión entre router y switch.' },
+    'refresh':          () => { return cablingOK() ? (ctx.isGuest ? `Conexión verificada correctamente. \n${GUEST_FLAG_TEXT}` : 'Conexión verificada correctamente. \nD1ft3l{F1rst_St3p.Ph1s1c4l_L4y3r}') : 'Error: Sin conexión entre router y switch.' },
     
     // ayuda
     'help':             () => getHelpCommands(),
@@ -418,7 +419,7 @@ function createRouterEngine(ctx){
         return [
           `${state.currentInt} changed state to up`,
           ``,
-          `🚩FLAG: D1ft3l{S3c0nd-2do&3er_L4y3r}`,
+          ctx.isGuest ? GUEST_FLAG_TEXT : `🚩FLAG: D1ft3l{S3c0nd-2do&3er_L4y3r}`,
           ``,
           `✅ ¡Configuración correcta de la interfaz fa0/0!`,
           `   IP: 192.168.1.1`,

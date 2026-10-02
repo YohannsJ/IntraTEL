@@ -124,7 +124,7 @@ mkdir -p "$WEB_ROOT"
 rsync -a --delete-after --chown=www-data:www-data --chmod=D755,F644 "$STAGE/" "$WEB_ROOT/" \
   || fail "static sync failed: API is on the new image, static is stale. Rerun the deploy"
 rm -rf "$STAGE"
-curl -fsS -m 5 -o /dev/null --resolve d1ft3l.cl:443:127.0.0.1 https://d1ft3l.cl/api/health \
+curl -fsS -m 5 -o /dev/null --resolve d1ft3l.cl:443:127.0.0.1 https://d1ft3l.cl/didactictel/api/health \
   || log "WARN: health check through nginx failed (API itself is healthy)"
 
 # ---------- disk hygiene: keep exactly one IntraTEL image ----------

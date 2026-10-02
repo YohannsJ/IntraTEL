@@ -11,7 +11,7 @@ IntraTEL (a.k.a. "Didactic-Tel") is a gamified learning platform for Telematics 
 ```bash
 npm install
 npm run dev:full        # API (node --watch, :3001) + Vite (:5173) together
-npm run dev             # frontend only (Vite proxies /api -> http://localhost:3001)
+npm run dev             # frontend only, at http://localhost:5173/didactictel/ (Vite proxies /didactictel/api -> http://localhost:3001/api)
 npm run server          # API only (also `npm start`); server:dev adds --watch
 npm run build           # vite build -> dist/
 npm run lint            # eslint .
@@ -27,13 +27,14 @@ Default admin (auto-created on first server start by `server/scripts/createAdmin
 
 ## Architecture
 
-**Frontend (`src/`)** — Vite + React 19 + react-router-dom 7. Routes are declared in `src/main.jsx` with `createBrowserRouter`; most are wrapped in `ProtectedRoute` (optionally `requiredRole="admin"`). `src/App.jsx` is the shared layout (navbar, `TelixBot` assistant, `FlagSubmitter`). Global state lives in three contexts: `AuthContext` (JWT), `DataContext` (cached data/refresh), `ThemeContext`. `src/config/environment.js` hardcodes `API_BASE_URL: '/api'`, so the frontend always calls relative `/api` — in dev via the Vite proxy, in prod via nginx (`/root/nginx/*.conf` hold the reverse-proxy configs).
+**Frontend (`src/`)** — Vite + React 19 + react-router-dom 7. Routes are declared in `src/main.jsx` with `createBrowserRouter`; the game routes are public (guests can play), while profile, flags and admin routes are wrapped in `ProtectedRoute` (optionally `requiredRole="admin"`). `src/App.jsx` is the shared layout (navbar, `TelixBot` assistant, `FlagSubmitter`). Global state lives in three contexts: `AuthContext` (JWT), `DataContext` (cached data/refresh), `ThemeContext`. The app (also called Didactictel) is served under a base path, `/didactictel/` by default (`VITE_BASE` at build time, see `vite.config.js`): the router uses it as `basename`, `src/config/environment.js` derives `API_BASE_URL` as `<base>api`, and files from `public/` must be referenced with `publicUrl('file.png')` — never a root-absolute `/file.png` or `/api/...`. In dev the Vite proxy maps `<base>api` to the backend's `/api`; in prod host nginx does (the backend itself still serves `/api`).
 
 **Games (`src/components/Games/`)** — each game is self-contained in its own folder: `Gestion` (NetworkManager), `Software` (CSSCodeGame), `Network`, `Teleco` (Espectro), `NandGame`, `Ajedrez` (chess vs. ONNX models via `onnxruntime-web`, see `chessAgent.js`/`boardEncoder.js`). Games report progress and flags through the API.
 
 **Backend (`server/`)** — ESM Express app, `server/server.js` entry. Layering: `routes/` -> `controllers/` -> `models/` -> `config/database.js` (a singleton wrapper over `sqlite3` that creates tables in `initializeTables()` on startup — schema changes go there, there is no migration tool). Auth is JWT via `middleware/auth.js` (`authenticateToken`, `requireRole`). The DB file is `server/data/intratel.db` (path is hardcoded in `database.js`; `DB_PATH` in `.env.example` is not read). `server/scripts/` has one-off admin/flag seeding utilities (`banderas.json` is the flag catalogue).
 
 Things that are non-obvious:
+- **Guests get no flags**: each game hides its flag when `isAuthenticated` is false and shows `GuestFlagNotice` (`src/components/Flags/GuestFlagNotice.jsx`) instead, and skips authenticated API calls. Flag strings are still embedded in the client bundle; the server only awards points to authenticated users (`/api/flags/submit`).
 - **Groups are disabled**: `/api/groups` is commented out in `server.js`, though `GroupController`, `Group` model, tables, and `requireGroupMembership` still exist (and `/api/games/progress/group/:groupId` still references it).
 - **Achievements are in-memory** (`models/AchievementsStore.js`) and reset on server restart; progress and flags are persisted in SQLite.
 - `dotenv` is a dependency but the server does not import it; env vars (`PORT`, `CORS_ORIGINS`, `NODE_ENV`) must come from the real environment. CORS allows all origins when `CORS_ORIGINS` is empty.
@@ -49,6 +50,6 @@ Production runs as a single container (`Dockerfile`: Debian build stage for Vite
 
 - `package.json` `dependencies` must contain **only what `server/` imports**; anything bundled by Vite (react, recharts, onnxruntime-web, ...) goes in `devDependencies`. The runtime image is installed with `npm ci --omit=dev --omit=optional`, and CI fails if the image exceeds 300 MB.
 - `deploy/deploy-intratel` and `deploy/docker-compose.yml` are the sources of `/usr/local/bin/deploy-intratel` and `/srv/projects/intratel/docker-compose.yml` on the VPS; they are installed by hand when changed, not by CI.
-- The deploy script backs up the SQLite DB (`/srv/projects/intratel/backups`, last 10), pulls the image, brings the container up on `127.0.0.1:3001`, rolls back to the previous image if `/api/health` fails, then copies `dist/` out of the image to `/var/www/intratel` (host nginx serves static files and proxies `/api`) and removes old images.
+- The deploy script backs up the SQLite DB (`/srv/projects/intratel/backups`, last 10), pulls the image, brings the container up on `127.0.0.1:3001`, rolls back to the previous image if `/api/health` fails, then copies `dist/` out of the image to `/var/www/intratel` and removes old images. Host nginx must serve that directory at `/didactictel/` (SPA fallback to `/didactictel/index.html`) and proxy `/didactictel/api/` to `http://127.0.0.1:3001/api/`.
 - The DB lives on the host at `/srv/projects/intratel/data/intratel.db`, bind-mounted to `/app/server/data`. The container runs as uid 1000 with a read-only root filesystem, so the server can only write there and in `/tmp`.
 - Operator scripts run inside the container: `docker compose -f /srv/projects/intratel/docker-compose.yml exec api node server/scripts/<script>.js`. Logs: `docker compose -f ... logs api`.

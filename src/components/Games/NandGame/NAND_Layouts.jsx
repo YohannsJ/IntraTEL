@@ -9,6 +9,7 @@ import { TruthTable } from './components/TruthTable.jsx';
 import { DynamicTruthTable } from './components/DynamicTruthTable.jsx';
 import { Toolbar } from './components/Toolbar.jsx';
 import StylishAlert from './components/StylishAlert.jsx';
+import { getApiUrl } from '../../../config/environment.js';
 import styles from './styles/NandGame.module.css';
 
 /**
@@ -236,7 +237,7 @@ export default function NandGame() {
     }
 
     try {
-      const response = await fetch('/api/flags/user', {
+      const response = await fetch(getApiUrl('/flags/user'), {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -671,14 +672,25 @@ export default function NandGame() {
       // Mostrar flag correspondiente
       const levelFlag = currentPuzzle.flag || `FLAG{${currentPuzzle.key}_COMPLETED}`;
       
-      showAlert({
-        type: 'flag',
-        title: '🎉 ¡Puzzle Resuelto!',
-        message: `¡Excelente trabajo! Has completado el puzzle ${currentPuzzle.key}. Aquí tienes tu flag:`,
-        flagValue: levelFlag,
-        showCopyButton: true,
-        autoClose: false
-      });
+      if (user) {
+        showAlert({
+          type: 'flag',
+          title: '🎉 ¡Puzzle Resuelto!',
+          message: `¡Excelente trabajo! Has completado el puzzle ${currentPuzzle.key}. Aquí tienes tu flag:`,
+          flagValue: levelFlag,
+          showCopyButton: true,
+          autoClose: false
+        });
+      } else {
+        // Invitados: pueden jugar, pero no reciben banderas
+        showAlert({
+          type: 'success',
+          title: '🎉 ¡Puzzle Resuelto!',
+          message: `¡Excelente trabajo! Has completado el puzzle ${currentPuzzle.key}.`,
+          guestNotice: true,
+          autoClose: false
+        });
+      }
       
       // Resetear contador de intentos fallidos al resolver
       setFailedAttempts(0);
@@ -695,7 +707,7 @@ export default function NandGame() {
         // autoCloseDelay: 4000
       });
     }
-  }, [nodes, connections, currentPuzzle, solved, mode, showAlert, failedAttempts, getUserFlags, puzzles]);
+  }, [nodes, connections, currentPuzzle, solved, mode, showAlert, failedAttempts, getUserFlags, puzzles, user]);
 
   // Limpiar todas las conexiones
   const clearAllConnections = useCallback(() => {
@@ -828,6 +840,17 @@ export default function NandGame() {
                   <button
                     className={`${styles.tabButton} ${styles.finalFlagButton}`}
                     onClick={async () => {
+                      if (!user) {
+                        // Invitados: sin bandera final
+                        showAlert({
+                          type: 'info',
+                          title: '🏆 ¡Completaste todos los ejercicios!',
+                          message: 'La bandera final solo se entrega a jugadores con sesión iniciada.',
+                          guestNotice: true,
+                          autoClose: false
+                        });
+                        return;
+                      }
                       // Verificar que el usuario tenga todas las 4 flags individuales en el backend
                       const userFlags = await getUserFlags();
                       const flagValues = userFlags.map(flag => flag.flag_value);
@@ -1010,6 +1033,7 @@ export default function NandGame() {
         title={alert.title}
         message={alert.message}
         flagValue={alert.flagValue}
+        guestNotice={alert.guestNotice}
         showCopyButton={alert.showCopyButton}
         autoClose={alert.autoClose}
         autoCloseDelay={alert.autoCloseDelay}

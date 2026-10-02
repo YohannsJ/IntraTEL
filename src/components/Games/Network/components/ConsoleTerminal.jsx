@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { IOSEngineContext } from '../lib/iosEngine.jsx';
+import { GUEST_FLAG_TEXT } from '../../../Flags/guestFlagText.js';
 
 export default function ConsoleTerminal({ type, persistentState, setPersistentState }) {
   const { routerEngine, pcEngine, ctx } = useContext(IOSEngineContext);
@@ -47,7 +48,9 @@ export default function ConsoleTerminal({ type, persistentState, setPersistentSt
     const prompt = type === 'router' ? (isConnected ? engine.getPrompt() : 'Desconectado>') : engine.getPrompt();
     
     if (connected) {
-      const refreshMsg = '✅ Conexión verificada correctamente.\nD1ft3l{F1rst_St3p.Ph1s1c4l_L4y3r}';
+      const refreshMsg = ctx && ctx.isGuest
+        ? `✅ Conexión verificada correctamente.\n${GUEST_FLAG_TEXT}`
+        : '✅ Conexión verificada correctamente.\nD1ft3l{F1rst_St3p.Ph1s1c4l_L4y3r}';
       setLines(prev => [...prev, prompt + ' refresh', refreshMsg, '']);
       
       // Si cambió de desconectado a conectado, mostrar mensajes de bienvenida

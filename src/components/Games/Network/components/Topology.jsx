@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { publicUrl } from '../../../../config/environment.js'
 
 export default function Topology({ topo, setTopo, ctx }) {
   const ref = useRef(null)
@@ -17,9 +18,9 @@ export default function Topology({ topo, setTopo, ctx }) {
     }
 
     // Rutas de imágenes
-    const routerPng = '/router.png'
-    const switchPng = '/switch.png'
-    const pcPng = '/pc.png'
+    const routerPng = publicUrl('router.png')
+    const switchPng = publicUrl('switch.png')
+    const pcPng = publicUrl('pc.png')
 
     // ---------- Estado local para two-tap selection ----------
     let selectedPort = null // { nodeId, portIdx, element }
@@ -84,7 +85,7 @@ export default function Topology({ topo, setTopo, ctx }) {
           {
             id: 'connection',
             title: 'Conexión Física Completada',
-            code: 'FLAG{NETWORK_C4BL1NG_M4ST3R}'
+            code: ctx.isGuest ? null : 'FLAG{NETWORK_C4BL1NG_M4ST3R}'
           }
         ])
       }

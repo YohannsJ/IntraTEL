@@ -4,7 +4,10 @@ const config = {
   // API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://170.239.86.170/api',
   // API_BASE_URL: 'http://170.239.86.170:3001',
   // API_PREFIX: '/api',
-  API_BASE_URL:'/api',
+  // La app se sirve bajo un prefijo configurable (Vite `base`, por defecto /didactictel/)
+  // y la API cuelga del mismo prefijo: /didactictel/api -> backend /api
+  BASE_PATH: import.meta.env.BASE_URL,
+  API_BASE_URL: `${import.meta.env.BASE_URL}api`,
   
   // Server Configuration
   SERVER_PORT: import.meta.env.VITE_SERVER_PORT || 3001,
@@ -42,6 +45,9 @@ const config = {
 };
 
 // Helper functions
+// URL de un archivo de public/ respetando el prefijo de despliegue
+export const publicUrl = (path = '') => `${config.BASE_PATH}${path.replace(/^\//, '')}`;
+
 export const getApiUrl = (endpoint = '') => {
   const baseUrl = `${config.API_BASE_URL}`;
   return endpoint ? `${baseUrl}${endpoint}` : baseUrl;

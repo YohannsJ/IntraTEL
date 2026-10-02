@@ -1,0 +1,13 @@
+*
+!package.json
+!package-lock.json
+!index.html
+!vite.config.js
+!public
+!src
+!server
+server/data
+**/*.db
+**/*.db-*
+**/.env*
+**/node_modules

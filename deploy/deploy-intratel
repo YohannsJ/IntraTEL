@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+# IntraTEL container deploy: pull-only, no build and no git on the VPS.
+# Usage: deploy-intratel [image-tag]        (default: latest)
+# Optional env: GHCR_USER + GHCR_TOKEN -> throwaway docker login if the GHCR package is private.
+set -Eeuo pipefail
+
+IMAGE_REPO="ghcr.io/yohannsj/intratel"
+TAG="${1:-${IMAGE_TAG:-latest}}"
+PROJECT_DIR="/srv/projects/intratel"
+COMPOSE_FILE="$PROJECT_DIR/docker-compose.yml"
+ENV_FILE="$PROJECT_DIR/.env"
+DATA_DIR="$PROJECT_DIR/data"
+DB="$DATA_DIR/intratel.db"
+BACKUP_DIR="$PROJECT_DIR/backups"
+KEEP_BACKUPS=10
+WEB_ROOT="/var/www/intratel"
+STAGE="$PROJECT_DIR/.static-staging"
+HEALTH_URL="http://127.0.0.1:3001/api/health"
+HEALTH_TRIES=30            # x 2s
+MIN_FREE_MB=1000
+LEGACY_UNIT="intratel-backend"
+NEW_IMAGE="$IMAGE_REPO:$TAG"
+
+log()  { printf '[DEPLOY] %s\n' "$*"; }
+fail() { printf '[DEPLOY][ERROR] %s\n' "$*" >&2; exit 1; }
+dc()   { docker compose --project-directory "$PROJECT_DIR" -f "$COMPOSE_FILE" "$@"; }
+free_mb() { df --output=avail -BM /var/lib/docker | tail -1 | tr -dc '0-9'; }
+set_image() { printf 'INTRATEL_IMAGE=%s\n' "$1" > "$ENV_FILE.tmp" && mv -f "$ENV_FILE.tmp" "$ENV_FILE"; }
+healthy() {
+  local i
+  for i in $(seq 1 "$HEALTH_TRIES"); do
+    curl -fsS -m 3 -o /dev/null "$HEALTH_URL" 2>/dev/null && return 0
+    sleep 2
+  done
+  return 1
+}
+
+# ---------- preflight (nothing is changed before the pull succeeds) ----------
+[ "$(id -u)" -eq 0 ] || fail "must run as root"
+[[ "$TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]] || fail "invalid tag: $TAG"
+exec 9>/run/lock/deploy-intratel.lock
+flock -n 9 || fail "another deploy is already running"
+command -v sqlite3 >/dev/null || fail "sqlite3 CLI missing (needed for safe DB backup)"
+[ -f "$COMPOSE_FILE" ] || fail "$COMPOSE_FILE missing"
+[ -d "$DATA_DIR" ] || fail "$DATA_DIR missing (cutover not done?)"
+if systemctl is-active --quiet "$LEGACY_UNIT"; then
+  fail "legacy unit $LEGACY_UNIT is still active: cutover not done, refusing to deploy"
+fi
+if [ "$(free_mb)" -lt "$MIN_FREE_MB" ]; then
+  log "low disk: pruning dangling images"
+  docker image prune -f >/dev/null || true
+  [ "$(free_mb)" -ge "$MIN_FREE_MB" ] || fail "less than ${MIN_FREE_MB} MB free, aborting before pull"
+fi
+
+# ---------- remember what is running ----------
+PREV_CID="$(docker ps -aq --filter label=com.docker.compose.project=intratel \
+                         --filter label=com.docker.compose.service=api | head -n1)"
+PREV_ID=""
+if [ -n "$PREV_CID" ]; then
+  PREV_ID="$(docker inspect -f '{{.Image}}' "$PREV_CID")"
+  docker tag "$PREV_ID" "$IMAGE_REPO:previous" || PREV_ID=""
+fi
+
+# ---------- pull ----------
+pull() {
+  if [ -n "${GHCR_TOKEN:-}" ]; then
+    local cfg rc=0
+    cfg="$(mktemp -d)"
+    printf '%s' "$GHCR_TOKEN" | docker --config "$cfg" login ghcr.io \
+        -u "${GHCR_USER:-x-access-token}" --password-stdin >/dev/null 2>&1 || rc=1
+    if [ "$rc" -eq 0 ]; then docker --config "$cfg" pull -q "$NEW_IMAGE" || rc=1; fi
+    rm -rf "$cfg"
+    return "$rc"
+  fi
+  docker pull -q "$NEW_IMAGE"
+}
+log "pulling $NEW_IMAGE"
+pull || fail "pull failed, nothing changed"
+NEW_ID="$(docker image inspect -f '{{.Id}}' "$NEW_IMAGE")"
+
+# ---------- DB backup (online-safe) ----------
+if [ -f "$DB" ]; then
+  mkdir -p "$BACKUP_DIR"; chmod 700 "$BACKUP_DIR"
+  BK="$BACKUP_DIR/intratel-$(date -u +%Y%m%dT%H%M%SZ)-pre-$TAG.db"
+  sqlite3 "$DB" ".timeout 10000" ".backup '$BK'" || fail "DB backup failed, nothing changed"
+  [ "$(sqlite3 "$BK" 'PRAGMA integrity_check;')" = "ok" ] || fail "backup integrity check failed, nothing changed"
+  ls -1t "$BACKUP_DIR"/intratel-*.db | tail -n +$((KEEP_BACKUPS + 1)) | xargs -r rm -f --
+  log "backup: $BK"
+else
+  log "WARN: $DB does not exist, the server will create a fresh DB"
+fi
+
+# ---------- extract static files to staging (prod still untouched) ----------
+rm -rf "$STAGE"; mkdir -p "$STAGE"
+TMP_CID="$(docker create "$NEW_IMAGE")"
+docker cp "$TMP_CID:/app/dist/." "$STAGE/" >/dev/null || { docker rm -f "$TMP_CID" >/dev/null; fail "could not extract dist"; }
+docker rm -f "$TMP_CID" >/dev/null
+[ -s "$STAGE/index.html" ] || fail "image has no dist/index.html"
+
+# ---------- switch API ----------
+rollback() {
+  dc logs --tail 60 api || true
+  if [ -n "$PREV_ID" ]; then
+    log "rolling back to previous image"
+    set_image "$IMAGE_REPO:previous"
+    dc up -d --remove-orphans || true
+    if healthy; then log "rollback OK"; else log "ROLLBACK FAILED: manual intervention required"; fi
+    [ "$NEW_ID" = "$PREV_ID" ] || docker image rm -f "$NEW_ID" >/dev/null 2>&1 || true
+  else
+    dc down || true
+  fi
+  rm -rf "$STAGE"
+}
+set_image "$NEW_IMAGE"
+if dc up -d --remove-orphans && healthy; then
+  log "API healthy on $NEW_IMAGE"
+else
+  rollback
+  fail "new image unhealthy, static files untouched"
+fi
+
+# ---------- publish static (only after the API is healthy) ----------
+mkdir -p "$WEB_ROOT"
+rsync -a --delete-after --chown=www-data:www-data --chmod=D755,F644 "$STAGE/" "$WEB_ROOT/" \
+  || fail "static sync failed: API is on the new image, static is stale. Rerun the deploy"
+rm -rf "$STAGE"
+curl -fsS -m 5 -o /dev/null --resolve d1ft3l.cl:443:127.0.0.1 https://d1ft3l.cl/api/health \
+  || log "WARN: health check through nginx failed (API itself is healthy)"
+
+# ---------- disk hygiene: keep exactly one IntraTEL image ----------
+docker image ls --no-trunc -q "$IMAGE_REPO" | sort -u | while read -r id; do
+  [ "$id" = "$NEW_ID" ] || docker image rm -f "$id" >/dev/null 2>&1 || true
+done
+docker image prune -f >/dev/null || true
+log "done. Free on /: $(df -h --output=avail / | tail -1 | tr -d ' ')"
+docker system df

@@ -1,0 +1,31 @@
+name: intratel
+
+services:
+  api:
+    image: ${INTRATEL_IMAGE:-ghcr.io/yohannsj/intratel:latest}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      # JWT_SECRET / JWT_EXPIRES_IN / CORS_ORIGINS intentionally NOT set: identical to current prod.
+    env_file:
+      - path: ./app.env        # optional future overrides (e.g. JWT_SECRET); absent today
+        required: false
+    ports:
+      - "127.0.0.1:${INTRATEL_PORT:-3001}:3001"
+    volumes:
+      - ${INTRATEL_DATA_DIR:-./data}:/app/server/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    pids_limit: 128
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO /dev/null http://127.0.0.1:3001/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
